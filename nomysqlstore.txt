@@ -1,0 +1,459 @@
+Here's the complete **ESM conversion** of the express-session implementation without MySQL store or JWT:
+
+### 1. Update `package.json` for ESM
+```json
+{
+  "name": "autopost-auth",
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "nodemon server.js",
+    "setup-db": "mysql -u root -p < sql/setup.sql",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "mysql2": "^3.6.3",
+    "bcryptjs": "^2.4.3",
+    "cors": "^2.8.5",
+    "dotenv": "^16.3.1",
+    "google-auth-library": "^9.6.3",
+    "express-session": "^1.17.3"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.1"
+  }
+}
+```
+
+### 2. Updated Server (`server.js`)
+```javascript
+import 'dotenv/config';
+import express from 'express';
+import cors from 'cors';
+import session from 'express-session';
+import authRoutes from './routes/authRoutes.js';
+import { pool } from './config/db.js';
+
+const app = express();
+
+// Middleware
+app.use(cors({
+  origin: process.env.CLIENT_URL,
+  credentials: true
+}));
+app.use(express.json());
+app.use(session({
+  name: 'autopost.sid',
+  secret: process.env.SESSION_SECRET,
+  resave: false,
+  saveUninitialized: false,
+  cookie: {
+    secure: process.env.NODE_ENV === 'production',
+    httpOnly: true,
+    maxAge: 24 * 60 * 60 * 1000, // 1 day
+    sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax'
+  }
+}));
+
+// Test database connection
+pool.getConnection((err, connection) => {
+  if (err) {
+    console.error('MySQL connection error:', err);
+    process.exit(1);
+  }
+  console.log('Connected to MySQL database');
+  connection.release();
+});
+
+// Routes
+app.use('/api/auth', authRoutes);
+
+// Error Handling Middleware
+app.use((err, req, res, next) => {
+  console.error(err.stack);
+  res.status(500).json({ error: 'Something went wrong!' });
+});
+
+const PORT = process.env.PORT || 5000;
+app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+```
+
+### 3. Updated Database Config (`config/db.js`)
+```javascript
+import mysql from 'mysql2';
+
+const pool = mysql.createPool({
+  host: process.env.DB_HOST,
+  user: process.env.DB_USER,
+  password: process.env.DB_PASSWORD,
+  database: process.env.DB_NAME,
+  waitForConnections: true,
+  connectionLimit: 10,
+  queueLimit: 0
+});
+
+export { pool };
+```
+
+### 4. Updated Google Config (`config/google.js`)
+```javascript
+import { OAuth2Client } from 'google-auth-library';
+
+const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
+
+const verifyGoogleToken = async (token) => {
+  try {
+    const ticket = await client.verifyIdToken({
+      idToken: token,
+      audience: process.env.GOOGLE_CLIENT_ID,
+    });
+    return { payload: ticket.getPayload() };
+  } catch (error) {
+    return { error: "Invalid user detected. Please try again" };
+  }
+};
+
+export { verifyGoogleToken };
+```
+
+### 5. Updated User Model (`models/User.js`)
+```javascript
+import { pool } from '../config/db.js';
+import bcrypt from 'bcryptjs';
+
+class User {
+  static async create({ name, email, password, avatar, provider, verified }) {
+    const hashedPassword = password ? await bcrypt.hash(password, 12) : null;
+    const [result] = await pool.promise().execute(
+      `INSERT INTO users (name, email, password, avatar, provider, verified) 
+       VALUES (?, ?, ?, ?, ?, ?)`,
+      [name, email, hashedPassword, avatar, provider, verified]
+    );
+    return { id: result.insertId, name, email, avatar, provider, verified };
+  }
+
+  static async findByEmail(email) {
+    const [rows] = await pool.promise().execute(
+      'SELECT * FROM users WHERE email = ? LIMIT 1',
+      [email]
+    );
+    return rows[0];
+  }
+
+  static async findById(id) {
+    const [rows] = await pool.promise().execute(
+      'SELECT id, name, email, avatar, provider, verified FROM users WHERE id = ? LIMIT 1',
+      [id]
+    );
+    return rows[0];
+  }
+
+  static async comparePassword(email, candidatePassword) {
+    const [rows] = await pool.promise().execute(
+      'SELECT password FROM users WHERE email = ? LIMIT 1',
+      [email]
+    );
+    if (!rows[0]) return false;
+    return await bcrypt.compare(candidatePassword, rows[0].password);
+  }
+}
+
+export default User;
+```
+
+### 6. Updated Auth Controller (`controllers/authController.js`)
+```javascript
+import User from '../models/User.js';
+import { verifyGoogleToken } from '../config/google.js';
+
+// Middleware to check if user is authenticated
+export const requireAuth = (req, res, next) => {
+  if (!req.session.user) {
+    return res.status(401).json({ error: 'Authentication required' });
+  }
+  next();
+};
+
+// Google Authentication
+export const googleAuth = async (req, res) => {
+  try {
+    const { token } = req.body;
+    
+    if (!token) {
+      return res.status(400).json({ error: 'Google token is required' });
+    }
+
+    const googleData = await verifyGoogleToken(token);
+    
+    if (googleData.error) {
+      return res.status(401).json({ error: googleData.error });
+    }
+
+    const { email, name, picture } = googleData.payload;
+
+    // Check if user exists
+    let user = await User.findByEmail(email);
+
+    if (!user) {
+      // Create new user
+      user = await User.create({
+        name,
+        email,
+        avatar: picture,
+        provider: 'google',
+        verified: true
+      });
+    }
+
+    // Store user in session
+    req.session.user = {
+      id: user.id,
+      name: user.name,
+      email: user.email,
+      avatar: user.avatar,
+      provider: user.provider
+    };
+
+    res.status(200).json({
+      status: 'success',
+      user: req.session.user
+    });
+
+  } catch (error) {
+    console.error('Google auth error:', error);
+    res.status(500).json({ error: 'Authentication failed' });
+  }
+};
+
+// Email Signup
+export const signup = async (req, res) => {
+  try {
+    const { name, email, password } = req.body;
+
+    // Check if user exists
+    const existingUser = await User.findByEmail(email);
+    if (existingUser) {
+      return res.status(400).json({ error: 'Email already in use' });
+    }
+
+    // Create new user
+    const user = await User.create({
+      name,
+      email,
+      password,
+      provider: 'email'
+    });
+
+    // Store user in session
+    req.session.user = {
+      id: user.id,
+      name: user.name,
+      email: user.email,
+      provider: user.provider
+    };
+
+    res.status(201).json({
+      status: 'success',
+      user: req.session.user
+    });
+
+  } catch (error) {
+    console.error('Signup error:', error);
+    res.status(500).json({ error: 'Registration failed' });
+  }
+};
+
+// Email Login
+export const login = async (req, res) => {
+  try {
+    const { email, password } = req.body;
+
+    // Check if user exists
+    const user = await User.findByEmail(email);
+    if (!user) {
+      return res.status(401).json({ error: 'Invalid credentials' });
+    }
+
+    // Check password
+    const isMatch = await User.comparePassword(email, password);
+    if (!isMatch) {
+      return res.status(401).json({ error: 'Invalid credentials' });
+    }
+
+    // Store user in session
+    req.session.user = {
+      id: user.id,
+      name: user.name,
+      email: user.email,
+      avatar: user.avatar,
+      provider: user.provider
+    };
+
+    res.status(200).json({
+      status: 'success',
+      user: req.session.user
+    });
+
+  } catch (error) {
+    console.error('Login error:', error);
+    res.status(500).json({ error: 'Login failed' });
+  }
+};
+
+// Get current user
+export const getMe = async (req, res) => {
+  try {
+    if (!req.session.user) {
+      return res.status(401).json({ error: 'Not authenticated' });
+    }
+
+    // Verify user still exists in database
+    const user = await User.findById(req.session.user.id);
+    
+    if (!user) {
+      req.session.destroy();
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    res.status(200).json({
+      status: 'success',
+      user: req.session.user
+    });
+  } catch (error) {
+    console.error('Get user error:', error);
+    res.status(500).json({ error: 'Failed to fetch user' });
+  }
+};
+
+// Logout
+export const logout = async (req, res) => {
+  try {
+    req.session.destroy((err) => {
+      if (err) {
+        return res.status(500).json({ error: 'Logout failed' });
+      }
+      
+      res.clearCookie('autopost.sid');
+      res.status(200).json({ status: 'success', message: 'Logged out successfully' });
+    });
+  } catch (error) {
+    console.error('Logout error:', error);
+    res.status(500).json({ error: 'Logout failed' });
+  }
+};
+```
+
+### 7. Updated Auth Routes (`routes/authRoutes.js`)
+```javascript
+import express from 'express';
+import {
+  googleAuth,
+  signup,
+  login,
+  getMe,
+  logout,
+  requireAuth
+} from '../controllers/authController.js';
+
+const router = express.Router();
+
+// Public routes
+router.post('/google', googleAuth);
+router.post('/signup', signup);
+router.post('/login', login);
+
+// Protected routes (require session)
+router.get('/me', requireAuth, getMe);
+router.post('/logout', requireAuth, logout);
+
+export default router;
+```
+
+### 8. Environment Variables (`.env`)
+```env
+DB_HOST=localhost
+DB_USER=root
+DB_PASSWORD=your_mysql_password
+DB_NAME=autopost
+GOOGLE_CLIENT_ID=your-google-client-id.apps.googleusercontent.com
+SESSION_SECRET=your_session_secret_here_make_it_long_and_secure
+CLIENT_URL=http://localhost:3000
+PORT=5000
+NODE_ENV=development
+```
+
+### 9. Database Setup (`sql/setup.sql`) - No changes needed
+```sql
+CREATE DATABASE IF NOT EXISTS autopost;
+
+USE autopost;
+
+CREATE TABLE IF NOT EXISTS users (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  name VARCHAR(255) NOT NULL,
+  email VARCHAR(255) NOT NULL UNIQUE,
+  password VARCHAR(255),
+  avatar VARCHAR(255),
+  provider ENUM('google', 'email') DEFAULT 'email',
+  verified BOOLEAN DEFAULT FALSE,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE INDEX idx_email ON users(email);
+```
+
+### Key ESM Changes:
+
+1. **Import/Export Syntax**:
+   - All `require()` statements converted to `import`
+   - All `module.exports` converted to `export`
+   - Added `.js` file extensions to all imports
+
+2. **Package.json**:
+   - Added `"type": "module"` to enable ESM
+
+3. **MySQL2 Usage**:
+   - Used `pool.promise().execute()` for async/await syntax
+   - No changes to actual SQL queries
+
+4. **Session Configuration**:
+   - Session config remains identical, just imported differently
+
+### Running the Application:
+
+1. **Install Dependencies**:
+```bash
+npm install
+```
+
+2. **Setup Database**:
+```bash
+npm run setup-db
+```
+
+3. **Start Development Server**:
+```bash
+npm run dev
+```
+
+### Frontend Usage (No Changes):
+```javascript
+// All frontend code remains exactly the same
+fetch('/api/auth/login', {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  credentials: 'include', // Crucial for session cookies
+  body: JSON.stringify({ email, password })
+});
+```
+
+### API Endpoints (No Changes):
+- `POST /api/auth/google` - Google authentication
+- `POST /api/auth/signup` - Email registration
+- `POST /api/auth/login` - Email login
+- `GET /api/auth/me` - Get current user (protected)
+- `POST /api/auth/logout` - Logout (protected)
+
+This ESM conversion maintains all the functionality of the original CommonJS implementation while using modern JavaScript module syntax. The application behavior, API endpoints, and database structure remain completely unchanged.

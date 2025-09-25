@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>About Us | AutoPost</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="style.css">
+  <style>
+    /* (Same base styles as pricing page) */
+
+    /* About-Specific Styles */
+    .about-hero {
+      text-align: center;
+      padding: 100px 0;
+      
+      background-size: cover;
+      background-position: center;
+      
+    }
+
+    .about-hero h1 {
+      font-size: 48px;
+      margin-bottom: 20px;
+    }
+
+    .about-hero p {
+      max-width: 700px;
+      margin: 0 auto;
+      font-size: 18px;
+      opacity: 0.9;
+    }
+
+    .about-section {
+      padding: 80px 0;
+    }
+
+    .about-section.alternate {
+      background-color: var(--bg-secondary);
+    }
+
+    .about-content {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 60px;
+      align-items: center;
+    }
+
+    .about-image {
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    }
+
+    .about-image img {
+      width: 100%;
+      height: auto;
+      display: block;
+    }
+
+    .team-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 30px;
+      margin-top: 40px;
+    }
+
+    .team-card {
+      background-color: var(--bg-primary);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      overflow: hidden;
+      text-align: center;
+      transition: transform 0.3s ease;
+    }
+
+    .team-card:hover {
+      transform: translateY(-5px);
+    }
+
+    .team-image {
+      height: 250px;
+      background-color: var(--bg-secondary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--text-secondary);
+      font-size: 72px;
+    }
+
+    .team-image img{
+      height:250px;
+    }
+    .team-info {
+      padding: 20px;
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 20px;
+      text-align: center;
+      margin: 60px 0;
+    }
+
+    .stat-card {
+      padding: 30px 20px;
+    }
+
+    .stat-number {
+      font-size: 48px;
+      font-weight: 700;
+      color: var(--accent-blue);
+      margin-bottom: 10px;
+    }
+
+    .stat-label {
+      color: var(--text-secondary);
+    }
+    
+    .cta-section{
+        text-align:center;
+    }
+    
+    footer {
+      background-color: var(--bg-secondary);
+      padding: 40px 10%;
+      border-top: 1px solid var(--border-color);
+      margin:0;
+    }
+    
+    
+    /* ===== Responsive ===== */
+    @media (max-width: 768px) {
+      .features-grid{
+        grid-template-columns: 1fr;
+      }
+      footer{
+          width:100%;
+      }
+      }
+  </style>
+</head>
+<body>
+  <!-- Header (Same as pricing page) -->
+<header>
+        <h1>Auto<span>Post</span></h1>
+        <nav>
+            <a href="home.html">Home</a>
+            <a href="pricing.html">Pricing</a>
+            <a href="signup.html">Sign Up!</a>
+        </nav>
+  <!-- Theme Toggle -->
+  <div class="theme-toggle">
+    
+    <label class="toggle-switch">
+      <input type="checkbox" id="toggle">
+      <span class="toggle-slider"></span>
+    </label>
+  </div>
+    </header>
+    
+  <!-- Hero -->
+  <section class="about-hero">
+    <div class="container">
+      <h1>Our Story</h1>
+      <p>How a team of marketers and engineers built the social media automation tool they wished existed</p>
+    </div>
+  </section>
+
+  <!-- Our Story -->
+  <section class="about-section container">
+    <div class="about-content">
+      <div>
+        <h2 class="section-title">Why We Built AutoPost</h2>
+        <p>In 2024, our founders were running a digital marketing agency and spending countless hours manually scheduling social media posts across multiple platforms. Frustrated by the lack of intelligent automation tools, they decided to build their own solution.</p>
+        <p>What started as an internal tool quickly gained interest from other agencies and content creators. Today, AutoPost helps thousands of businesses automate their social media presence while maintaining authenticity and engagement.</p>
+      </div>
+      <div class="about-image">
+          <img src="autopost-dashboard.jpg" alt="">
+ </div>
+    </div>
+  </section>
+
+  <!-- Stats -->
+  <section class="about-section alternate">
+    <div class="container">
+      <h2 class="section-title" style="text-align: center;">By the Numbers</h2>
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-number">100+</div>
+          <div class="stat-label">Happy Customers</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-number">50+</div>
+          <div class="stat-label">Posts Scheduled</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-number">2</div>
+          <div class="stat-label">Countries</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-number">24/7</div>
+          <div class="stat-label">Support</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Team -->
+  <section class="about-section container">
+    <h2 class="section-title">Meet the Team</h2>
+    <p style="text-align: center; max-width: 700px; margin: 0 auto 40px;">We're a diverse team of marketers, engineers, and designers passionate about making social media easier.</p>
+    
+    <div class="team-grid">
+      <div class="team-card">
+        <div class="team-image">
+          <img src="autopost-dashboard.jpg" alt="">
+        </div>
+        <div class="team-info">
+          <h3>Emeka Chukwuka</h3>
+          <p style="color: var(--accent-blue);">CEO & Founder</p>
+        </div>
+      </div>
+      <div class="team-card">
+        <div class="team-image">
+          <img src="autopost-dashboard.jpg" alt="">
+        </div>
+        <div class="team-info">
+          <h3></h3>
+          <p style="color: var(--accent-blue);">Head of Product</p>
+        </div>
+      </div>
+      <div class="team-card">
+        <div class="team-image">
+          <img src="BackgroundEraser_20250602_174923132.jpg" alt="">
+        </div>
+        <div class="team-info">
+          <h3>Ebuka Chukwuka</h3>
+          <p style="color: var(--accent-blue);">Marketing Director</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Values -->
+  <section class="about-section alternate">
+    <div class="container">
+      <h2 class="section-title" style="text-align: center;">Our Values</h2>
+      <div class="features-grid" style="margin-top: 40px;">
+        <div class="feature-card">
+          <div class="feature-icon">
+            <i class="fas fa-lightbulb"></i>
+          </div>
+          <h3>Innovation</h3>
+          <p>We constantly push boundaries to deliver cutting-edge automation that actually works.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">
+            <i class="fas fa-heart"></i>
+          </div>
+          <h3>Customer Focus</h3>
+          <p>Your success is our success. We build tools that solve real problems.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">
+            <i class="fas fa-lock"></i>
+          </div>
+          <h3>Integrity</h3>
+          <p>We're transparent about data usage and prioritize your privacy.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="cta-section container">
+    <h2>Join Our Mission</h2>
+    <p>We're hiring! Check out open positions and help us build the future of social media automation.</p>
+    <div class="cta-buttons">
+      <a href="#" class="btn btn-primary">View Careers</a>
+      <a href="contact.html" class="btn btn-outline">Contact Us</a>
+    </div>
+  </section>
+
+  <!-- Footer (Same as pricing page) -->
+<footer class="container">
+    <div class="footer-grid">
+      <div class="footer-links">
+        <h3>Product</h3>
+        <ul>
+          <li><a href="features.html">Features</a></li>
+          <li><a href="pricing.html">Pricing</a></li>
+          <li><a href="#">Integrations</a></li>
+          <li><a href="#">Updates</a></li>
+        </ul>
+      </div>
+      <div class="footer-links">
+        <h3>Resources</h3>
+        <ul>
+          <li><a href="blog.html">Blog</a></li>
+          <li><a href="#">Guides</a></li>
+          <li><a href="#">Help Center</a></li>
+          <li><a href="#">API Docs</a></li>
+        </ul>
+      </div>
+      <div class="footer-links">
+        <h3>Company</h3>
+        <ul>
+          <li><a href="about.html">About</a></li>
+          <li><a href="careers.html">Careers</a></li>
+          <li><a href="contact.html">Contact</a></li>
+          <li><a href="#">Legal</a></li>
+        </ul>
+      </div>
+      <div class="footer-links">
+        <h3>Connect</h3>
+        <ul>
+          <li><a href="#"><i class="fab fa-twitter"></i> X</a></li>
+          <li><a href="#"><i class="fab fa-linkedin"></i> LinkedIn</a></li>
+          <li><a href="#"><i class="fab fa-instagram"></i> Instagram</a></li>
+          <li><a href="#"><i class="fab fa-facebook"></i> Facebook</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="copyright">
+      <p>&copy; 2025 AutoPost. All rights reserved.</p>
+    </div>
+  </footer>
+  <script>
+    // (Same JS as pricing page for dark mode)
+  </script>
+  <script src="script.js"></script>
+</body>
+</html>

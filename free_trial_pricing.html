@@ -1,0 +1,796 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ProjectHub - Premium Features Demo</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #4361ee;
+            --secondary: #3a0ca3;
+            --accent: #f72585;
+            --success: #4cc9f0;
+            --light: #f8f9fa;
+            --dark: #212529;
+            --gray: #6c757d;
+            --border: #dee2e6;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #f5f7fb;
+            color: var(--dark);
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 0;
+            margin-bottom: 30px;
+        }
+        
+        .logo {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+        }
+        
+        .logo i {
+            margin-right: 10px;
+        }
+        
+        .auth-buttons {
+            display: flex;
+            gap: 15px;
+        }
+        
+        .btn {
+            display: inline-block;
+            padding: 10px 20px;
+            background: var(--primary);
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 600;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 1rem;
+        }
+        
+        .btn:hover {
+            background: var(--secondary);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        
+        .btn-outline {
+            background: transparent;
+            border: 2px solid var(--primary);
+            color: var(--primary);
+        }
+        
+        .btn-outline:hover {
+            background: var(--primary);
+            color: white;
+        }
+        
+        .btn-success {
+            background: var(--success);
+        }
+        
+        .btn-success:hover {
+            background: #3aa9d3;
+        }
+        
+        .hero {
+            text-align: center;
+            padding: 40px 0;
+            margin-bottom: 40px;
+            background: linear-gradient(135deg, #4361ee 0%, #3a0ca3 100%);
+            color: white;
+            border-radius: 12px;
+            box-shadow: 0 10px 20px rgba(67, 97, 238, 0.2);
+        }
+        
+        .hero h1 {
+            font-size: 2.8rem;
+            margin-bottom: 15px;
+        }
+        
+        .hero p {
+            font-size: 1.2rem;
+            max-width: 700px;
+            margin: 0 auto 25px;
+            opacity: 0.9;
+        }
+        
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+            margin: 40px 0;
+        }
+        
+        .feature-card {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+            padding: 25px;
+            text-align: center;
+            transition: transform 0.3s ease;
+        }
+        
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
+        }
+        
+        .feature-card i {
+            font-size: 2.8rem;
+            color: var(--primary);
+            margin-bottom: 20px;
+        }
+        
+        .feature-card h3 {
+            margin-bottom: 15px;
+            color: var(--dark);
+        }
+        
+        .feature-card p {
+            color: var(--gray);
+            margin-bottom: 20px;
+        }
+        
+        .trial-status {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+            padding: 25px;
+            margin: 40px auto;
+            text-align: center;
+        }
+        
+        .trial-status h2 {
+            color: var(--primary);
+            margin-bottom: 15px;
+        }
+        
+        .countdown {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--dark);
+            margin: 15px 0;
+            padding: 15px;
+            background: var(--light);
+            border-radius: 8px;
+        }
+        
+        .premium-features {
+            margin-top: 40px;
+        }
+        
+        .premium-features h2 {
+            text-align: center;
+            margin-bottom: 30px;
+            color: var(--primary);
+        }
+        
+        .features-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+        }
+        
+        .premium-feature {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+            padding: 25px;
+            transition: all 0.3s ease;
+        }
+        
+        .premium-feature:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
+        }
+        
+        .premium-feature i {
+            font-size: 2.5rem;
+            color: var(--accent);
+            margin-bottom: 20px;
+        }
+        
+        .premium-feature h3 {
+            margin-bottom: 15px;
+            color: var(--dark);
+        }
+        
+        .premium-feature p {
+            color: var(--gray);
+            margin-bottom: 20px;
+        }
+        
+        .feature-demo {
+            background: var(--light);
+            padding: 20px;
+            border-radius: 8px;
+            margin-top: 15px;
+        }
+        
+        .demo-placeholder {
+            height: 150px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: white;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            border: 1px dashed var(--border);
+        }
+        
+        .demo-placeholder i {
+            font-size: 3rem;
+            color: var(--primary);
+        }
+        
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+        
+        .modal-content {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            max-width: 500px;
+            width: 100%;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+        
+        .modal h2 {
+            color: var(--primary);
+            margin-bottom: 15px;
+        }
+        
+        .modal p {
+            margin-bottom: 25px;
+            color: var(--gray);
+        }
+        
+        .modal-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+        }
+        
+        footer {
+            text-align: center;
+            padding: 40px 0;
+            color: var(--gray);
+            margin-top: 60px;
+            border-top: 1px solid var(--border);
+        }
+        
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--primary);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+        
+        @media (max-width: 768px) {
+            .features-grid,
+            .features-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .hero h1 {
+                font-size: 2.2rem;
+            }
+            
+            .modal-buttons {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="logo">
+                <i class="fas fa-rocket"></i>
+                <span>ProjectHub</span>
+            </div>
+            <div class="auth-buttons" id="authButtons">
+                <button class="btn btn-outline" id="loginBtn">Login</button>
+                <button class="btn" id="signupBtn">Sign Up</button>
+            </div>
+            <div class="user-info" id="userInfo" style="display: none;">
+                <div class="user-avatar" id="userAvatar">U</div>
+                <span id="userName">User</span>
+                <button class="btn btn-outline" id="logoutBtn">Logout</button>
+            </div>
+        </header>
+        
+        <div class="hero">
+            <h1>Supercharge Your Projects</h1>
+            <p>Access premium features during your 14-day free trial. No credit card required.</p>
+            <button class="btn btn-success" id="startTrial">Start Free Trial</button>
+        </div>
+        
+        <div class="features-grid">
+            <div class="feature-card">
+                <i class="fas fa-tachometer-alt"></i>
+                <h3>Advanced Analytics</h3>
+                <p>Track project performance with detailed metrics and visualizations.</p>
+                <button class="btn btn-outline use-feature" data-feature="analytics">Try Feature</button>
+            </div>
+            
+            <div class="feature-card">
+                <i class="fas fa-users-cog"></i>
+                <h3>Team Collaboration</h3>
+                <p>Work seamlessly with your team with real-time collaboration tools.</p>
+                <button class="btn btn-outline use-feature" data-feature="collaboration">Try Feature</button>
+            </div>
+            
+            <div class="feature-card">
+                <i class="fas fa-robot"></i>
+                <h3>AI Assistant</h3>
+                <p>Get intelligent suggestions and automate repetitive tasks.</p>
+                <button class="btn btn-outline use-feature" data-feature="ai">Try Feature</button>
+            </div>
+        </div>
+        
+        <div class="trial-status" id="trialStatus" style="display: none;">
+            <h2>Your Free Trial Status</h2>
+            <p>You are currently on the <strong id="currentPlan">Professional</strong> plan trial</p>
+            <p>Your trial ends on: <strong id="trialEndDate">June 30, 2023</strong></p>
+            <div class="countdown">Time remaining: <span id="countdown">13 days 23 hours 59 minutes</span></div>
+        </div>
+        
+        <div class="premium-features">
+            <h2>Premium Features Available in Your Trial</h2>
+            <div class="features-container">
+                <div class="premium-feature">
+                    <i class="fas fa-chart-line"></i>
+                    <h3>Advanced Analytics</h3>
+                    <p>Gain insights with detailed project metrics, conversion tracking, and custom reports.</p>
+                    <div class="feature-demo">
+                        <div class="demo-placeholder">
+                            <i class="fas fa-chart-bar"></i>
+                        </div>
+                        <button class="btn use-feature" data-feature="analytics">View Analytics</button>
+                    </div>
+                </div>
+                
+                <div class="premium-feature">
+                    <i class="fas fa-users"></i>
+                    <h3>Team Collaboration</h3>
+                    <p>Invite team members, assign tasks, and collaborate in real-time.</p>
+                    <div class="feature-demo">
+                        <div class="demo-placeholder">
+                            <i class="fas fa-comments"></i>
+                        </div>
+                        <button class="btn use-feature" data-feature="collaboration">Open Collaboration</button>
+                    </div>
+                </div>
+                
+                <div class="premium-feature">
+                    <i class="fas fa-robot"></i>
+                    <h3>AI Assistant</h3>
+                    <p>Get intelligent suggestions, automate tasks, and generate content.</p>
+                    <div class="feature-demo">
+                        <div class="demo-placeholder">
+                            <i class="fas fa-magic"></i>
+                        </div>
+                        <button class="btn use-feature" data-feature="ai">Try AI Assistant</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="modal" id="featureModal">
+            <div class="modal-content">
+                <h2 id="featureModalTitle">Premium Feature</h2>
+                <div id="featureModalContent">
+                    <p>This is a premium feature that requires an active subscription.</p>
+                    <div class="demo-placeholder">
+                        <i class="fas fa-lock"></i>
+                    </div>
+                </div>
+                <div class="modal-buttons">
+                    <button class="btn" id="upgradeNow">Upgrade Now</button>
+                    <button class="btn btn-outline" id="closeFeatureModal">Maybe Later</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal" id="loginModal">
+            <div class="modal-content">
+                <h2>Login to Your Account</h2>
+                <p>Enter your credentials to access your account and start your free trial</p>
+                <div class="auth-form">
+                    <div class="form-group">
+                        <input type="email" id="loginEmail" placeholder="Email address" class="form-input">
+                    </div>
+                    <div class="form-group">
+                        <input type="password" id="loginPassword" placeholder="Password" class="form-input">
+                    </div>
+                    <button class="btn" id="doLogin" style="width: 100%; margin-top: 15px;">Login</button>
+                </div>
+                <div class="form-switch">
+                    <p>Don't have an account? <a href="#" id="switchToSignup">Sign up</a></p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="modal" id="signupModal">
+            <div class="modal-content">
+                <h2>Create Your Account</h2>
+                <p>Sign up to start your 14-day free trial with access to all premium features</p>
+                <div class="auth-form">
+                    <div class="form-group">
+                        <input type="text" id="signupName" placeholder="Full name" class="form-input">
+                    </div>
+                    <div class="form-group">
+                        <input type="email" id="signupEmail" placeholder="Email address" class="form-input">
+                    </div>
+                    <div class="form-group">
+                        <input type="password" id="signupPassword" placeholder="Create password" class="form-input">
+                    </div>
+                    <button class="btn" id="doSignup" style="width: 100%; margin-top: 15px;">Sign Up & Start Trial</button>
+                </div>
+                <div class="form-switch">
+                    <p>Already have an account? <a href="#" id="switchToLogin">Login</a></p>
+                </div>
+            </div>
+        </div>
+
+        <footer>
+            <p>© 2023 ProjectHub. All rights reserved.</p>
+            <p>Questions? Contact us at support@projecthub.com</p>
+        </footer>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // DOM Elements
+            const authButtons = document.getElementById('authButtons');
+            const userInfo = document.getElementById('userInfo');
+            const userAvatar = document.getElementById('userAvatar');
+            const userName = document.getElementById('userName');
+            const logoutBtn = document.getElementById('logoutBtn');
+            const loginBtn = document.getElementById('loginBtn');
+            const signupBtn = document.getElementById('signupBtn');
+            const startTrialBtn = document.getElementById('startTrial');
+            const loginModal = document.getElementById('loginModal');
+            const signupModal = document.getElementById('signupModal');
+            const doLogin = document.getElementById('doLogin');
+            const doSignup = document.getElementById('doSignup');
+            const switchToSignup = document.getElementById('switchToSignup');
+            const switchToLogin = document.getElementById('switchToLogin');
+            const useFeatureButtons = document.querySelectorAll('.use-feature');
+            const trialStatus = document.getElementById('trialStatus');
+            const currentPlan = document.getElementById('currentPlan');
+            const trialEndDate = document.getElementById('trialEndDate');
+            const countdown = document.getElementById('countdown');
+            const featureModal = document.getElementById('featureModal');
+            const featureModalTitle = document.getElementById('featureModalTitle');
+            const featureModalContent = document.getElementById('featureModalContent');
+            const upgradeNowBtn = document.getElementById('upgradeNow');
+            const closeFeatureModal = document.getElementById('closeFeatureModal');
+            
+            // Check if user has an active trial (simulated with localStorage)
+            const trialData = JSON.parse(localStorage.getItem('trialData'));
+            const user = JSON.parse(localStorage.getItem('currentUser'));
+            
+            if (user) {
+                showUserInfo(user);
+            }
+            
+            if (trialData && user) {
+                const now = new Date();
+                const endDate = new Date(trialData.endDate);
+                
+                if (now < endDate) {
+                    // Trial is still active
+                    showTrialStatus(trialData);
+                    startCountdown(endDate);
+                }
+            }
+            
+            // Event Listeners
+            loginBtn.addEventListener('click', function() {
+                loginModal.style.display = 'flex';
+            });
+            
+            signupBtn.addEventListener('click', function() {
+                signupModal.style.display = 'flex';
+            });
+            
+            startTrialBtn.addEventListener('click', function() {
+                signupModal.style.display = 'flex';
+            });
+            
+            doLogin.addEventListener('click', function() {
+                const email = document.getElementById('loginEmail').value;
+                const password = document.getElementById('loginPassword').value;
+                
+                if (!email || !password) {
+                    alert('Please enter both email and password');
+                    return;
+                }
+                
+                // Simulate login
+                const user = {
+                    name: email.split('@')[0],
+                    email: email
+                };
+                
+                localStorage.setItem('currentUser', JSON.stringify(user));
+                showUserInfo(user);
+                loginModal.style.display = 'none';
+                
+                alert('Login successful!');
+            });
+            
+            doSignup.addEventListener('click', function() {
+                const name = document.getElementById('signupName').value;
+                const email = document.getElementById('signupEmail').value;
+                const password = document.getElementById('signupPassword').value;
+                
+                if (!name || !email || !password) {
+                    alert('Please fill all fields');
+                    return;
+                }
+                
+                // Simulate registration
+                const user = {
+                    name: name,
+                    email: email
+                };
+                
+                localStorage.setItem('currentUser', JSON.stringify(user));
+                showUserInfo(user);
+                signupModal.style.display = 'none';
+                
+                // Start free trial
+                const startDate = new Date();
+                const endDate = new Date(startDate.getTime() + 14 * 24 * 60 * 60 * 1000); // 14 days from now
+                
+                const trialData = {
+                    plan: trialPlan,
+                    startDate: startDate.toISOString(),
+                    endDate: endDate.toISOString()
+                };
+                
+                localStorage.setItem('trialData', JSON.stringify(trialData));
+                
+                showTrialStatus(trialData);
+                startCountdown(endDate);
+                
+                alert('Account created successfully! Your 14-day free trial has started.');
+            });
+            
+            switchToSignup.addEventListener('click', function(e) {
+                e.preventDefault();
+                loginModal.style.display = 'none';
+                signupModal.style.display = 'flex';
+            });
+            
+            switchToLogin.addEventListener('click', function(e) {
+                e.preventDefault();
+                signupModal.style.display = 'none';
+                loginModal.style.display = 'flex';
+            }); 
+            
+            logoutBtn.addEventListener('click', function() {
+                localStorage.removeItem('currentUser');
+                userInfo.style.display = 'none';
+                authButtons.style.display = 'flex';
+                trialStatus.style.display = 'none';
+                alert('You have been logged out');
+            });
+            
+            // Feature buttons
+            useFeatureButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    const feature = this.getAttribute('data-feature');
+                    
+                    // Check if user is logged in
+                    const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+                    
+                    if (!currentUser) {
+                        // Show login modal if not logged in
+                        loginModal.style.display = 'flex';
+                        return;
+                    }
+                    
+                    // Check if user has active trial
+                    const trialData = JSON.parse(localStorage.getItem('trialData'));
+                    
+                    if (!trialData) {
+                        // No trial active, show upgrade modal
+                        showFeatureModal(feature, false);
+                        return;
+                    }
+                    
+                    const now = new Date();
+                    const endDate = new Date(trialData.endDate);
+                    
+                    if (now > endDate) {
+                        // Trial has ended, show upgrade modal
+                        showFeatureModal(feature, false);
+                    } else {
+                        // Trial is active, show feature demo
+                        showFeatureDemo(feature);
+                    }
+                });
+            });
+            
+            upgradeNowBtn.addEventListener('click', function() {
+                featureModal.style.display = 'none';
+                alert('Redirecting to subscription plans...');
+            });
+            
+            closeFeatureModal.addEventListener('click', function() {
+                featureModal.style.display = 'none';
+            });
+            
+            // Close modals when clicking outside
+            window.addEventListener('click', function(e) {
+                if (e.target.classList.contains('modal')) {
+                    e.target.style.display = 'none';
+                }
+            });
+            
+            // Functions
+            function showUserInfo(user) {
+                userAvatar.textContent = user.name.charAt(0).toUpperCase();
+                userName.textContent = user.name;
+                userInfo.style.display = 'flex';
+                authButtons.style.display = 'none';
+            }
+            
+            function showTrialStatus(trialData) {
+                const startDate = new Date(trialData.startDate);
+                const endDate = new Date(trialData.endDate);
+                
+                currentPlan.textContent = trialData.plan.charAt(0).toUpperCase() + trialData.plan.slice(1);
+                trialEndDate.textContent = endDate.toLocaleDateString();
+                
+                trialStatus.style.display = 'block';
+            }
+            
+            function startCountdown(endDate) {
+                function updateCountdown() {
+                    const now = new Date();
+                    const timeRemaining = endDate - now;
+                    
+                    if (timeRemaining <= 0) {
+                        clearInterval(countdownInterval);
+                        return;
+                    }
+                    
+                    const days = Math.floor(timeRemaining / (1000 * 60 * 60 * 24));
+                    const hours = Math.floor((timeRemaining % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                    const minutes = Math.floor((timeRemaining % (1000 * 60 * 60)) / (1000 * 60));
+                    const seconds = Math.floor((timeRemaining % (1000 * 60)) / 1000);
+                    
+                    countdown.textContent = `${days}d ${hours}h ${minutes}m ${seconds}s`;
+                }
+                
+                updateCountdown();
+                const countdownInterval = setInterval(updateCountdown, 1000);
+            }
+            
+            function showFeatureModal(feature, hasAccess) {
+                const featureTitles = {
+                    'analytics': 'Advanced Analytics',
+                    'collaboration': 'Team Collaboration',
+                    'ai': 'AI Assistant'
+                };
+                
+                const featureDescriptions = {
+                    'analytics': 'Gain insights with detailed project metrics, conversion tracking, and custom reports.',
+                    'collaboration': 'Invite team members, assign tasks, and collaborate in real-time.',
+                    'ai': 'Get intelligent suggestions, automate tasks, and generate content with our AI assistant.'
+                };
+                
+                featureModalTitle.textContent = featureTitles[feature];
+                
+                if (hasAccess) {
+                    featureModalContent.innerHTML = `
+                        <p>${featureDescriptions[feature]}</p>
+                        <div class="demo-placeholder">
+                            <i class="fas fa-check-circle" style="color: var(--success);"></i>
+                        </div>
+                        <p>You have access to this feature during your trial period.</p>
+                    `;
+                } else {
+                    featureModalContent.innerHTML = `
+                        <p>${featureDescriptions[feature]}</p>
+                        <div class="demo-placeholder">
+                            <i class="fas fa-lock"></i>
+                        </div>
+                        <p>This premium feature requires an active subscription.</p>
+                    `;
+                }
+                
+                featureModal.style.display = 'flex';
+            }
+            
+            function showFeatureDemo(feature) {
+                showFeatureModal(feature, true);
+                
+                // Simulate feature functionality
+                setTimeout(() => {
+                    if (feature === 'analytics') {
+                        featureModalContent.innerHTML = `
+                            <p>Generating your advanced analytics report...</p>
+                            <div class="demo-placeholder">
+                                <i class="fas fa-chart-pie" style="color: var(--success);"></i>
+                            </div>
+                            <p>Your report is ready! This would show actual analytics data in a real application.</p>
+                        `;
+                    } else if (feature === 'collaboration') {
+                        featureModalContent.innerHTML = `
+                            <p>Opening team collaboration workspace...</p>
+                            <div class="demo-placeholder">
+                                <i class="fas fa-users" style="color: var(--success);"></i>
+                            </div>
+                            <p>You can now collaborate with your team in real-time.</p>
+                        `;
+                    } else if (feature === 'ai') {
+                        featureModalContent.innerHTML = `
+                            <p>AI Assistant is analyzing your project...</p>
+                            <div class="demo-placeholder">
+                                <i class="fas fa-robot" style="color: var(--success);"></i>
+                            </div>
+                            <p>I recommend optimizing your task distribution and adding more documentation.</p>
+                        `;
+                    }
+                }, 1500);
+            }
+        });
+    </script>
+</body>
+</html>

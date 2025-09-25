@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payment Verification</title>
+    <style>
+        .verification-container {
+            text-align: center;
+            padding: 50px;
+            font-family: Arial, sans-serif;
+        }
+        .loading {
+            font-size: 18px;
+            color: #007bff;
+        }
+        .success {
+            color: #28a745;
+            font-size: 20px;
+        }
+        .error {
+            color: #dc3545;
+            font-size: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="verification-container">
+        <div id="status-message" class="loading">
+            Verifying your payment...
+        </div>
+        <div id="redirect-message" style="margin-top: 20px; display: none;">
+            Redirecting to dashboard in <span id="countdown">5</span> seconds...
+        </div>
+        <button id="manual-redirect" style="margin-top: 20px; display: none; padding: 10px 20px; background: #007bff; color: white; border: none; border-radius: 5px; cursor: pointer;">
+            Go to Dashboard Now
+        </button>
+    </div>
+
+    <script>
+        // Handle payment verification and redirect
+        async function verifyPaymentAndRedirect() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const reference = urlParams.get('reference');
+            const status = urlParams.get('status');
+
+            if (!reference) {
+                showError('No payment reference found');
+                return;
+            }
+
+            try {
+                // Verify payment with backend
+                const response = await fetch(`http://localhost:3000/payment/verify?reference=${reference}`);
+                const result = await response.json();
+
+                if (result.status === 'success') {
+                    showSuccess('Payment successful! Redirecting to dashboard...');
+                    
+                    // Store payment success in localStorage/sessionStorage
+                    localStorage.setItem('paymentSuccess', 'true');
+                    localStorage.setItem('paymentReference', reference);
+                    localStorage.setItem('paymentAmount', result.data.amount);
+                    localStorage.setItem('paymentDate', new Date().toISOString());
+                    
+                    // Start countdown redirect
+                    startRedirectCountdown();
+                } else {
+                    showError('Payment verification failed: ' + (result.message || 'Unknown error'));
+                }
+            } catch (error) {
+                showError('Verification error: ' + error.message);
+            }
+        }
+
+        function showSuccess(message) {
+            const statusElement = document.getElementById('status-message');
+            statusElement.className = 'success';
+            statusElement.textContent = message;
+            document.getElementById('redirect-message').style.display = 'block';
+        }
+
+        function showError(message) {
+            const statusElement = document.getElementById('status-message');
+            statusElement.className = 'error';
+            statusElement.textContent = message;
+        }
+
+        function startRedirectCountdown() {
+            let seconds = 5;
+            const countdownElement = document.getElementById('countdown');
+            const manualRedirectBtn = document.getElementById('manual-redirect');
+            
+            manualRedirectBtn.style.display = 'block';
+            manualRedirectBtn.addEventListener('click', redirectToDashboard);
+            
+            const countdown = setInterval(() => {
+                seconds--;
+                countdownElement.textContent = seconds;
+                
+                if (seconds <= 0) {
+                    clearInterval(countdown);
+                    redirectToDashboard();
+                }
+            }, 1000);
+        }
+
+        function redirectToDashboard() {
+            // Redirect to dashboard
+            window.location.href = '/dashboard.html'; // Change to your dashboard URL
+        }
+
+        // Start verification when page loads
+        document.addEventListener('DOMContentLoaded', verifyPaymentAndRedirect);
+    </script>
+</body>
+</html>

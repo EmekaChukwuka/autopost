@@ -1,0 +1,550 @@
+Here's the complete **Flutterwave payment integration** for AutoPost with both frontend and backend:
+
+## Frontend Implementation
+
+### 1. HTML Payment Component (`payment.html`)
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payment - AutoPost</title>
+    <script src="https://checkout.flutterwave.com/v3.js"></script>
+    <style>
+        :root {
+            --primary-blue: #2962FF;
+            --white: #ffffff;
+            --gray-100: #f8f9fa;
+            --gray-200: #e9ecef;
+            --gray-500: #6c757d;
+            --gray-800: #343a40;
+            --success: #28a745;
+            --danger: #dc3545;
+        }
+
+        .payment-container {
+            max-width: 500px;
+            margin: 2rem auto;
+            padding: 2rem;
+            background: var(--white);
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        .plan-card {
+            border: 2px solid var(--gray-200);
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .plan-card.selected {
+            border-color: var(--primary-blue);
+            background-color: rgba(41, 98, 255, 0.05);
+        }
+
+        .plan-price {
+            font-size: 2rem;
+            font-weight: bold;
+            color: var(--primary-blue);
+        }
+
+        .payment-methods {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 1rem;
+            margin: 1.5rem 0;
+        }
+
+        .payment-method {
+            border: 2px solid var(--gray-200);
+            border-radius: 8px;
+            padding: 1rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .payment-method:hover {
+            border-color: var(--primary-blue);
+        }
+
+        .payment-method.selected {
+            border-color: var(--primary-blue);
+            background-color: rgba(41, 98, 255, 0.05);
+        }
+
+        .payment-method img {
+            height: 40px;
+            margin-bottom: 0.5rem;
+        }
+
+        .pay-btn {
+            width: 100%;
+            padding: 1rem;
+            background-color: var(--primary-blue);
+            color: var(--white);
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: opacity 0.3s;
+        }
+
+        .pay-btn:hover {
+            opacity: 0.9;
+        }
+
+        .pay-btn:disabled {
+            background-color: var(--gray-500);
+            cursor: not-allowed;
+        }
+
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255,255,255,0.3);
+            border-radius: 50%;
+            border-top-color: var(--white);
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="payment-container">
+        <h1>Upgrade Your AutoPost Plan</h1>
+        
+        <div class="plan-card selected" data-plan="pro">
+            <h3>Pro Plan</h3>
+            <div class="plan-price">₦2,500</div>
+            <p>per month</p>
+            <ul>
+                <li>10 social accounts</li>
+                <li>Unlimited posts</li>
+                <li>AI content generator</li>
+                <li>Advanced analytics</li>
+            </ul>
+        </div>
+
+        <h3>Select Payment Method</h3>
+        <div class="payment-methods">
+            <div class="payment-method selected" data-method="card">
+                <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA0MCA0MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjQwIiBoZWlnaHQ9IjQwIiByeD0iOCIgZmlsbD0iIzI5NjJGRiIvPgo8dGV4dCB4PSIyMCIgeT0iMjUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIxMiIgZm9udC13ZWlnaHQ9ImJvbGQiIGZpbGw9IndoaXRlIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIj5DYXJkPC90ZXh0Pgo8L3N2Zz4=" alt="Card">
+                <span>Card</span>
+            </div>
+            
+            <div class="payment-method" data-method="banktransfer">
+                <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA0MCA0MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjQwIiBoZWlnaHQ9IjQwIiByeD0iOCIgZmlsbD0iIzZDNzdGRiIvPgo8dGV4dCB4PSIyMCIgeT0iMjUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIxMCIgZm9udC13ZWlnaHQ9ImJvbGQiIGZpbGw9IndoaXRlIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIj5CYW5rPC90ZXh0Pgo8L3N2Zz4=" alt="Bank Transfer">
+                <span>Bank Transfer</span>
+            </div>
+            
+            <div class="payment-method" data-method="ussd">
+                <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA0MCA0MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjQwIiBoZWlnaHQ9IjQwIiByeD0iOCIgZmlsbD0iIzM0QTQwIi8+Cjx0ZXh0IHg9IjIwIiB5PSIyNSIgZm9udC1mYW1pbHk9IkFyaWFsIiBmb250LXNpemU9IjEwIiBmb250LXdlaWdodD0iYm9sZCIgZmlsbD0id2hpdGUiIHRleHQtYW5jaG9yPSJtaWRkbGUiPlVTRFM8L3RleHQ+Cjwvc3ZnPg==" alt="USSD">
+                <span>USSD</span>
+            </div>
+        </div>
+
+        <button id="payButton" class="pay-btn">
+            Pay Now - ₦2,500
+        </button>
+    </div>
+
+    <script>
+        let selectedMethod = 'card';
+        const plan = { id: 'pro', amount: 2500, name: 'Pro Plan' };
+
+        // Payment method selection
+        document.querySelectorAll('.payment-method').forEach(method => {
+            method.addEventListener('click', () => {
+                document.querySelectorAll('.payment-method').forEach(m => 
+                    m.classList.remove('selected'));
+                method.classList.add('selected');
+                selectedMethod = method.dataset.method;
+            });
+        });
+
+        // Payment initialization
+        document.getElementById('payButton').addEventListener('click', async () => {
+            const btn = document.getElementById('payButton');
+            btn.innerHTML = '<div class="loading"></div> Processing...';
+            btn.disabled = true;
+
+            try {
+                // Initialize payment with backend
+                const response = await fetch('/api/payments/initialize', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${localStorage.getItem('token')}`
+                    },
+                    credentials: 'include',
+                    body: JSON.stringify({
+                        plan: plan.id,
+                        amount: plan.amount,
+                        payment_method: selectedMethod
+                    })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    // Launch Flutterwave payment modal
+                    makePayment(data.data);
+                } else {
+                    alert('Payment initialization failed: ' + data.message);
+                    resetButton();
+                }
+            } catch (error) {
+                console.error('Payment error:', error);
+                alert('Payment failed. Please try again.');
+                resetButton();
+            }
+        });
+
+        function makePayment(paymentData) {
+            FlutterwaveCheckout({
+                public_key: paymentData.public_key,
+                tx_ref: paymentData.tx_ref,
+                amount: paymentData.amount,
+                currency: paymentData.currency,
+                payment_options: selectedMethod,
+                customer: paymentData.customer,
+                customizations: paymentData.customizations,
+                
+                callback: function(response) {
+                    verifyPayment(response.transaction_id, paymentData.tx_ref);
+                },
+                
+                onclose: function() {
+                    resetButton();
+                }
+            });
+        }
+
+        async function verifyPayment(transactionId, txRef) {
+            try {
+                const response = await fetch('/api/payments/verify', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${localStorage.getItem('token')}`
+                    },
+                    credentials: 'include',
+                    body: JSON.stringify({ transaction_id: transactionId, tx_ref: txRef })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    alert('Payment successful! Your account has been upgraded.');
+                    window.location.href = '/dashboard';
+                } else {
+                    alert('Payment verification failed: ' + data.message);
+                    resetButton();
+                }
+            } catch (error) {
+                console.error('Verification error:', error);
+                alert('Payment verification failed. Please contact support.');
+                resetButton();
+            }
+        }
+
+        function resetButton() {
+            const btn = document.getElementById('payButton');
+            btn.innerHTML = 'Pay Now - ₦2,500';
+            btn.disabled = false;
+        }
+    </script>
+</body>
+</html>
+```
+
+## Backend Implementation
+
+### 2. Payment Routes (`routes/paymentRoutes.js`)
+```javascript
+import express from 'express';
+import { PaymentController } from '../controllers/paymentController.js';
+import { requireAuth } from '../middlewares/authMiddleware.js';
+
+const router = express.Router();
+
+router.post('/initialize', requireAuth, PaymentController.initializePayment);
+router.post('/verify', requireAuth, PaymentController.verifyPayment);
+router.post('/webhook', PaymentController.handleWebhook);
+router.get('/plans', PaymentController.getSubscriptionPlans);
+
+export default router;
+```
+
+### 3. Payment Controller (`controllers/paymentController.js`)
+```javascript
+import Flutterwave from 'flutterwave-node-v3';
+import { pool } from '../config/db.js';
+
+const flw = new Flutterwave(
+  process.env.FLW_PUBLIC_KEY,
+  process.env.FLW_SECRET_KEY
+);
+
+export class PaymentController {
+  static async initializePayment(req, res) {
+    try {
+      const { plan, amount, payment_method } = req.body;
+      const userId = req.session.user.id;
+
+      // Generate unique transaction reference
+      const txRef = `AUTOPOST_${Date.now()}_${userId}`;
+
+      const paymentData = {
+        tx_ref: txRef,
+        amount: amount,
+        currency: 'NGN',
+        payment_options: payment_method,
+        redirect_url: `${process.env.CLIENT_URL}/payment/success`,
+        customer: {
+          email: req.session.user.email,
+          name: req.session.user.name,
+        },
+        customizations: {
+          title: 'AutoPost Subscription',
+          description: `Payment for ${plan} plan`,
+          logo: `${process.env.CLIENT_URL}/logo.png`,
+        },
+      };
+
+      const response = await flw.Payment.initialize(paymentData);
+
+      // Store transaction in database
+      await pool.execute(
+        `INSERT INTO transactions 
+         (user_id, amount, currency, plan, tx_ref, status, payment_method) 
+         VALUES (?, ?, ?, ?, ?, ?, ?)`,
+        [userId, amount, 'NGN', plan, txRef, 'initiated', payment_method]
+      );
+
+      res.json({
+        success: true,
+        message: 'Payment initialized',
+        data: {
+          public_key: process.env.FLW_PUBLIC_KEY,
+          ...response.data
+        }
+      });
+
+    } catch (error) {
+      console.error('Payment initialization error:', error);
+      res.status(500).json({
+        success: false,
+        message: 'Payment initialization failed'
+      });
+    }
+  }
+
+  static async verifyPayment(req, res) {
+    try {
+      const { transaction_id, tx_ref } = req.body;
+      const userId = req.session.user.id;
+
+      // Verify payment with Flutterwave
+      const verification = await flw.Transaction.verify({ id: transaction_id });
+
+      if (verification.status === 'success' && verification.data.status === 'successful') {
+        // Update transaction status
+        await pool.execute(
+          `UPDATE transactions SET 
+           status = 'completed', 
+           flutterwave_id = ?,
+           updated_at = NOW()
+           WHERE tx_ref = ? AND user_id = ?`,
+          [transaction_id, tx_ref, userId]
+        );
+
+        // Update user subscription
+        await pool.execute(
+          `UPDATE users SET 
+           subscription_plan = ?,
+           subscription_status = 'active',
+           subscription_end = DATE_ADD(NOW(), INTERVAL 1 MONTH)
+           WHERE id = ?`,
+          [verification.data.meta.plan, userId]
+        );
+
+        res.json({
+          success: true,
+          message: 'Payment verified successfully',
+          data: verification.data
+        });
+      } else {
+        await pool.execute(
+          `UPDATE transactions SET status = 'failed' WHERE tx_ref = ?`,
+          [tx_ref]
+        );
+
+        res.status(400).json({
+          success: false,
+          message: 'Payment verification failed'
+        });
+      }
+    } catch (error) {
+      console.error('Payment verification error:', error);
+      res.status(500).json({
+        success: false,
+        message: 'Payment verification failed'
+      });
+    }
+  }
+
+  static async handleWebhook(req, res) {
+    try {
+      const secretHash = process.env.FLW_WEBHOOK_SECRET;
+      const signature = req.headers['verif-hash'];
+      
+      if (!signature || signature !== secretHash) {
+        return res.status(401).end();
+      }
+
+      const payload = req.body;
+
+      // Verify the event came from Flutterwave
+      if (payload.event === 'charge.completed') {
+        const transaction = payload.data;
+
+        await pool.execute(
+          `UPDATE transactions SET 
+           status = ?,
+           flutterwave_id = ?,
+           updated_at = NOW()
+           WHERE tx_ref = ?`,
+          [transaction.status, transaction.id, transaction.tx_ref]
+        );
+
+        if (transaction.status === 'successful') {
+          await pool.execute(
+            `UPDATE users SET 
+             subscription_plan = ?,
+             subscription_status = 'active',
+             subscription_end = DATE_ADD(NOW(), INTERVAL 1 MONTH)
+             WHERE id = (SELECT user_id FROM transactions WHERE tx_ref = ?)`,
+            [transaction.meta.plan, transaction.tx_ref]
+          );
+        }
+      }
+
+      res.status(200).end();
+    } catch (error) {
+      console.error('Webhook error:', error);
+      res.status(500).end();
+    }
+  }
+
+  static async getSubscriptionPlans(req, res) {
+    try {
+      const [plans] = await pool.execute(
+        `SELECT id, name, price, duration, features 
+         FROM subscription_plans 
+         WHERE active = true 
+         ORDER BY price ASC`
+      );
+
+      res.json({
+        success: true,
+        data: plans
+      });
+    } catch (error) {
+      console.error('Get plans error:', error);
+      res.status(500).json({
+        success: false,
+        message: 'Failed to fetch plans'
+      });
+    }
+  }
+}
+```
+
+### 4. Database Schema Updates (`sql/payment_tables.sql`)
+```sql
+CREATE TABLE IF NOT EXISTS transactions (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  user_id INT NOT NULL,
+  amount DECIMAL(10, 2) NOT NULL,
+  currency VARCHAR(3) DEFAULT 'NGN',
+  plan VARCHAR(50) NOT NULL,
+  tx_ref VARCHAR(255) NOT NULL UNIQUE,
+  flutterwave_id VARCHAR(255),
+  status ENUM('initiated', 'pending', 'completed', 'failed') DEFAULT 'initiated',
+  payment_method VARCHAR(50) NOT NULL,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  FOREIGN KEY (user_id) REFERENCES users(id)
+);
+
+CREATE TABLE IF NOT EXISTS subscription_plans (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  name VARCHAR(100) NOT NULL,
+  description TEXT,
+  price DECIMAL(10, 2) NOT NULL,
+  duration INT DEFAULT 30 COMMENT 'Duration in days',
+  features JSON,
+  active BOOLEAN DEFAULT TRUE,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+INSERT INTO subscription_plans (name, description, price, duration, features) VALUES
+('Basic', 'Essential features for starters', 1000, 30, '["3 social accounts", "100 posts/month", "Basic analytics"]'),
+('Pro', 'For serious content creators', 2500, 30, '["10 social accounts", "Unlimited posts", "AI content generator", "Advanced analytics"]'),
+('Business', 'For agencies and teams', 5000, 30, '["Unlimited accounts", "Team members", "Priority support", "White-label reports"]');
+
+ALTER TABLE users 
+ADD COLUMN subscription_plan VARCHAR(50) DEFAULT NULL,
+ADD COLUMN subscription_status ENUM('active', 'inactive', 'canceled') DEFAULT 'inactive',
+ADD COLUMN subscription_end TIMESTAMP NULL DEFAULT NULL;
+```
+
+### 5. Environment Variables (`.env`)
+```env
+FLW_PUBLIC_KEY=your_flutterwave_public_key
+FLW_SECRET_KEY=your_flutterwave_secret_key
+FLW_WEBHOOK_SECRET=your_webhook_secret_hash
+FLW_ENCRYPTION_KEY=your_encryption_key
+```
+
+### 6. Package.json Dependencies
+```json
+{
+  "dependencies": {
+    "flutterwave-node-v3": "^1.0.5",
+    "axios": "^1.4.0"
+  }
+}
+```
+
+## 🚀 Setup Instructions:
+
+1. **Create Flutterwave Account**:
+   - Sign up at [Flutterwave Dashboard](https://dashboard.flutterwave.com/)
+   - Get your API keys from Settings → API
+
+2. **Setup Webhooks**:
+   - In Flutterwave dashboard: Settings → Webhooks
+   - Add endpoint: `https://yourdomain.com/api/payments/webhook`
+   - Set secret hash (store in `.env` as `FLW_WEBHOOK_SECRET`)
+
+3. **Run Database Setup**:
+```bash
+mysql -u root -p < sql/payment_tables.sql
+```
+
+4. **Start Your Server**:
+```bash
+npm run dev
+```
+
+This implementation provides complete payment integration with Flutterwave, including frontend checkout, backend verification, webhook handling, and subscription management.

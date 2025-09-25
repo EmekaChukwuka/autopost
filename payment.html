@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payment - AutoPost</title>
+    <script src="https://js.paystack.co/v1/inline.js"></script>
+    <style>
+    :root {
+      /* Light Mode */
+      --bg-primary: #ffffff;
+      --bg-secondary: #f5f5f5;
+      --text-primary: #000000;
+      --text-secondary: #333333;
+      --border-color: #e0e0e0;
+      --accent-blue: #2962FF;
+      --accent-green: #00C853;
+      --accent-purple: #7C3AED;
+    }
+
+            [data-theme="dark"] {
+      /* Dark Mode */
+      --bg-primary: #121212;
+      --bg-secondary: #1e1e1e;
+      --text-primary: #ffffff;
+      --text-secondary: #e0e0e0;
+      --border-color: #333333;
+      --accent-blue: #448AFF;
+      --accent-purple: #9C27B0;
+    }
+
+    
+    body {
+      font-family: 'Inter', sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: var(--bg-secondary);
+      color: var(--text-primary);
+      transition: background 0.3s ease;
+    }
+
+  /* ===== Sidebar ===== */
+        .sidebar {
+            background: var(--bg-primary);
+            border-right: 1px solid var(--border-color);
+            padding: 24px;
+            position: fixed;
+            top: 0;
+            width:20%;
+            height: 100vh;
+            display:none;
+        }
+        .cog{
+             margin-right: 12px;
+            width: 20px;
+            color: var(--text-primary);
+            text-align: center;
+        }
+        .logo {
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 32px;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+        }
+
+        .logo span {
+            color: var(--accent-blue);
+        }
+
+        a{
+            text-decoration: none;
+        }
+        
+        .logo-icon {
+            width: 24px;
+            height: 24px;
+            background-color: var(--accent-blue);
+            color: white;
+            border-radius: 4px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 8px;
+            font-weight: bold;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            padding: 12px 16px;
+            margin-bottom: 8px;
+            border-radius: 6px;
+            cursor: pointer;
+            color: var(--text-secondary);
+            transition: all 0.2s;
+        }
+
+        .nav-item i{
+            margin-right: 12px;
+            width: 20px;
+            color: var(--text-primary);
+            text-align: center;
+        }
+
+        .nav-item.active {
+            background-color: var(--accent-blue);
+            color: var(--text-primary);
+            font-weight: 500;
+        }
+
+        .nav-item:hover:not(.active) {
+            background-color: var(--bg-secondary);
+        }
+
+.content {
+  flex: 1;
+  padding: 1rem;
+}
+
+/* Mobile Bottom Nav */
+.bottom-nav {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  padding: 0.8rem 0;
+  background-color: var(--bg-primary);
+  border-top: 1px solid var(--gray-medium);
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+}
+
+.bottom-nav a {
+  color: var(--gray-dark);
+  text-decoration: none;
+  font-size: 1.2rem;
+}
+
+.bottom-nav a.active {
+  color: var(--accent-blue);
+}
+
+        .payment-container {
+            max-width: 500px;
+            margin: 2rem auto;
+            padding: 2rem;
+            background: var(--bg-primary);
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        .plan-card {
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .plan-card.selected {
+            border-color: var(--accent-blue);
+            background-color: rgba(41, 98, 255, 0.05);
+        }
+
+        .plan-price {
+            font-size: 2rem;
+            font-weight: bold;
+            color: var(--accent-blue);
+        }
+
+        .payment-methods {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 1rem;
+            margin: 1.5rem 0;
+        }
+
+        .payment-method {
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+            padding: 1rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .payment-method:hover {
+            border-color: var(--accent-blue);
+        }
+
+        .payment-method.selected {
+            border-color: var(--accent-blue);
+            background-color: rgba(41, 98, 255, 0.05);
+        }
+
+        .payment-method img {
+            height: 40px;
+            margin-bottom: 0.5rem;
+        }
+
+        .pay-btn {
+            width: 100%;
+            padding: 1rem;
+            background-color: var(--accent-blue);
+            color: var(--text-primary);
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: opacity 0.3s;
+        }
+
+        .pay-btn:hover {
+            opacity: 0.9;
+        }
+
+        .pay-btn:disabled {
+            background-color: var(--border-color);
+            cursor: not-allowed;
+        }
+
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255,255,255,0.3);
+            border-radius: 50%;
+            border-top-color: var(--bg-primary);
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+/* Responsive */
+@media (min-width: 768px) {
+  .sidebar {
+    display: block;
+  }
+  .bottom-nav {
+    display: none;
+  }
+  .content{
+  margin-left:24%;
+}
+}
+    </style>
+</head>
+<body>   
+        <div class="sidebar">
+            <div class="logo">Auto<span>Post</span></div>
+            <a href="dashboard.html"><div class="nav-item" data-page="home">
+                <i class="fas fa-home"></i><span>Dashboard</span>
+            </div></a>
+            <a href="create.html"><div class="nav-item" data-page="create">
+                <i class="fas fa-plus"></i><span>Create Post</span>
+            </div></a>
+           <a href="calendar.html"><div class="nav-item" data-page="calendar">
+                <i class="fas fa-calendar-alt"></i><span>Calendar</span>
+            </div></a>
+           <a href="analytics.html"><div class="nav-item" data-page="analytics">
+                <i class="fas fa-chart-line"></i><span>Analytics</span>
+            </div></a>
+           <a href="settings.html"> <div class="nav-item" data-page="settings">
+                <i class="fas fa-cog"></i><span>Settings</span>
+            </div></a>
+        </div>
+        <main class="content">
+    <div class="payment-container">
+        <h1>Upgrade Your AutoPost Plan</h1>
+        
+        <div class="plan-card selected" data-plan="pro">
+            <h3><span id="plan"></span> Plan</h3>
+            <div class="plan-price" id="plan-price"></div>
+            <p>per month</p>
+            <ul>
+                <li>10 social accounts</li>
+                <li>Unlimited posts</li>
+                <li>AI content generator</li>
+                <li>Advanced analytics</li>
+            </ul>
+        </div>
+
+        <h3>Select Payment Method</h3>
+        <div class="payment-methods">
+            <div class="payment-method selected" data-method="card">
+                <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA0MCA0MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjQwIiBoZWlnaHQ9IjQwIiByeD0iOCIgZmlsbD0iIzI5NjJGRiIvPgo8dGV4dCB4PSIyMCIgeT0iMjUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIxMiIgZm9udC13ZWlnaHQ9ImJvbGQiIGZpbGw9IndoaXRlIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIj5DYXJkPC90ZXh0Pgo8L3N2Zz4=" alt="Card">
+                <span>Card</span>
+            </div>
+            
+            <div class="payment-method" data-method="bank">
+                <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA0MCA0MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjQwIiBoZWlnaHQ9IjQwIiByeD0iOCIgZmlsbD0iIzZDNzdGRiIvPgo8dGV4dCB4PSIyMCIgeT0iMjUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIxMCIgZm9udC13ZWlnaHQ9ImJvbGQiIGZpbGw9IndoaXRlIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIj5CYW5rPC90ZXh0Pgo8L3N2Zz4=" alt="Bank Transfer">
+                <span>Bank Transfer</span>
+            </div>
+            
+            <div class="payment-method" data-method="ussd">
+                <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA0MCA0MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjQwIiBoZWlnaHQ9IjQwIiByeD0iOCIgZmlsbD0iIzM0QTQwIi8+Cjx0ZXh0IHg9IjIwIiB5PSIyNSIgZm9udC1mYW1pbHk9IkFyaWFsIiBmb250LXNpemU9IjEwIiBmb250LXdlaWdodD0iYm9sZCIgZmlsbD0id2hpdGUiIHRleHQtYW5jaG9yPSJtaWRkbGUiPlVTRFM8L3RleHQ+Cjwvc3ZnPg==" alt="USSD">
+                <span>USSD</span>
+            </div>
+        </div>
+
+        <button id="payButton" class="pay-btn">
+            Pay Now - <span id="plan-priceb"></span>
+        </button>
+    </div>
+    </main>
+  <!-- Mobile Bottom Nav -->
+  <nav class="bottom-nav">
+    <a href="dashboard.html"><i class="fas fa-home"></i></a>
+    <a href="calendar.html"><i class="fas fa-calendar-alt"></i></a>
+    <a href="create.html"><i class="fas fa-plus"></i></a>
+    <a href="analytics.html"><i class="fas fa-chart-line"></i></a>
+    <a href="settings.html"><i class="fas fa-user"></i></a>
+  </nav>
+
+
+    <script>
+          const root = document.documentElement;
+    if (localStorage.getItem('theme') === 'dark') {
+      root.setAttribute('data-theme', 'dark');
+    }
+
+    document.addEventListener('DOMContentLoaded', async ()=>{
+        const trialPlan = localStorage.getItem('trialPlan');
+        const trialData = localStorage.getItem('trialData');
+        if(trialData && trialPlan){
+        console.log(trialData);
+        console.log(trialPlan);
+          const a = trialPlan;
+                                            const response = await fetch('http://localhost:3000/trialInfo', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({ a })
+                    });
+                    const data = await response.json();
+                    if(response.ok){
+                        console.log(data);
+                        console.log(data.plan.Details.name);
+                document.getElementById('plan').innerHTML = `${data.plan.Details.name} `;
+                document.getElementById('plan-price').innerHTML = ` ${data.plan.Details.price} `;
+                document.getElementById('plan-priceb').innerHTML = ` ${data.plan.Details.price} `;
+            
+        
+        let selectedMethod = 'card';
+        let planName = `${data.plan.Details.name}`;
+        let planAmount = `${data.plan.Details.price}`;
+        const plan = { id: planName, amount: planAmount, name: planName+'plan' };
+        const newPlanAmount = plan.amount.replace('₦','');
+                    console.log(plan);
+                      console.log(newPlanAmount);
+        // Payment method selection
+        document.querySelectorAll('.payment-method').forEach(method => {
+            method.addEventListener('click', () => {
+                document.querySelectorAll('.payment-method').forEach(m => 
+                    m.classList.remove('selected'));
+                method.classList.add('selected');
+                selectedMethod = method.dataset.method;
+            });
+        });
+         let callbackUrl = 'http://localhost:3000/payment-verification';
+        // Payment initialization
+        document.getElementById('payButton').addEventListener('click', async () => {
+            const btn = document.getElementById('payButton');
+            btn.innerHTML = '<div class="loading"></div> Processing...';
+            btn.disabled = true;
+            let currentUser = JSON.parse(localStorage.getItem('currentUser'));
+            console.log(currentUser);
+            console.log(localStorage.getItem('authToken'));
+            try {
+                // Initialize payment with backend
+                const response = await fetch('http://localhost:3000/paymentApi/initialize', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${localStorage.getItem('authToken')}`
+                    },
+                    body: JSON.stringify({
+                        plan: plan.id,
+                        amount: newPlanAmount,
+                        payment_method: selectedMethod,
+                        email: currentUser.email,
+                        id: 1,
+                        callback_url: callbackUrl
+                    })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    // Launch Paystack payment modal
+                    console.log(data.data);
+                    makePayment(data.data);
+                } else {
+                    alert('Payment initialization failed: ' + data.message);
+                    resetButton();
+                }
+            } catch (error) {
+                console.error('Payment error:', error);
+                alert('Payment failed. Please try again.');
+                resetButton();
+            }
+        });
+
+        function makePayment(paymentData) {
+           /* const handler = PaystackPop.setup({
+                key: 'pk_test_6f95f15597d288f766633a962361c3acf833da58',
+                email: paymentData.email,
+                amount: paymentData.amount,
+                currency: paymentData.currency,
+                ref: paymentData.reference,
+                metadata: paymentData.metadata,
+                channels: [selectedMethod],
+                
+                onClose: function() {
+                    resetButton();
+                },
+                
+                callback: function(response) {
+                    verifyPayment(response.reference);
+                }
+            });
+            
+            handler.openIframe();*/
+            if (paymentData && paymentData.authorization_url) {
+                // Redirect to Paystack payment page
+                redirectToPayment(paymentData.authorization_url, paymentData.reference);
+            } else {
+                throw new Error('Invalid payment response');
+            }
+        }
+
+        function redirectToPayment(authorizationUrl, paymentReference) {
+        // Open in new tab/window
+        const newWindow = window.open(authorizationUrl, '_blank');
+        
+        if (!newWindow || newWindow.closed || typeof newWindow.closed === 'undefined') {
+            // Fallback to same tab if popup is blocked
+            window.location.href = authorizationUrl;
+        } else {
+            // Poll to check when the payment is completed
+            pollPaymentStatus(newWindow, paymentReference);
+        }
+    }
+
+    function pollPaymentStatus(paymentWindow, paymentReference) {
+        const checkInterval = setInterval(async () => {
+            if (paymentWindow.closed) {
+                clearInterval(checkInterval);
+                verifyPayment(paymentReference);
+            }
+        }, 1000);
+
+        // Timeout after 5 minutes
+        setTimeout(() => {
+            clearInterval(checkInterval);
+            if (!paymentWindow.closed) {
+                paymentWindow.close();
+                alert('Payment timed out. Please try again.');
+                //this.showLoading(false);
+            }
+        }, 300000);
+    }
+
+        async function verifyPayment(reference) {
+            try {
+                const response = await fetch('http://localhost:3000/paymentApi/verify', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${localStorage.getItem('token')}`
+                    },
+                    body: JSON.stringify({ reference: reference })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    alert('Payment successful! Your account has been upgraded.');
+                    window.location.href = 'dashboard.html';
+                } else {
+                    alert('Payment verification failed: ' + data.message);
+                    resetButton();
+                }
+            } catch (error) {
+                console.error('Verification error:', error);
+                alert('Payment verification failed. Please contact support.');
+                resetButton();
+            }
+        }
+
+        function resetButton() {
+            const btn = document.getElementById('payButton');
+            btn.innerHTML = 'Pay Now - ₦2,500';
+            btn.disabled = false;
+        }
+        }
+        }
+    });
+    </script>
+</body>
+</html>

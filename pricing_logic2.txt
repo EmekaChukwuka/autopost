@@ -1,0 +1,1789 @@
+# Project Implementation with Separate Files and Backend
+
+I'll create a complete implementation with separate HTML, CSS, and JS files, along with a Node.js backend using MySQL.
+
+## File Structure
+```
+project/
+├── public/
+│   ├── index.html
+│   ├── login.html
+│   ├── signup.html
+│   ├── styles/
+│   │   └── main.css
+│   └── scripts/
+│       ├── auth.js
+│       ├── trial.js
+│       ├── features.js
+│       └── main.js
+├── server.js
+├── package.json
+└── .env
+```
+
+## 1. Main HTML (public/index.html)
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ProjectHub - Premium Features Demo</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="styles/main.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <a href="index.html" class="logo">
+                <i class="fas fa-rocket"></i>
+                <span>ProjectHub</span>
+            </a>
+            <div class="auth-buttons" id="authButtons">
+                <a href="login.html" class="btn btn-outline">Login</a>
+                <a href="signup.html" class="btn">Sign Up</a>
+            </div>
+            <div class="user-info" id="userInfo" style="display: none;">
+                <div class="user-avatar" id="userAvatar">U</div>
+                <span id="userName">User</span>
+                <button class="btn btn-outline" id="logoutBtn">Logout</button>
+            </div>
+        </header>
+        
+        <div class="hero">
+            <h1>Supercharge Your Projects</h1>
+            <p>Access premium features during your 14-day free trial. No credit card required.</p>
+            <a href="signup.html" class="btn btn-success" id="startTrial">Start Free Trial</a>
+        </div>
+        
+        <div class="features-grid">
+            <div class="feature-card">
+                <i class="fas fa-tachometer-alt"></i>
+                <h3>Advanced Analytics</h3>
+                <p>Track project performance with detailed metrics and visualizations.</p>
+                <button class="btn btn-outline use-feature" data-feature="analytics">Try Feature</button>
+            </div>
+            
+            <div class="feature-card">
+                <i class="fas fa-users-cog"></i>
+                <h3>Team Collaboration</h3>
+                <p>Work seamlessly with your team with real-time collaboration tools.</p>
+                <button class="btn btn-outline use-feature" data-feature="collaboration">Try Feature</button>
+            </div>
+            
+            <div class="feature-card">
+                <i class="fas fa-robot"></i>
+                <h3>AI Assistant</h3>
+                <p>Get intelligent suggestions and automate repetitive tasks.</p>
+                <button class="btn btn-outline use-feature" data-feature="ai">Try Feature</button>
+            </div>
+        </div>
+        
+        <div class="trial-status" id="trialStatus" style="display: none;">
+            <h2>Your Free Trial Status</h2>
+            <p>You are currently on the <strong id="currentPlan">Professional</strong> plan trial</p>
+            <p>Your trial ends on: <strong id="trialEndDate">June 30, 2023</strong></p>
+            <div class="countdown">Time remaining: <span id="countdown">13 days 23 hours 59 minutes</span></div>
+        </div>
+        
+        <div class="premium-features" id="premiumFeatures" style="display: none;">
+            <h2>Premium Features Available in Your Trial</h2>
+            <div class="features-container">
+                <div class="premium-feature">
+                    <i class="fas fa-chart-line"></i>
+                    <h3>Advanced Analytics</h3>
+                    <p>Gain insights with detailed project metrics, conversion tracking, and custom reports.</p>
+                    <div class="feature-demo">
+                        <div class="demo-placeholder">
+                            <i class="fas fa-chart-bar"></i>
+                        </div>
+                        <button class="btn use-feature" data-feature="analytics">View Analytics</button>
+                    </div>
+                </div>
+                
+                <div class="premium-feature">
+                    <i class="fas fa-users"></i>
+                    <h3>Team Collaboration</h3>
+                    <p>Invite team members, assign tasks, and collaborate in real-time.</p>
+                    <div class="feature-demo">
+                        <div class="demo-placeholder">
+                            <i class="fas fa-comments"></i>
+                        </div>
+                        <button class="btn use-feature" data-feature="collaboration">Open Collaboration</button>
+                    </div>
+                </div>
+                
+                <div class="premium-feature">
+                    <i class="fas fa-robot"></i>
+                    <h3>AI Assistant</h3>
+                    <p>Get intelligent suggestions, automate tasks, and generate content.</p>
+                    <div class="feature-demo">
+                        <div class="demo-placeholder">
+                            <i class="fas fa-magic"></i>
+                        </div>
+                        <button class="btn use-feature" data-feature="ai">Try AI Assistant</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="modal" id="featureModal">
+            <div class="modal-content">
+                <h2 id="featureModalTitle">Premium Feature</h2>
+                <div id="featureModalContent">
+                    <p>This is a premium feature that requires an active subscription.</p>
+                    <div class="demo-placeholder">
+                        <i class="fas fa-lock"></i>
+                    </div>
+                </div>
+                <div class="modal-buttons">
+                    <button class="btn" id="upgradeNow">Upgrade Now</button>
+                    <button class="btn btn-outline" id="closeFeatureModal">Maybe Later</button>
+                </div>
+            </div>
+        </div>
+
+        <footer>
+            <p>© 2023 ProjectHub. All rights reserved.</p>
+            <p>Questions? Contact us at support@projecthub.com</p>
+        </footer>
+    </div>
+
+    <script src="scripts/main.js"></script>
+    <script src="scripts/trial.js"></script>
+    <script src="scripts/features.js"></script>
+</body>
+</html>
+```
+
+## 2. Login HTML (public/login.html)
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - ProjectHub</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="styles/main.css">
+</head>
+<body>
+    <div class="auth-page">
+        <div class="auth-container">
+            <div class="auth-header">
+                <h1>Welcome Back</h1>
+                <p>Sign in to your account to continue</p>
+            </div>
+            
+            <form id="loginForm">
+                <div class="auth-form">
+                    <div class="form-group">
+                        <label for="loginEmail">Email</label>
+                        <input type="email" id="loginEmail" placeholder="Your email address" required>
+                        <div class="error-message" id="loginEmailError"></div>
+                    </div>
+                    <div class="form-group">
+                        <label for="loginPassword">Password</label>
+                        <input type="password" id="loginPassword" placeholder="Your password" required>
+                        <div class="error-message" id="loginPasswordError"></div>
+                    </div>
+                    <button type="submit" class="btn">Login</button>
+                </div>
+            </form>
+            
+            <div class="auth-footer">
+                <p>Don't have an account? <a href="signup.html">Sign up</a></p>
+                <p><a href="index.html">← Back to home</a></p>
+            </div>
+        </div>
+    </div>
+
+    <script src="scripts/main.js"></script>
+    <script src="scripts/auth.js"></script>
+</body>
+</html>
+```
+
+## 3. Signup HTML (public/signup.html)
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign Up - ProjectHub</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="styles/main.css">
+</head>
+<body>
+    <div class="auth-page">
+        <div class="auth-container">
+            <div class="auth-header">
+                <h1>Create Account</h1>
+                <p>Sign up to start your free trial</p>
+            </div>
+            
+            <form id="signupForm">
+                <div class="auth-form">
+                    <div class="form-group">
+                        <label for="signupName">Full Name</label>
+                        <input type="text" id="signupName" placeholder="Your full name" required>
+                        <div class="error-message" id="signupNameError"></div>
+                    </div>
+                    <div class="form-group">
+                        <label for="signupEmail">Email</label>
+                        <input type="email" id="signupEmail" placeholder="Your email address" required>
+                        <div class="error-message" id="signupEmailError"></div>
+                    </div>
+                    <div class="form-group">
+                        <label for="signupPassword">Password</label>
+                        <input type="password" id="signupPassword" placeholder="Create a password" required>
+                        <div class="error-message" id="signupPasswordError"></div>
+                    </div>
+                    <button type="submit" class="btn">Sign Up & Start Trial</button>
+                </div>
+            </form>
+            
+            <div class="auth-footer">
+                <p>Already have an account? <a href="login.html">Login</a></p>
+                <p><a href="index.html">← Back to home</a></p>
+            </div>
+        </div>
+    </div>
+
+    <script src="scripts/main.js"></script>
+    <script src="scripts/auth.js"></script>
+</body>
+</html>
+```
+
+## 4. Main CSS (public/styles/main.css)
+
+```css
+:root {
+    --primary: #4361ee;
+    --secondary: #3a0ca3;
+    --accent: #f72585;
+    --success: #4cc9f0;
+    --light: #f8f9fa;
+    --dark: #212529;
+    --gray: #6c757d;
+    --border: #dee2e6;
+    --danger: #dc3545;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+body {
+    background-color: #f5f7fb;
+    color: var(--dark);
+    line-height: 1.6;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 0;
+    margin-bottom: 30px;
+}
+
+.logo {
+    font-size: 1.8rem;
+    font-weight: bold;
+    color: var(--primary);
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+}
+
+.logo i {
+    margin-right: 10px;
+}
+
+.auth-buttons {
+    display: flex;
+    gap: 15px;
+}
+
+.btn {
+    display: inline-block;
+    padding: 10px 20px;
+    background: var(--primary);
+    color: white;
+    text-decoration: none;
+    border-radius: 8px;
+    font-weight: 600;
+    border: none;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 1rem;
+}
+
+.btn:hover {
+    background: var(--secondary);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.btn-outline {
+    background: transparent;
+    border: 2px solid var(--primary);
+    color: var(--primary);
+}
+
+.btn-outline:hover {
+    background: var(--primary);
+    color: white;
+}
+
+.btn-success {
+    background: var(--success);
+}
+
+.btn-success:hover {
+    background: #3aa9d3;
+}
+
+.hero {
+    text-align: center;
+    padding: 40px 0;
+    margin-bottom: 40px;
+    background: linear-gradient(135deg, #4361ee 0%, #3a0ca3 100%);
+    color: white;
+    border-radius: 12px;
+    box-shadow: 0 10px 20px rgba(67, 97, 238, 0.2);
+}
+
+.hero h1 {
+    font-size: 2.8rem;
+    margin-bottom: 15px;
+}
+
+.hero p {
+    font-size: 1.2rem;
+    max-width: 700px;
+    margin: 0 auto 25px;
+    opacity: 0.9;
+}
+
+.features-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 25px;
+    margin: 40px 0;
+}
+
+.feature-card {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+    padding: 25px;
+    text-align: center;
+    transition: transform 0.3s ease;
+}
+
+.feature-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
+}
+
+.feature-card i {
+    font-size: 2.8rem;
+    color: var(--primary);
+    margin-bottom: 20px;
+}
+
+.feature-card h3 {
+    margin-bottom: 15px;
+    color: var(--dark);
+}
+
+.feature-card p {
+    color: var(--gray);
+    margin-bottom: 20px;
+}
+
+.trial-status {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+    padding: 25px;
+    margin: 40px auto;
+    text-align: center;
+}
+
+.trial-status h2 {
+    color: var(--primary);
+    margin-bottom: 15px;
+}
+
+.countdown {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: var(--dark);
+    margin: 15px 0;
+    padding: 15px;
+    background: var(--light);
+    border-radius: 8px;
+}
+
+.premium-features {
+    margin-top: 40px;
+}
+
+.premium-features h2 {
+    text-align: center;
+    margin-bottom: 30px;
+    color: var(--primary);
+}
+
+.features-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 25px;
+}
+
+.premium-feature {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+    padding: 25px;
+    transition: all 0.3s ease;
+}
+
+.premium-feature:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
+}
+
+.premium-feature i {
+    font-size: 2.5rem;
+    color: var(--accent);
+    margin-bottom: 20px;
+}
+
+.premium-feature h3 {
+    margin-bottom: 15px;
+    color: var(--dark);
+}
+
+.premium-feature p {
+    color: var(--gray);
+    margin-bottom: 20px;
+}
+
+.feature-demo {
+    background: var(--light);
+    padding: 20px;
+    border-radius: 8px;
+    margin-top: 15px;
+}
+
+.demo-placeholder {
+    height: 150px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: white;
+    border-radius: 8px;
+    margin-bottom: 15px;
+    border: 1px dashed var(--border);
+}
+
+.demo-placeholder i {
+    font-size: 3rem;
+    color: var(--primary);
+}
+
+.modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.modal-content {
+    background: white;
+    padding: 30px;
+    border-radius: 12px;
+    max-width: 500px;
+    width: 100%;
+    text-align: center;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+}
+
+.modal h2 {
+    color: var(--primary);
+    margin-bottom: 15px;
+}
+
+.modal p {
+    margin-bottom: 25px;
+    color: var(--gray);
+}
+
+.modal-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+}
+
+footer {
+    text-align: center;
+    padding: 40px 0;
+    color: var(--gray);
+    margin-top: 60px;
+    border-top: 1px solid var(--border);
+}
+
+.user-info {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.user-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: var(--primary);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+}
+
+.auth-page {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+}
+
+.auth-container {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 450px;
+    padding: 40px;
+}
+
+.auth-header {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.auth-header h1 {
+    color: var(--primary);
+    margin-bottom: 10px;
+}
+
+.auth-header p {
+    color: var(--gray);
+}
+
+.auth-form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.form-group {
+    text-align: left;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 600;
+    color: var(--dark);
+}
+
+.form-group input {
+    width: 100%;
+    padding: 12px 15px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    font-size: 1rem;
+    transition: border-color 0.3s;
+}
+
+.form-group input:focus {
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.1);
+}
+
+.auth-footer {
+    text-align: center;
+    margin-top: 20px;
+}
+
+.auth-footer p {
+    color: var(--gray);
+    margin-bottom: 10px;
+}
+
+.auth-footer a {
+    color: var(--primary);
+    text-decoration: none;
+    font-weight: 600;
+}
+
+.auth-footer a:hover {
+    text-decoration: underline;
+}
+
+.error-message {
+    color: var(--danger);
+    margin-top: 5px;
+    font-size: 0.9rem;
+    display: none;
+}
+
+@media (max-width: 768px) {
+    .features-grid,
+    .features-container {
+        grid-template-columns: 1fr;
+    }
+    
+    .hero h1 {
+        font-size: 2.2rem;
+    }
+    
+    .modal-buttons {
+        flex-direction: column;
+    }
+    
+    .auth-container {
+        padding: 25px;
+        margin: 20px;
+    }
+    
+    header {
+        flex-direction: column;
+        gap: 15px;
+        text-align: center;
+    }
+    
+    .auth-buttons {
+        justify-content: center;
+    }
+}
+```
+
+## 5. Main JavaScript (public/scripts/main.js)
+
+```javascript
+// API base URL - change this to your server URL
+const API_BASE_URL = 'http://localhost:3000/api';
+
+// Check if user is logged in
+function checkAuthStatus() {
+    const token = localStorage.getItem('authToken');
+    const user = JSON.parse(localStorage.getItem('currentUser'));
+    
+    if (token && user) {
+        if (typeof showUserInfo === 'function') {
+            showUserInfo(user);
+        }
+        
+        if (typeof checkTrialStatus === 'function') {
+            checkTrialStatus();
+        }
+        
+        return true;
+    }
+    
+    return false;
+}
+
+// Show error message
+function showError(elementId, message) {
+    const errorElement = document.getElementById(elementId);
+    if (errorElement) {
+        errorElement.textContent = message;
+        errorElement.style.display = 'block';
+    }
+}
+
+// Clear error messages
+function clearErrors() {
+    const errorElements = document.querySelectorAll('.error-message');
+    errorElements.forEach(element => {
+        element.textContent = '';
+        element.style.display = 'none';
+    });
+}
+
+// Show user info in header
+function showUserInfo(user) {
+    const userInfo = document.getElementById('userInfo');
+    const authButtons = document.getElementById('authButtons');
+    const userAvatar = document.getElementById('userAvatar');
+    const userName = document.getElementById('userName');
+    
+    if (userInfo && authButtons && userAvatar && userName) {
+        userAvatar.textContent = user.name.charAt(0).toUpperCase();
+        userName.textContent = user.name;
+        userInfo.style.display = 'flex';
+        authButtons.style.display = 'none';
+    }
+}
+
+// Logout function
+function logout() {
+    localStorage.removeItem('authToken');
+    localStorage.removeItem('currentUser');
+    localStorage.removeItem('trialData');
+    
+    const userInfo = document.getElementById('userInfo');
+    const authButtons = document.getElementById('authButtons');
+    const trialStatus = document.getElementById('trialStatus');
+    const premiumFeatures = document.getElementById('premiumFeatures');
+    
+    if (userInfo && authButtons) {
+        userInfo.style.display = 'none';
+        authButtons.style.display = 'flex';
+    }
+    
+    if (trialStatus) {
+        trialStatus.style.display = 'none';
+    }
+    
+    if (premiumFeatures) {
+        premiumFeatures.style.display = 'none';
+    }
+    
+    alert('You have been logged out');
+    
+    // Redirect to home page if not already there
+    if (!window.location.pathname.endsWith('index.html') && 
+        !window.location.pathname.endsWith('/')) {
+        window.location.href = 'index.html';
+    }
+}
+
+// Initialize page
+document.addEventListener('DOMContentLoaded', function() {
+    // Check authentication status
+    checkAuthStatus();
+    
+    // Add logout event listener if logout button exists
+    const logoutBtn = document.getElementById('logoutBtn');
+    if (logoutBtn) {
+        logoutBtn.addEventListener('click', logout);
+    }
+    
+    // Close modals when clicking outside
+    window.addEventListener('click', function(e) {
+        if (e.target.classList.contains('modal')) {
+            e.target.style.display = 'none';
+            clearErrors();
+        }
+    });
+});
+```
+
+## 6. Auth JavaScript (public/scripts/auth.js)
+
+```javascript
+// Register new user
+async function registerUser(name, email, password) {
+    try {
+        const response = await fetch(`${API_BASE_URL}/auth/register`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ name, email, password })
+        });
+        
+        const data = await response.json();
+        
+        if (response.ok) {
+            // Store token and user data
+            localStorage.setItem('authToken', data.token);
+            localStorage.setItem('currentUser', JSON.stringify(data.user));
+            
+            if (typeof showUserInfo === 'function') {
+                showUserInfo(data.user);
+            }
+            
+            clearErrors();
+            
+            // Start free trial
+            if (typeof startFreeTrial === 'function') {
+                startFreeTrial('professional');
+                
+                // Redirect to home page
+                window.location.href = 'index.html';
+            }
+        } else {
+            // Show validation errors
+            if (data.errors) {
+                data.errors.forEach(error => {
+                    showError(`${error.field}Error`, error.msg);
+                });
+            } else {
+                alert(data.message || 'Registration failed');
+            }
+        }
+    } catch (error) {
+        console.error('Registration error:', error);
+        alert('Registration failed. Please try again.');
+    }
+}
+
+// Login user
+async function loginUser(email, password) {
+    try {
+        const response = await fetch(`${API_BASE_URL}/auth/login`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ email, password })
+        });
+        
+        const data = await response.json();
+        
+        if (response.ok) {
+            // Store token and user data
+            localStorage.setItem('authToken', data.token);
+            localStorage.setItem('currentUser', JSON.stringify(data.user));
+            
+            if (typeof showUserInfo === 'function') {
+                showUserInfo(data.user);
+            }
+            
+            clearErrors();
+            
+            // Check trial status
+            if (typeof checkTrialStatus === 'function') {
+                checkTrialStatus();
+            }
+            
+            alert('Login successful!');
+            
+            // Redirect to home page
+            window.location.href = 'index.html';
+        } else {
+            // Show validation errors
+            if (data.errors) {
+                data.errors.forEach(error => {
+                    showError(`${error.field}Error`, error.msg);
+                });
+            } else {
+                alert(data.message || 'Login failed');
+            }
+        }
+    } catch (error) {
+        console.error('Login error:', error);
+        alert('Login failed. Please try again.');
+    }
+}
+
+// Initialize auth pages
+function initAuthPage() {
+    const loginForm = document.getElementById('loginForm');
+    const signupForm = document.getElementById('signupForm');
+    
+    if (loginForm) {
+        loginForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const email = document.getElementById('loginEmail').value;
+            const password = document.getElementById('loginPassword').value;
+            
+            if (!email || !password) {
+                showError('loginEmailError', 'Please enter both email and password');
+                return;
+            }
+            
+            loginUser(email, password);
+        });
+    }
+    
+    if (signupForm) {
+        signupForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const name = document.getElementById('signupName').value;
+            const email = document.getElementById('signupEmail').value;
+            const password = document.getElementById('signupPassword').value;
+            
+            if (!name || !email || !password) {
+                showError('signupNameError', 'Please fill all fields');
+                return;
+            }
+            
+            registerUser(name, email, password);
+        });
+    }
+}
+
+// Add to DOMContentLoaded for auth pages
+if (document.getElementById('loginForm') || document.getElementById('signupForm')) {
+    document.addEventListener('DOMContentLoaded', function() {
+        initAuthPage();
+        
+        // Check if user is already logged in
+        const token = localStorage.getItem('authToken');
+        const user = JSON.parse(localStorage.getItem('currentUser'));
+        
+        if (token && user) {
+            // Redirect to home page if already logged in
+            window.location.href = 'index.html';
+        }
+    });
+}
+```
+
+## 7. Trial JavaScript (public/scripts/trial.js)
+
+```javascript
+// Check trial status
+async function checkTrialStatus() {
+    try {
+        const token = localStorage.getItem('authToken');
+        if (!token) return;
+        
+        const response = await fetch(`${API_BASE_URL}/trials/status`, {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        });
+        
+        if (response.ok) {
+            const trialData = await response.json();
+            
+            if (trialData.active) {
+                const endDate = new Date(trialData.end_date);
+                const now = new Date();
+                
+                if (now < endDate) {
+                    // Trial is still active
+                    showTrialStatus(trialData);
+                    startCountdown(endDate);
+                    
+                    // Show premium features
+                    const premiumFeatures = document.getElementById('premiumFeatures');
+                    if (premiumFeatures) {
+                        premiumFeatures.style.display = 'block';
+                    }
+                } else {
+                    // Trial has ended
+                    showTrialStatus(trialData);
+                }
+            }
+        }
+    } catch (error) {
+        console.error('Error checking trial status:', error);
+    }
+}
+
+// Start free trial
+async function startFreeTrial(plan) {
+    try {
+        const token = localStorage.getItem('authToken');
+        if (!token) return;
+        
+        const response = await fetch(`${API_BASE_URL}/trials/start`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify({ plan })
+        });
+        
+        const data = await response.json();
+        
+        if (response.ok) {
+            // Store trial data locally
+            localStorage.setItem('trialData', JSON.stringify({
+                plan: data.plan,
+                startDate: data.start_date,
+                endDate: data.end_date
+            }));
+            
+            showTrialStatus(data);
+            
+            const endDate = new Date(data.end_date);
+            startCountdown(endDate);
+            
+            // Show premium features
+            const premiumFeatures = document.getElementById('premiumFeatures');
+            if (premiumFeatures) {
+                premiumFeatures.style.display = 'block';
+            }
+            
+            alert(`Your ${plan} plan free trial has started! You have 14 days to explore all features.`);
+        } else {
+            alert(data.message || 'Failed to start trial');
+        }
+    } catch (error) {
+        console.error('Error starting trial:', error);
+        alert('Failed to start trial. Please try again.');
+    }
+}
+
+// Show trial status
+function showTrialStatus(trialData) {
+    const trialStatus = document.getElementById('trialStatus');
+    const currentPlan = document.getElementById('currentPlan');
+    const trialEndDate = document.getElementById('trialEndDate');
+    
+    if (trialStatus && currentPlan && trialEndDate) {
+        const startDate = new Date(trialData.start_date);
+        const endDate = new Date(trialData.end_date);
+        
+        currentPlan.textContent = trialData.plan.charAt(0).toUpperCase() + trialData.plan.slice(1);
+        trialEndDate.textContent = endDate.toLocaleDateString();
+        
+        trialStatus.style.display = 'block';
+    }
+}
+
+// Start countdown timer
+function startCountdown(endDate) {
+    const countdown = document.getElementById('countdown');
+    
+    if (!countdown) return;
+    
+    function updateCountdown() {
+        const now = new Date();
+        const timeRemaining = endDate - now;
+        
+        if (timeRemaining <= 0) {
+            clearInterval(countdownInterval);
+            countdown.textContent = 'Trial has ended';
+            return;
+        }
+        
+        const days = Math.floor(timeRemaining / (1000 * 60 * 60 * 24));
+        const hours = Math.floor((timeRemaining % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        const minutes = Math.floor((timeRemaining % (1000 * 60 * 60)) / (1000 * 60));
+        const seconds = Math.floor((timeRemaining % (1000 * 60)) / 1000);
+        
+        countdown.textContent = `${days}d ${hours}h ${minutes}m ${seconds}s`;
+    }
+    
+    updateCountdown();
+    const countdownInterval = setInterval(updateCountdown, 1000);
+}
+
+// Check if user has active trial
+function hasActiveTrial() {
+    const trialData = JSON.parse(localStorage.getItem('trialData'));
+    if (!trialData) return false;
+    
+    const now = new Date();
+    const endDate = new Date(trialData.endDate);
+    
+    return now < endDate;
+}
+
+// Initialize trial functionality
+function initTrialButtons() {
+    const trialButtons = document.querySelectorAll('.start-trial');
+    
+    trialButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            const plan = this.getAttribute('data-plan');
+            
+            // Check if user is logged in
+            const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+            const token = localStorage.getItem('authToken');
+            
+            if (!token || !currentUser) {
+                // Redirect to signup page if not logged in
+                window.location.href = 'signup.html';
+            } else {
+                startFreeTrial(plan);
+            }
+        });
+    });
+}
+
+// Add to DOMContentLoaded for pricing page
+if (document.querySelector('.start-trial')) {
+    document.addEventListener('DOMContentLoaded', function() {
+        initTrialButtons();
+        checkTrialStatus();
+    });
+}
+```
+
+## 8. Features JavaScript (public/scripts/features.js)
+
+```javascript
+// Premium features configuration
+const premiumFeatures = {
+    analytics: {
+        title: "Advanced Analytics",
+        description: "Gain insights with detailed project metrics, conversion tracking, and custom reports.",
+        content: `
+            <div class="feature-toolbar">
+                <h3>Advanced Analytics</h3>
+                <button class="btn btn-outline" id="generateReport">Generate Report</button>
+            </div>
+            <div class="feature-data">
+                <h4>Project Performance</h4>
+                <p>View and analyze your project data with interactive charts and detailed metrics.</p>
+                <div class="demo-placeholder">
+                    <i class="fas fa-chart-pie" style="color: var(--success);"></i>
+                </div>
+                <p>Your project is performing better than 78% of similar projects.</p>
+            </div>
+        `
+    },
+    collaboration: {
+        title: "Team Collaboration",
+        description: "Invite team members, assign tasks, and collaborate in real-time.",
+        content: `
+            <div class="feature-toolbar">
+                <h3>Team Collaboration</h3>
+                <button class="btn btn-outline" id="inviteMember">Invite Team Member</button>
+            </div>
+            <div class="feature-data">
+                <h4>Team Workspace</h4>
+                <p>Collaborate with your team in real-time on projects and tasks.</p>
+                <div class="demo-placeholder">
+                    <i class="fas fa-users" style="color: var(--success);"></i>
+                </div>
+                <p>You have 3 team members active in the last 24 hours.</p>
+            </div>
+        `
+    },
+    ai: {
+        title: "AI Assistant",
+        description: "Get intelligent suggestions, automate tasks, and generate content.",
+        content: `
+            <div class="feature-toolbar">
+                <h3>AI Assistant</h3>
+                <button class="btn btn-outline" id="askAI">Ask AI</button>
+            </div>
+            <div class="feature-data">
+                <h4>AI Suggestions</h4>
+                <p>Get intelligent recommendations to improve your project workflow.</p>
+                <div class="demo-placeholder">
+                    <i class="fas fa-robot" style="color: var(--success);"></i>
+                </div>
+                <p>Based on your project history, I recommend optimizing your task distribution.</p>
+            </div>
+        `
+    }
+};
+
+// Initialize premium features
+function initPremiumFeatures() {
+    const useFeatureButtons = document.querySelectorAll('.use-feature');
+    const featureModal = document.getElementById('featureModal');
+    const featureModalTitle = document.getElementById('featureModalTitle');
+    const featureModalContent = document.getElementById('featureModalContent');
+    const upgradeNowBtn = document.getElementById('upgradeNow');
+    const closeFeatureModal = document.getElementById('closeFeatureModal');
+    
+    // Handle feature button clicks
+    useFeatureButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            const featureName = this.getAttribute('data-feature');
+            const feature = premiumFeatures[featureName];
+            
+            if (hasActiveTrial()) {
+                // User has active trial, show feature
+                showFeatureModal(featureName, true);
+                simulateFeatureUsage(featureName);
+            } else {
+                // User doesn't have active trial, show upgrade modal
+                showFeatureModal(featureName, false);
+            }
+        });
+    });
+    
+    // Upgrade now button
+    if (upgradeNowBtn) {
+        upgradeNowBtn.addEventListener('click', function() {
+            featureModal.style.display = 'none';
+            // Redirect to pricing page
+            window.location.href = 'index.html';
+        });
+    }
+    
+    // Close feature modal
+    if (closeFeatureModal) {
+        closeFeatureModal.addEventListener('click', function() {
+            featureModal.style.display = 'none';
+        });
+    }
+    
+    // Show feature modal
+    function showFeatureModal(featureName, hasAccess) {
+        const feature = premiumFeatures[featureName];
+        
+        featureModalTitle.textContent = feature.title;
+        
+        if (hasAccess) {
+            featureModalContent.innerHTML = `
+                <p>${feature.description}</p>
+                ${feature.content}
+            `;
+            
+            // Add event listeners for feature buttons
+            setTimeout(() => {
+                const generateReportBtn = document.getElementById('generateReport');
+                const inviteMemberBtn = document.getElementById('inviteMember');
+                const askAIBtn = document.getElementById('askAI');
+                
+                if (generateReportBtn) {
+                    generateReportBtn.addEventListener('click', function() {
+                        alert('Generating advanced report... This would create a detailed PDF report in a real application.');
+                    });
+                }
+                
+                if (inviteMemberBtn) {
+                    inviteMemberBtn.addEventListener('click', function() {
+                        alert('Invite team member dialog would appear here in a real application.');
+                    });
+                }
+                
+                if (askAIBtn) {
+                    askAIBtn.addEventListener('click', function() {
+                        alert('AI assistant is analyzing your project...');
+                    });
+                }
+            }, 100);
+        } else {
+            featureModalContent.innerHTML = `
+                <p>${feature.description}</p>
+                <div class="demo-placeholder">
+                    <i class="fas fa-lock"></i>
+                </div>
+                <p>This premium feature requires an active subscription.</p>
+            `;
+        }
+        
+        featureModal.style.display = 'flex';
+    }
+    
+    // Simulate feature usage
+    function simulateFeatureUsage(featureName) {
+        const token = localStorage.getItem('authToken');
+        if (!token) return;
+        
+        // Log feature usage to backend
+        fetch(`${API_BASE_URL}/features/usage`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify({ 
+                feature: featureName, 
+                action: 'accessed' 
+            })
+        }).catch(error => {
+            console.error('Error logging feature usage:', error);
+        });
+    }
+}
+
+// Initialize features when DOM is loaded
+if (document.querySelector('.use-feature')) {
+    document.addEventListener('DOMContentLoaded', function() {
+        initPremiumFeatures();
+    });
+}
+```
+
+## 9. Backend Server (server.js)
+
+```javascript
+const express = require('express');
+const mysql = require('mysql2');
+const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
+const cors = require('cors');
+const { body, validationResult } = require('express-validator');
+const path = require('path');
+
+const app = express();
+const PORT = process.env.PORT || 3000;
+const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key';
+
+// Middleware
+app.use(express.json());
+app.use(cors());
+app.use(express.static('public'));
+
+// MySQL Database Connection
+const db = mysql.createConnection({
+    host: process.env.DB_HOST || 'localhost',
+    user: process.env.DB_USER || 'root',
+    password: process.env.DB_PASSWORD || '',
+    database: process.env.DB_NAME || 'projecthub'
+});
+
+db.connect((err) => {
+    if (err) {
+        console.error('Database connection failed: ', err.stack);
+        return;
+    }
+    console.log('Connected to MySQL database');
+});
+
+// Create tables if they don't exist
+const createTables = () => {
+    // Users table
+    const usersTable = `
+        CREATE TABLE IF NOT EXISTS users (
+            id INT AUTO_INCREMENT PRIMARY KEY,
+            name VARCHAR(255) NOT NULL,
+            email VARCHAR(255) UNIQUE NOT NULL,
+            password VARCHAR(255) NOT NULL,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )
+    `;
+    
+    // Trials table
+    const trialsTable = `
+        CREATE TABLE IF NOT EXISTS trials (
+            id INT AUTO_INCREMENT PRIMARY KEY,
+            user_id INT NOT NULL,
+            plan VARCHAR(50) NOT NULL,
+            start_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            end_date TIMESTAMP NOT NULL,
+            status ENUM('active', 'expired') DEFAULT 'active',
+            FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+        )
+    `;
+    
+    // Feature usage table
+    const featureUsageTable = `
+        CREATE TABLE IF NOT EXISTS feature_usage (
+            id INT AUTO_INCREMENT PRIMARY KEY,
+            user_id INT NOT NULL,
+            feature VARCHAR(100) NOT NULL,
+            action VARCHAR(100) NOT NULL,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+        )
+    `;
+    
+    db.query(usersTable, (err) => {
+        if (err) console.error('Error creating users table: ', err);
+    });
+    
+    db.query(trialsTable, (err) => {
+        if (err) console.error('Error creating trials table: ', err);
+    });
+    
+    db.query(featureUsageTable, (err) => {
+        if (err) console.error('Error creating feature_usage table: ', err);
+    });
+};
+
+createTables();
+
+// Middleware to verify JWT token
+const authenticateToken = (req, res, next) => {
+    const authHeader = req.headers['authorization'];
+    const token = authHeader && authHeader.split(' ')[1];
+    
+    if (!token) {
+        return res.status(401).json({ message: 'Access token required' });
+    }
+    
+    jwt.verify(token, JWT_SECRET, (err, user) => {
+        if (err) {
+            return res.status(403).json({ message: 'Invalid or expired token' });
+        }
+        req.user = user;
+        next();
+    });
+};
+
+// Validation middleware
+const validateUser = [
+    body('name').notEmpty().withMessage('Name is required'),
+    body('email').isEmail().withMessage('Valid email is required'),
+    body('password').isLength({ min: 6 }).withMessage('Password must be at least 6 characters')
+];
+
+// Routes
+
+// Serve frontend
+app.get('/', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'index.html'));
+});
+
+app.get('/login', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'login.html'));
+});
+
+app.get('/signup', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'signup.html'));
+});
+
+// Register new user
+app.post('/api/auth/register', validateUser, async (req, res) => {
+    try {
+        // Check for validation errors
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            return res.status(400).json({ 
+                message: 'Validation failed', 
+                errors: errors.array().map(error => ({
+                    field: error.param,
+                    msg: error.msg
+                }))
+            });
+        }
+        
+        const { name, email, password } = req.body;
+        
+        // Check if user already exists
+        db.query('SELECT id FROM users WHERE email = ?', [email], async (err, results) => {
+            if (err) {
+                return res.status(500).json({ message: 'Database error' });
+            }
+            
+            if (results.length > 0) {
+                return res.status(400).json({ 
+                    message: 'User already exists',
+                    errors: [{ field: 'email', msg: 'Email already registered' }]
+                });
+            }
+            
+            // Hash password
+            const hashedPassword = await bcrypt.hash(password, 10);
+            
+            // Insert new user
+            db.query('INSERT INTO users (name, email, password) VALUES (?, ?, ?)', 
+                [name, email, hashedPassword], (err, result) => {
+                    if (err) {
+                        return res.status(500).json({ message: 'Database error' });
+                    }
+                    
+                    const userId = result.insertId;
+                    
+                    // Generate JWT token
+                    const token = jwt.sign({ id: userId, email }, JWT_SECRET, { expiresIn: '7d' });
+                    
+                    res.status(201).json({
+                        message: 'User created successfully',
+                        token,
+                        user: { id: userId, name, email }
+                    });
+                });
+        });
+    } catch (error) {
+        console.error('Registration error:', error);
+        res.status(500).json({ message: 'Server error' });
+    }
+});
+
+// Login user
+app.post('/api/auth/login', [
+    body('email').isEmail().withMessage('Valid email is required'),
+    body('password').notEmpty().withMessage('Password is required')
+], (req, res) => {
+    try {
+        // Check for validation errors
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            return res.status(400).json({ 
+                message: 'Validation failed', 
+                errors: errors.array().map(error => ({
+                    field: error.param,
+                    msg: error.msg
+                }))
+            });
+        }
+        
+        const { email, password } = req.body;
+        
+        // Find user by email
+        db.query('SELECT * FROM users WHERE email = ?', [email], async (err, results) => {
+            if (err) {
+                return res.status(500).json({ message: 'Database error' });
+            }
+            
+            if (results.length === 0) {
+                return res.status(400).json({ 
+                    message: 'Invalid credentials',
+                    errors: [{ field: 'email', msg: 'Email not found' }]
+                });
+            }
+            
+            const user = results[0];
+            
+            // Check password
+            const validPassword = await bcrypt.compare(password, user.password);
+            if (!validPassword) {
+                return res.status(400).json({ 
+                    message: 'Invalid credentials',
+                    errors: [{ field: 'password', msg: 'Incorrect password' }]
+                });
+            }
+            
+            // Generate JWT token
+            const token = jwt.sign({ id: user.id, email }, JWT_SECRET, { expiresIn: '7d' });
+            
+            res.json({
+                message: 'Login successful',
+                token,
+                user: { id: user.id, name: user.name, email: user.email }
+            });
+        });
+    } catch (error) {
+        console.error('Login error:', error);
+        res.status(500).json({ message: 'Server error' });
+    }
+});
+
+// Start free trial
+app.post('/api/trials/start', authenticateToken, [
+    body('plan').isIn(['basic', 'professional', 'enterprise']).withMessage('Valid plan is required')
+], (req, res) => {
+    try {
+        // Check for validation errors
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            return res.status(400).json({ 
+                message: 'Validation failed', 
+                errors: errors.array()
+            });
+        }
+        
+        const userId = req.user.id;
+        const { plan } = req.body;
+        
+        // Check if user already has an active trial
+        db.query('SELECT * FROM trials WHERE user_id = ? AND status = "active"', [userId], (err, results) => {
+            if (err) {
+                return res.status(500).json({ message: 'Database error' });
+            }
+            
+            if (results.length > 0) {
+                return res.status(400).json({ message: 'You already have an active trial' });
+            }
+            
+            // Calculate trial end date (14 days from now)
+            const startDate = new Date();
+            const endDate = new Date();
+            endDate.setDate(endDate.getDate() + 14);
+            
+            // Create new trial
+            db.query('INSERT INTO trials (user_id, plan, start_date, end_date) VALUES (?, ?, ?, ?)', 
+                [userId, plan, startDate, endDate], (err, result) => {
+                    if (err) {
+                        return res.status(500).json({ message: 'Database error' });
+                    }
+                    
+                    res.status(201).json({
+                        message: 'Trial started successfully',
+                        id: result.insertId,
+                        user_id: userId,
+                        plan,
+                        start_date: startDate,
+                        end_date: endDate,
+                        status: 'active'
+                    });
+                });
+        });
+    } catch (error) {
+        console.error('Trial start error:', error);
+        res.status(500).json({ message: 'Server error' });
+    }
+});
+
+// Get trial status
+app.get('/api/trials/status', authenticateToken, (req, res) => {
+    try {
+        const userId = req.user.id;
+        
+        // Get active trial for user
+        db.query('SELECT * FROM trials WHERE user_id = ? AND status = "active"', [userId], (err, results) => {
+            if (err) {
+                return res.status(500).json({ message: 'Database error' });
+            }
+            
+            if (results.length === 0) {
+                return res.status(404).json({ message: 'No active trial found' });
+            }
+            
+            const trial = results[0];
+            
+            // Check if trial has expired
+            const now = new Date();
+            const endDate = new Date(trial.end_date);
+            
+            if (now > endDate) {
+                // Update trial status to expired
+                db.query('UPDATE trials SET status = "expired" WHERE id = ?', [trial.id], (err) => {
+                    if (err) {
+                        console.error('Error updating trial status:', err);
+                    }
+                });
+                
+                return res.status(404).json({ message: 'Trial has expired' });
+            }
+            
+            res.json({
+                active: true,
+                id: trial.id,
+                plan: trial.plan,
+                start_date: trial.start_date,
+                end_date: trial.end_date
+            });
+        });
+    } catch (error) {
+        console.error('Trial status error:', error);
+        res.status(500).json({ message: 'Server error' });
+    }
+});
+
+// Log feature usage
+app.post('/api/features/usage', authenticateToken, (req, res) => {
+    try {
+        const userId = req.user.id;
+        const { feature, action } = req.body;
+        
+        // Log feature usage
+        db.query('INSERT INTO feature_usage (user_id, feature, action) VALUES (?, ?, ?)', 
+            [userId, feature, action], (err, result) => {
+                if (err) {
+                    console.error('Error logging feature usage:', err);
+                    return res.status(500).json({ message: 'Database error' });
+                }
+                
+                res.json({ message: 'Usage logged successfully' });
+            });
+    } catch (error) {
+        console.error('Feature usage error:', error);
+        res.status(500).json({ message: 'Server error' });
+    }
+});
+
+// Get feature usage statistics
+app.get('/api/features/usage', authenticateToken, (req, res) => {
+    try {
+        const userId = req.user.id;
+        
+        // Get feature usage statistics for user
+        db.query('SELECT feature, COUNT(*) as count FROM feature_usage WHERE user_id = ? GROUP BY feature', 
+            [userId], (err, results) => {
+                if (err) {
+                    console.error('Error getting feature usage:', err);
+                    return res.status(500).json({ message: 'Database error' });
+                }
+                
+                res.json({ usage: results });
+            });
+    } catch (error) {
+        console.error('Feature usage stats error:', error);
+        res.status(500).json({ message: 'Server error' });
+    }
+});
+
+// Start server
+app.listen(PORT, () => {
+    console.log(`Server running on port ${PORT}`);
+});
+```
+
+## 10. Package.json
+
+```json
+{
+  "name": "projecthub",
+  "version": "1.0.0",
+  "description": "A project management SaaS with free trial and premium features",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "nodemon server.js"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "mysql2": "^3.6.0",
+    "bcryptjs": "^2.4.3",
+    "jsonwebtoken": "^9.0.1",
+    "cors": "^2.8.5",
+    "express-validator": "^7.0.1",
+    "dotenv": "^16.3.1"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.1"
+  },
+  "keywords": [
+    "saas",
+    "project-management",
+    "free-trial",
+    "premium-features"
+  ],
+  "author": "Your Name",
+  "license": "MIT"
+}
+```
+
+## 11. Environment File (.env)
+
+```env
+DB_HOST=localhost
+DB_USER=root
+DB_PASSWORD=your_password
+DB_NAME=projecthub
+JWT_SECRET=your_jwt_secret_key
+PORT=3000
+```
+
+## Setup Instructions
+
+1. **Install Node.js and MySQL** on your server
+
+2. **Create a MySQL database** named `projecthub`
+
+3. **Install dependencies**:
+   ```
+   npm install
+   ```
+
+4. **Configure environment variables** in the `.env` file
+
+5. **Start the server**:
+   ```
+   npm start
+   ```
+
+6. **Access the application** at `http://localhost:3000`
+
+This implementation provides a complete full-stack solution with separate frontend and backend components, user authentication, free trial management, and premium feature access control.

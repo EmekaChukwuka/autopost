@@ -1,0 +1,835 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head> 
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Settings | AutoPost</title>
+   <style>
+        /* ===== Global Styles ===== */
+       
+    :root {
+      /* Light Mode */
+      --bg-primary: #ffffff;
+      --bg-secondary: #f5f5f5;
+      --text-primary: #000000;
+      --text-secondary: #333333;
+      --border-color: #e0e0e0;
+      --accent-blue: #2962FF;
+      --accent-green: #00C853;
+      --error-red: #D32F2F;
+    }
+
+    [data-theme="dark"] {
+      /* Dark Mode */
+      --bg-primary: #121212;
+      --bg-secondary: #1e1e1e;
+      --text-primary: #ffffff;
+      --text-secondary: #e0e0e0;
+      --border-color: #333333;
+      --accent-blue: #448AFF;
+    }
+
+        body {
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            margin: 0;
+            padding: 0;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        /* ===== Sidebar ===== */
+        .sidebar {
+            background: var(--bg-primary);
+            border-right: 1px solid var(--border-color);
+            padding: 24px;
+            position: fixed;
+            top: 0;
+            height: 100vh;
+            width:20%;
+            }
+
+        .logo {
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 32px;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+        }
+
+        .logo span {
+            color: var(--accent-blue);
+        }
+
+        a{
+            text-decoration: none;
+        }
+        
+        .logo-icon {
+            width: 24px;
+            height: 24px;
+            background-color: var(--accent-blue);
+            color: white;
+            border-radius: 4px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 8px;
+            font-weight: bold;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            padding: 12px 16px;
+            margin-bottom: 8px;
+            border-radius: 6px;
+            cursor: pointer;
+            color: var(--text-secondary);
+            transition: all 0.2s;
+        }
+
+        .nav-item i {
+            margin-right: 12px;
+            width: 20px;
+            text-align: center;
+            color: var(--text-primary);
+        }
+
+        .nav-item.active {
+            background-color: var(--accent-blue);
+            color: var(--text-primary);
+            font-weight: 500;
+        }
+
+        .nav-item:hover:not(.active) {
+            background-color: var(--bg-secondary);
+        }
+
+        /* ===== Main Content ===== */
+        .main {
+            padding: 4%;
+            margin-right:4%;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 32px;
+        }
+
+        h1 {
+            font-size: 24px;
+        }
+
+        .btn {
+            padding: 10px 16px;
+            border-radius: 6px;
+            font-weight: 500;
+            cursor: pointer;
+            border: none;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+        }
+
+        .btn i {
+            margin-right: 8px;
+        }
+
+        .btn-primary {
+            background-color: var(--accent-blue);
+            color: var(--white);
+        }
+
+        .btn-primary:hover {
+            background-color: var(--accent-blue);
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 1px solid var(--border-color);
+            color: var(--text-secondary);
+        }
+
+        .btn-outline:hover {
+            background: var(--bg-secondary);
+        }
+
+        .btn-danger {
+            background-color: var(--error-red);
+            color: white;
+        }
+
+    .card {
+      background-color: var(--bg-primary);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      padding: 30px;
+      transition: transform 0.3s ease;
+    }
+
+    .card:hover {
+      transform: translateY(-5px);
+    }
+
+        /* ===== Settings Page ===== */
+        .settings-tabs {
+            display: flex;
+            border-bottom: 1px solid var(--border-color);
+            margin-bottom: 24px;
+        }
+
+        .settings-tab {
+            padding: 12px 16px;
+            cursor: pointer;
+            font-weight: 500;
+            color: var(--text-secondary);
+        }
+
+        .settings-tab.active {
+            color: var(--blue-500);
+            border-bottom: 2px solid var(--accent-blue);
+        }
+
+        .settings-section {
+            margin-bottom: 32px;
+        }
+
+        .settings-section h2 {
+            margin-bottom: 16px;
+            font-size: 18px;
+        }
+
+        .form-group {
+            margin-bottom: 16px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            background: var(--bg-secondary);
+            color:var(--text-primary);
+        }
+
+        .connected-accounts {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .account-card {
+            display: flex;
+            align-items: center;
+            padding: 12px;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+        }
+
+        .account-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--bg-secondary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 12px;
+            color: var(--border-color);
+        }
+
+        .account-info {
+            flex: 1;
+        }
+
+        .account-info h3 {
+            margin-bottom: 4px;
+        }
+
+        .account-status {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        .account-status.connected {
+            color: var(--accent-blue);
+        }
+
+        .account-actions {
+            margin-left: auto;
+        }
+
+        /* ===== Responsive ===== */
+        @media (max-width: 1024px) {
+            .metrics-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .dashboard {
+                grid-template-columns: 0;
+            }
+            .sidebar {
+                display: none;
+            }
+            .metrics-grid {
+                grid-template-columns: 1fr;
+            }
+            body{
+                margin:0;
+                padding:0;
+                
+            }
+/* Mobile Bottom Nav */
+.bottom-nav {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  padding: 0.8rem 0;
+  background-color: var(--bg-primary);
+  border-top: 1px solid var(--gray-medium);
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+}
+
+.bottom-nav a {
+  color: var(--gray-dark);
+  text-decoration: none;
+  font-size: 1.2rem;
+}
+
+.bottom-nav a.active {
+  color: var(--accent-blue);
+}
+        /* ===== Settings Page ===== */
+        .settings-tabs {
+            display: flex;
+            border-bottom: 1px solid var(--border-color);
+            margin-bottom: 14px;
+        }
+
+        .settings-tab {
+            padding: 12px 16px;
+            cursor: pointer;
+            font-weight: 500;
+            color: var(--text-secondary);
+        }
+
+        .settings-tab.active {
+            color: var(--blue-500);
+            border-bottom: 2px solid var(--accent-blue);
+        }
+
+        .settings-section {
+            margin-bottom: 32px;
+            width:90%;
+            margin: 1% 5%;
+        }
+
+        .settings-section h2 {
+            margin-bottom: 16px;
+            font-size: 18px;
+        }
+
+        .form-group {
+            margin-bottom: 16px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+
+        .form-group input, .form-group select {
+            width: 80%;
+            margin: 2% 0;
+            padding: 10px 12px;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            background: var(--bg-secondary);
+            color:var(--text-primary);
+        }
+
+        .connected-accounts {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .account-card {
+            display: flex;
+            align-items: center;
+            padding: 12px;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            width:90%;
+            margin: 1% 5%;
+        }
+
+        .account-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--bg-secondary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 12px;
+            color: var(--border-color);
+        }
+
+        .account-info {
+            flex: 1;
+        }
+
+        .account-info h3 {
+            margin-bottom: 4px;
+        }
+
+        .account-status {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        .account-status.connected {
+            color: var(--accent-blue);
+        }
+
+        .account-actions {
+            margin-left: auto;
+        }
+
+        }
+        
+
+
+        @media (min-width: 768px) {
+                .main {
+            padding: 32px;
+            min-height: 100vh;
+            margin-left:24%;
+        }
+    }
+    </style>
+</head>
+<body>
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <div class="logo">Auto<span>Post</span></div>
+            <a href="dashboard.html"><div class="nav-item" data-page="home">
+                <i class="fas fa-home"></i><span>Dashboard</span>
+            </div></a>
+            <a href="create.html"><div class="nav-item" data-page="create">
+                <i class="fas fa-plus"></i><span>Create Post</span>
+            </div></a>
+           <a href="calendar.html"><div class="nav-item" data-page="calendar">
+                <i class="fas fa-calendar-alt"></i><span>Calendar</span>
+            </div></a>
+           <a href="analytics.html"><div class="nav-item" data-page="analytics">
+                <i class="fas fa-chart-line"></i><span>Analytics</span>
+            </div></a>
+           <a href="#"> <div data-page="settings" class="nav-item active">
+                <i class="fas fa-cog"></i><span>Settings</span>
+            </div></a>
+        </div>
+
+    <div class="dashboard">
+        <!-- Main Content -->
+        <div class="main">
+            <!-- Settings Page -->
+            <div id="settings-page">
+                <div class="header">
+                    <h1>Settings</h1>
+                </div>
+
+                <div class="settings-tabs">
+                    <div class="settings-tab active" data-tab="account">Account</div>
+                    <div class="settings-tab" data-tab="connected-accounts">Connected Accounts</div>
+                    <div class="settings-tab" data-tab="notifications">Notifications</div>
+                    <div class="settings-tab" data-tab="billing">Billing</div>
+                </div>
+
+                <div id="account-tab">
+                    <div class="settings-section">
+                        <h2>Profile Information</h2>
+                        <div class="form-group">
+                            <label>Name</label>
+                            <input type="text" id="name_input"> 
+                        </div>
+                        <div class="form-group">
+                            <label>Email</label>
+                            <input type="email" id="email_input">
+                        </div>
+                        <div class="form-group">
+                            <label>Timezone</label>
+                            <select>
+                                <option>(UTC-05:00) Eastern Time</option>
+                            </select>
+                        </div>
+                        <button id="editName" class="btn btn-primary">Save Changes</button>
+                    </div>
+
+                    <div class="settings-section">
+                        <h2>Security</h2>
+                        <div class="form-group">
+                            <label>Password</label>
+                            <input type="password" placeholder="••••••••">
+                        </div>
+                        <button class="btn btn-outline">Change Password</button>
+                    </div>
+                                         <br>   <div class="form-group">
+                        <a href="logout.html" class="btn btn-outline" style="margin-left: 5%;">Logout</a>
+                    </div>
+                </div>
+
+                <div id="connected-accounts-tab" class="hidden">
+                    <div class="settings-section">
+                        <h2>Social Accounts</h2>
+                        <div class="connected-accounts">
+                            <div class="account-card">
+                                <div class="account-icon"><i class="fas fa-twitter"></i></div>
+                                <div class="account-info">
+                                    <h3>Twitter</h3>
+                                    <div class="account-status connected">Connected as @autopost_user</div>
+                                </div>
+                                <div class="account-actions">
+                                    <button class="btn btn-outline">Disconnect</button>
+                                </div>
+                            </div>
+                            <div class="account-card">
+                                <div class="account-icon"><i class="fas fa-linkedin"></i></div>
+                                <div class="account-info">
+                                    <h3>LinkedIn</h3>
+                                    <div class="account-status connected">Connected</div>
+                                </div>
+                                <div class="account-actions">
+                                    <button class="btn btn-outline">Disconnect</button>
+                                </div>
+                            </div>
+                            <div class="account-card">
+                                <div class="account-icon"><i class="fas fa-facebook"></i></div>
+                                <div class="account-info">
+                                    <h3>Facebook</h3>
+                                    <div class="account-status">Not connected</div>
+                                </div>
+                                <div class="account-actions">
+                                    <button class="btn btn-primary">Connect</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="notifications-tab" class="hidden">
+                    <div class="settings-section">
+                        <h2>Notification Preferences</h2>
+                        <div class="form-group">
+                            <label>
+                                <input type="checkbox" checked> Email notifications
+                            </label>
+                        </div>
+                        <div class="form-group">
+                            <label>
+                                <input type="checkbox" checked> Push notifications
+                            </label>
+                        </div>
+                        <div class="form-group">
+                            <label>
+                                <input type="checkbox"> SMS alerts
+                            </label>
+                        </div>
+                        <button class="btn btn-primary">Save Preferences</button>
+                    </div>
+                </div>
+
+                <div id="billing-tab" class="hidden">
+                    <div class="settings-section">
+                        <h2>Subscription Plan</h2>
+                        <div class="card" id="plan">
+                        </div>
+                    </div>
+
+                    <div class="settings-section">
+                        <h2>Payment Method</h2>
+                        <div class="card">
+                            <!--<p>VISA •••• •••• •••• 4242</p>
+                            <p>Expires 04/2025</p>-->
+                            <a href="payment.html" class="btn btn-outline" style="margin-top: 16px;" >Update Payment</a>
+                        </div>
+                    </div>
+
+                    <div class="settings-section">
+                        <h2>Billing History</h2>
+                        <div class="card">
+                            <!--
+                            <p>Dec 15, 2023 - $29.00</p>
+                            <p>Nov 15, 2023 - $29.00</p>-->
+                            <button class="btn btn-outline" style="margin-top: 16px;">View All</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>  
+  <!-- Mobile Bottom Nav -->
+  <nav class="bottom-nav">
+    <a href="dashboard.html"><i class="fas fa-home"></i></a>
+    <a href="calendar.html"><i class="fas fa-calendar-alt"></i></a>
+    <a href="create.html"><i class="fas fa-plus"></i></a>
+    <a href="analytics.html"><i class="fas fa-chart-line"></i></a>
+    <a href="#"  class="active"><i class="fas fa-user"></i></a>
+  </nav>
+
+    <script>
+    // Dark Mode Toggle
+    const root = document.documentElement;
+
+    if (localStorage.getItem('theme') === 'dark') {
+      root.setAttribute('data-theme', 'dark');
+    }
+
+
+        // Settings Tabs
+        const settingsTabs = document.querySelectorAll('.settings-tab');
+        const settingsTabContents = document.querySelectorAll('#settings-page > div[id$="-tab"]');
+        
+        settingsTabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+                const tabId = tab.getAttribute('data-tab') + '-tab';
+                
+                // Update active tab
+                settingsTabs.forEach(t => t.classList.remove('active'));
+                tab.classList.add('active');
+                
+                // Show selected tab content
+                settingsTabContents.forEach(content => content.classList.add('hidden'));
+                document.getElementById(tabId).classList.remove('hidden');
+            });
+        });
+
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            const trialData = JSON.parse(localStorage.getItem('trialData'));
+          
+           /* plan = trialData.plan;
+                try {
+                    const token = localStorage.getItem('authToken');
+                    const response = await fetch('http://localhost:3000/register/trials/start', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${token}`
+                        },
+                        body: JSON.stringify({ plan })
+                    });
+                    
+                    const data = await response.json();
+                    
+                    if (response.ok) {
+                        
+                        const endDate = new Date(data.end_date);
+                        startCountdown(endDate);
+                        
+                        alert(`Your ${plan} plan free trial has started! You have 14 days to explore all features.`);
+                        
+                    } else {
+                        alert(data.message || 'Failed to start trial');
+                    }
+                } catch (error) {
+                    console.error('Error starting trial:', error);
+                    alert('Failed to start trial. Please try again.');
+                }*/
+            
+            try{
+                 const token = localStorage.getItem('authToken');
+                const response = await fetch('http://localhost:3000/register/me', {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type' : 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+                const result = await response.json();
+                if (response.ok){
+                    console.log(result);
+                }else{
+                    console.log('An error occurred');
+                }
+            }catch{
+
+            }
+
+            let currentUser = JSON.parse(localStorage.getItem('currentUser'));
+            console.log(currentUser);
+
+            
+            // Check if user has an active trial (simulated with localStorage)
+            const user = JSON.parse(localStorage.getItem('currentUser'));
+            console.log(trialData);
+            checkTrialStatus();
+            
+            if (user) {
+            document.getElementById('name_input').value = currentUser.name;
+            document.getElementById('email_input').value = currentUser.email;            
+       document.getElementById('editName').addEventListener('click', async function saveEditChanges(){
+                const user = {
+                    name: document.getElementById('name').value,
+                    email: document.getElementById('email').value
+                };
+                console.log(name, email);
+                
+                localStorage.setItem('currentUser', JSON.stringify(user));
+        });
+            }
+            
+            if (trialData && user) {
+                const now = new Date();
+                const endDate = new Date(trialData.endDate);
+                
+                if (now < endDate) {
+                    // Trial is still active
+                    showTrialStatus(trialData);
+                    startCountdown(endDate, trialData);
+                }
+            }
+             
+            async function showTrialStatus(trialData) {
+                const startDate = new Date(trialData.startDate);
+                const endDate = new Date(trialData.endDate);
+
+                document.getElementById('plan').innerHTML = ` <h3>${trialData.plan} Plan</h3>
+                            <p>Free Trial</p>
+                            <p></p>
+                            <a href='pricing.html' class="btn btn-outline" >Change Plan</a>
+                        `;
+                        
+                       /* const a = trialData.plan;
+                                            const response = await fetch('http://localhost:3000/trialInfo', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({ a })
+                    });
+                    if(response.ok){
+                    const data = await response.json();
+                        console.log(data.plan.Details.name);
+                document.getElementById('plan').innerHTML = ` <h3>${data.plan.Details.name} Plan</h3>
+                            <p>Expired, update payment</p>
+                            <p>${data.plan.Details.price}</p>
+                            <a href="payment.html" class="btn btn-outline" style="margin-top: 16px;">Change Plan</a>
+                    `;
+                    }*/
+            }            
+
+            async function startCountdown(endDate, trialData) {
+              async  function updateCountdown() {
+                    const now = new Date();
+                    const timeRemaining = endDate - now;
+                    
+                    if (timeRemaining <= 0) {
+                        clearInterval(countdownInterval);
+                        
+                        const a = trialData.plan;
+                                            const response = await fetch('http://localhost:3000/trialInfo', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({ a })
+                    });
+                    const data = await response.json();
+                    if(response.ok){
+                        console.log(data);
+                        console.log(data.plan.Details.name);
+                document.getElementById('plan').innerHTML = ` <h3>${data.plan.Details.name} Plan</h3>
+                            <p>Expired, update payment</p>
+                            <p>${data.plan.Details.price}</p>
+                            <a href="payment.html" class="btn btn-outline" style="margin-top: 16px;">Update Payment</a>
+                    `;
+                    }
+                        return;
+                    }
+                    
+                    const days = Math.floor(timeRemaining / (1000 * 60 * 60 * 24));
+                    const hours = Math.floor((timeRemaining % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                    const minutes = Math.floor((timeRemaining % (1000 * 60 * 60)) / (1000 * 60));
+                    const seconds = Math.floor((timeRemaining % (1000 * 60)) / 1000);
+                    
+                    //console.log(`${days}d ${hours}h ${minutes}m ${seconds}s`);
+                }                
+                updateCountdown();
+                const countdownInterval = setInterval(updateCountdown, 1000);
+            }
+            async function checkTrialStatus() {
+                try {
+                    const token = localStorage.getItem('authToken');
+                    const response = await fetch(`http://localhost:3000/register/trials/status`, {
+                        method: 'GET',
+                        headers: {
+                            'Authorization': `Bearer ${token}`
+                        }
+                    });
+                    
+                    if (response.ok) {
+                        const trialData = await response.json();
+                        console.log(trialData);
+                        if (trialData.active) {
+                            const endDate = new Date(trialData.end_date);
+                            const now = new Date();
+                            
+                            if (now < endDate) {
+                                // Trial is still active
+                                showTrialStatus(trialData);
+                                console.log(trialData);
+                                startCountdown(endDate);
+                            } else {
+                                // Trial has ended
+                                const a = trialData.plan;
+                                            const response = await fetch('http://localhost:3000/trialInfo', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({ a })
+                    });
+                    const data = await response.json();
+                    if(response.ok){
+                        console.log(data);
+                        console.log(data.plan.Details.name);
+                document.getElementById('plan').innerHTML = ` <h3>${data.plan.Details.name} Plan</h3>
+                            <p>Expired, update payment</p>
+                            <p>${data.plan.Details.price}</p>
+                            <a href="payment.html" class="btn btn-outline" style="margin-top: 16px;">Update Payment</a>
+                    `;
+                    }
+                            }
+                        }
+                    }
+                } catch (error) {
+                    console.error('Error checking trial status:', error);
+                }
+            }
+            
+checkTrialStatus();
+        });
+    </script>
+</body>
+</html>

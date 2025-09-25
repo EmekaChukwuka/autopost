@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Contact Us | AutoPost</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="style.css">
+  <style>
+    /* (Same base styles as pricing page) */
+
+    /* Contact-Specific Styles */
+    .contact-hero {
+      text-align: center;
+      padding: 60px 0 40px;
+     
+    }
+
+    .contact-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 40px;
+      margin: 60px 0;
+    }
+
+    .contact-card {
+      background-color: var(--bg-primary);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      padding: 30px;
+      text-align: center;
+    }
+
+    .contact-icon {
+      font-size: 32px;
+      color: var(--accent-blue);
+      margin-bottom: 20px;
+    }
+
+    .contact-form {
+      max-width: 600px;
+      margin: 0 auto 60px;
+    }
+
+    .form-row {
+      margin-bottom: 20px;
+    }
+
+    .form-row.two-col {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+
+    textarea.form-input {
+      min-height: 150px;
+    }
+
+    .map-container {
+      height: 400px;
+      background-color: var(--bg-secondary);
+      border-radius: 8px;
+      overflow: hidden;
+      margin-bottom: 60px;
+    }
+    
+    footer {
+      background-color: var(--bg-secondary);
+      padding: 40px 10%;
+      border-top: 1px solid var(--border-color);
+      margin:0;
+    }
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    .form-label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 500;
+    }
+
+    .form-input {
+      width: 90%;
+      padding: 12px 15px;
+      border: 1px solid var(--border-color);
+      border-radius: 6px;
+      background-color: var(--bg-primary);
+      color: var(--text-primary);
+      font-size: 16px;
+    }
+
+    .form-input:focus {
+      outline: none;
+      border-color: var(--accent-blue);
+    }
+
+    .btn {
+      display: block;
+      width: 100%;
+      padding: 14px;
+      border-radius: 6px;
+      font-size: 16px;
+      font-weight: 500;
+      text-align: center;
+      cursor: pointer;
+      text-decoration: none;
+    }
+
+    .btn-primary {
+      background-color: var(--accent-blue);
+      color: white;
+      border: none;
+    }
+
+
+    /* ===== Responsive ===== */
+    @media (max-width: 768px) {
+     
+       .contact-grid{
+        grid-template-columns: 1fr;
+      }
+     
+      footer{
+          width:100%;
+      }
+     
+      }
+  </style>
+</head>
+<body>
+  <!-- Header (Same as pricing page) -->
+<header>
+        <h1>Auto<span>Post</span></h1>
+        <nav>
+            <a href="home.html">Home</a>
+            <a href="pricing.html">Pricing</a>
+            <a href="signup.html">Sign Up!</a>
+        </nav>
+  <!-- Theme Toggle -->
+  <div class="theme-toggle">
+    
+    <label class="toggle-switch">
+      <input type="checkbox" id="toggle">
+      <span class="toggle-slider"></span>
+    </label>
+  </div>
+    </header>
+  <!-- Hero -->
+  <section class="contact-hero">
+    <div class="container">
+      <h1>We'd Love to Hear From You</h1>
+      <p>Whether you have questions, feedback, or need support, our team is ready to help.</p>
+    </div>
+  </section>
+
+  <!-- Contact Methods -->
+ <div class="container">
+    <div class="contact-grid">
+      <div class="contact-card">
+        <div class="contact-icon">
+          <i class="fas fa-envelope"></i>
+        </div>
+        <h3>Email Us</h3>
+        <p>For general inquiries</p>
+        <a href="mailto:hello@autopost.com" style="color: var(--accent-blue);">autopost26@gmail.com</a>
+      </div>
+      <div class="contact-card">
+        <div class="contact-icon">
+          <i class="fas fa-headset"></i>
+        </div>
+        <h3>Support</h3>
+        <p>Technical assistance</p>
+        <a href="mailto:support@autopost.com" style="color: var(--accent-blue);">autopost26@gmail.com</a>
+      </div>
+      <div class="contact-card">
+        <div class="contact-icon">
+          <i class="fas fa-map-marker-alt"></i>
+        </div>
+        <h3>Visit Us</h3>
+        <p>Warri, Delta State</p>
+        <p>Asheshe street, Jakpa Road, Effurun</p>
+      </div>
+    </div>
+
+    <!-- Contact Form -->
+    <div class="contact-form">
+      <h2 class="section-title">Send a Message</h2>
+      <form id="contactForm">
+        <div class="form-row two-col">
+          <div class="form-group">
+            <label for="name" class="form-label">Name</label>
+            <input type="text" id="name" class="form-input" required>
+          </div><br>
+          <div class="form-group">
+            <label for="email" class="form-label">Email</label>
+            <input type="email" id="email" class="form-input" required>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="subject" class="form-label">Subject</label>
+            <input type="text" id="subject" class="form-input" required>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="message" class="form-label">Message</label>
+            <textarea id="message" class="form-input" required></textarea>
+          </div>
+        </div>
+        <button type="submit" class="btn btn-primary">Send Message</button>
+      </form>
+  </div>  
+
+    <!-- Map -->
+    <h2 class="section-title">Our Location</h2>
+    <div class="map-container">
+      <!-- Embedded Google Map -->
+      <iframe 
+        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3153.365253029567!2d-122.4194!3d37.7749!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMzfCsDQ2JzI5LjYiTiAxMjLCsDI1JzA5LjkiVw!5e0!3m2!1sen!2sus!4v1620000000000!5m2!1sen!2sus" 
+        width="100%" 
+        height="100%" 
+        style="border:0;" 
+        allowfullscreen="" 
+        loading="lazy">
+      </iframe>
+    </div>
+  </div>
+
+  <!-- Footer (Same as pricing page) -->
+<footer class="container">
+    <div class="footer-grid">
+      <div class="footer-links">
+        <h3>Product</h3>
+        <ul>
+          <li><a href="features.html">Features</a></li>
+          <li><a href="pricing.html">Pricing</a></li>
+          <li><a href="#">Integrations</a></li>
+          <li><a href="#">Updates</a></li>
+        </ul>
+      </div>
+      <div class="footer-links">
+        <h3>Resources</h3>
+        <ul>
+          <li><a href="blog.html">Blog</a></li>
+          <li><a href="#">Guides</a></li>
+          <li><a href="#">Help Center</a></li>
+          <li><a href="#">API Docs</a></li>
+        </ul>
+      </div>
+      <div class="footer-links">
+        <h3>Company</h3>
+        <ul>
+          <li><a href="about.html">About</a></li>
+          <li><a href="careers.html">Careers</a></li>
+          <li><a href="contact.html">Contact</a></li>
+          <li><a href="#">Legal</a></li>
+        </ul>
+      </div>
+      <div class="footer-links">
+        <h3>Connect</h3>
+        <ul>
+          <li><a href="#"><i class="fab fa-twitter"></i> X</a></li>
+          <li><a href="#"><i class="fab fa-linkedin"></i> LinkedIn</a></li>
+          <li><a href="#"><i class="fab fa-instagram"></i> Instagram</a></li>
+          <li><a href="#"><i class="fab fa-facebook"></i> Facebook</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="copyright">
+      <p>&copy; 2025 AutoPost. All rights reserved.</p>
+    </div>
+  </footer>
+  
+  <script>
+    // (Same JS as pricing page for dark mode)
+    
+    // Form submission
+    document.getElementById('contactForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      alert('Thank you for your message! We\'ll respond within 24 hours.');
+      this.reset();
+    });
+  </script>
+  <script src="script.js"></script>
+</body>
+</html>

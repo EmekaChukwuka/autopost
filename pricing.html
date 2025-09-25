@@ -1,0 +1,810 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pricing | AutoPost</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<link rel="stylesheet" href="style.css">
+  <style>
+    /* ===== Base Styles ===== */
+    :root {
+      /* Light Mode */
+      --bg-primary: #ffffff;
+      --bg-secondary: #f5f5f5;
+      --text-primary: #000000;
+      --text-secondary: #333333;
+      --border-color: #e0e0e0;
+      --accent-blue: #2962FF;
+      --accent-green: #00C853;
+      --accent-purple: #7C3AED;
+    }
+
+    [data-theme="dark"] {
+      /* Dark Mode */
+      --bg-primary: #121212;
+      --bg-secondary: #1e1e1e;
+      --text-primary: #ffffff;
+      --text-secondary: #e0e0e0;
+      --border-color: #333333;
+      --accent-blue: #448AFF;
+      --accent-purple: #9C27B0;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: var(--bg-primary);
+      color: var(--text-primary);
+      transition: background 0.3s ease;
+    }
+
+        header{
+            background:var(--bg-primary);
+            padding:5%;
+            color:var(--text-primary);
+            margin-bottom:0;
+        }
+       header h1 span{
+           color:var(--accent-blue)
+       }
+        .container{
+  width:90%;
+  margin:auto;
+  overflow:hidden;
+}
+        header nav a{
+           text-decoration:none; 
+           color:var(--text-secondary);
+           padding:0 5px;
+        }
+        header nav{
+  float:right;
+  margin-top:0;
+  margin-right:2%;
+}
+        header a:hover{
+  color:var(--accent-blue);
+  font-weight:bold;
+}
+.btn-outline {
+      border: 1px solid var(--text-primary);
+      color: var(--text-primary);
+    }
+
+    .btn-primary {
+      background-color: var(--accent-blue);
+      color: white;
+      border: none;
+    }
+
+
+    /* ===== Pricing Hero ===== */
+    .pricing-hero {
+      text-align: center;
+      padding: 60px 0 40px;
+    }
+
+    .pricing-hero h1 {
+      font-size: 42px;
+      margin-bottom: 20px;
+    }
+
+    .pricing-hero p {
+      font-size: 18px;
+      color: var(--text-secondary);
+      max-width: 700px;
+      margin: 0 auto 40px;
+    }
+
+    /* ===== Pricing Toggle ===== */
+    .billing-toggle {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 40px;
+    }
+
+    .toggle-label {
+      margin: 0 15px;
+      font-weight: 500;
+    }
+
+    .toggle-switch {
+      position: relative;
+      display: inline-block;
+      width: 60px;
+      height: 30px;
+    }
+
+    .toggle-switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+
+    .toggle-slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: var(--border-color);
+      transition: .4s;
+      border-radius: 34px;
+    }
+
+    .toggle-slider:before {
+      position: absolute;
+      content: "";
+      height: 22px;
+      width: 22px;
+      left: 4px;
+      bottom: 4px;
+      background-color: var(--bg-primary);
+      transition: .4s;
+      border-radius: 50%;
+    }
+
+    input:checked + .toggle-slider {
+      background-color: var(--accent-blue);
+    }
+
+    input:checked + .toggle-slider:before {
+      transform: translateX(30px);
+    }
+
+    .save-badge {
+      background-color: var(--accent-green);
+      color: white;
+      padding: 3px 8px;
+      border-radius: 12px;
+      font-size: 12px;
+      font-weight: 600;
+      margin-left: 10px;
+    }
+
+    /* ===== Pricing Cards ===== */
+    .pricing-cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 30px;
+      margin-bottom: 60px;
+    }
+
+    .pricing-card {
+      background-color: var(--bg-primary);
+      border: 1px solid var(--border-color);
+      border-radius: 10px;
+      padding: 30px;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      padding-left:5%;
+      padding-right:5%;
+    }
+
+    .pricing-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    }
+
+    .pricing-card.popular {
+      border: 2px solid var(--accent-blue);
+      position: relative;
+    }
+
+    .popular-badge {
+      position: absolute;
+      top: -12px;
+      right: 20px;
+      background-color: var(--accent-blue);
+      color: white;
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    .pricing-tier {
+      font-size: 20px;
+      font-weight: 600;
+      margin-bottom: 10px;
+      color: var(--accent-blue);
+    }
+
+    .pricing-card.popular .pricing-tier {
+      color: var(--accent-purple);
+    }
+
+    .pricing-price {
+      font-size: 48px;
+      font-weight: 700;
+      margin-bottom: 5px;
+    }
+
+    .pricing-period {
+      color: var(--text-secondary);
+      margin-bottom: 20px;
+    }
+
+    .pricing-features {
+      margin: 30px 0;
+    }
+
+    .pricing-features li {
+      margin-bottom: 12px;
+      padding-left: 25px;
+      position: relative;
+      list-style: none;
+    }
+
+    .pricing-features li:before {
+      content: "\f00c";
+      font-family: "Font Awesome 6 Free";
+      font-weight: 900;
+      position: absolute;
+      left: 0;
+      color: var(--accent-green);
+    }
+
+    .pricing-features li.disabled {
+      color: var(--text-secondary);
+      opacity: 0.6;
+    }
+
+    .pricing-features li.disabled:before {
+      content: "\f00d";
+      color: var(--error-red);
+    }
+
+    .pricing-button {
+      display: block;
+      width: 90%;
+      padding: 12px;
+      border-radius: 6px;
+      font-weight: 600;
+      text-align: center;
+      text-decoration: none;
+      transition: all 0.3s ease;
+    }
+
+    .btn-card-primary {
+      background-color: var(--accent-blue);
+      color: white;
+      border: none;
+      
+    }
+
+    .btn-card-outline {
+      border: 1px solid var(--accent-blue);
+      color: var(--accent-blue);
+      background: none;
+    }
+
+    /* ===== FAQ Section ===== */
+    .faq-section {
+      padding: 60px 0;
+      border-top: 1px solid var(--border-color);
+    }
+
+    .section-title {
+      text-align: center;
+      margin-bottom: 40px;
+    }
+
+    .faq-grid {
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    .faq-item {
+      margin-bottom: 15px;
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      overflow: hidden;
+    }
+
+    .faq-question {
+      padding: 15px 20px;
+      background-color: var(--bg-secondary);
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .faq-answer {
+      padding: 0 20px;
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.3s ease, padding 0.3s ease;
+    }
+
+    .faq-item.active .faq-answer {
+      padding: 20px;
+      max-height: 300px;
+    }
+
+    /* ===== CTA Section ===== */
+    .cta-section {
+      padding: 60px 0;
+      text-align: center;
+      background-color: var(--bg-secondary);
+      border-radius: 10px;
+      margin-bottom: 60px;
+    }
+
+    .cta-section h2 {
+      margin-bottom: 20px;
+    }
+
+    .cta-buttons {
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      margin-top: 30px;
+    }
+
+  footer {
+      background-color: var(--bg-secondary);
+      padding: 40px 5%;
+      border-top: 1px solid var(--border-color);
+    }
+
+        footer a{
+            text-decoration:none;
+            color:#cccccc;
+        }
+        footer a:hover{
+  color:white;
+  font-weight:bold;
+}
+.footer-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 40px;
+    }
+
+    .footer-links h3 {
+      margin-bottom: 20px;
+    }
+
+    .footer-links ul {
+      list-style: none;
+      padding: 0;
+    }
+
+    .footer-links li {
+      margin-bottom: 10px;
+    }
+
+    .footer-links a {
+      text-decoration: none;
+      color: var(--text-secondary);
+    }
+
+    .footer-links a:hover {
+      color: var(--accent-blue);
+    }
+
+    .copyright {
+      text-align: center;
+      margin-top: 40px;
+      color: var(--text-secondary);
+    }
+
+    /* ===== Theme Toggle ===== */
+    
+
+    .Toggle-label {
+      margin-left: 10px;
+      cursor: pointer;
+    }
+    
+  .theme-toggle {
+      top: 20px;
+      right: 20px;
+      float:right;
+    }
+
+    .Toggle-label {
+      margin: 0 15px;
+      font-weight: 500;
+    }
+
+    .Toggle-switch {
+      position: relative;
+      display: inline-block;
+      width: 60px;
+      height: 30px;
+    }
+
+    .Toggle-switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+
+    .Toggle-slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: var(--border-color);
+      transition: .4s;
+      border-radius: 34px;
+    }
+
+    .Toggle-slider:before {
+      position: absolute;
+      content: "";
+      height: 22px;
+      width: 22px;
+      left: 4px;
+      bottom: 4px;
+      background-color: var(--bg-primary);
+      transition: .4s;
+      border-radius: 50%;
+    }
+
+    input:checked + .toggle-slider {
+      background-color: var(--accent-blue);
+    }
+
+    input:checked + .toggle-slider:before {
+      transform: translateX(30px);
+    }
+
+     .btn-outline {
+      border: 1px solid var(--text-primary);
+      color: var(--text-primary);
+    }
+
+    .btn-primary {
+      background-color: var(--accent-blue);
+      color: white;
+      border: none;
+    }
+
+    .cta-buttons {
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      margin-bottom: 40px;
+    }
+
+    .cta-buttons .btn {
+      padding: 12px 20px;
+      font-size: 16px;
+      border-radius: 6px;
+      margin:0 2px;
+    }
+    
+    .cta-buttons a{
+        text-decoration:none;
+    }
+
+
+    /* ===== Responsive ===== */
+    @media (max-width: 768px) {
+      .pricing-cards {
+        grid-template-columns: 1fr;
+      }
+      
+      .pricing-hero h1 {
+        font-size: 32px;
+      }
+      
+      
+      .cta-buttons {
+        flex-direction: column;
+        align-items: center;
+      }
+      
+      header{
+   text-align:center;
+    padding:10% 2%;
+  }
+  header nav{
+      float:none;
+    text-align:center;
+  }
+    }
+  </style>
+</head>
+<body>
+  <!-- Header -->
+  <header>
+        <h1>Auto<span>Post</span></h1>
+        <nav>
+            <a href="home.html">Home</a>
+            <a href="features.html">Features</a>
+            <a href="signup.html">Sign Up!</a>
+        </nav>
+  <!-- Theme Toggle -->
+  <div class="theme-toggle">
+    
+    <label class="Toggle-switch">
+      <input type="checkbox" class="ttoggle">
+      <span class="Toggle-slider"></span>
+    </label>
+  </div>
+    </header>
+    
+  <!-- Pricing Hero -->
+  <section class="pricing-hero container">
+    <h1>Simple, Transparent Pricing</h1>
+    <p>Choose the perfect plan for your social media automation needs. Start with a 14-day free trial – no credit card required.</p>
+  </section>
+
+  <!-- Billing Toggle -->
+  <div class="billing-toggle container">
+    <span class="toggle-label">Monthly</span>
+    <label class="toggle-switch">
+      <input type="checkbox" id="billingToggle">
+      <span class="toggle-slider"></span>
+    </label>
+    <span class="toggle-label">Yearly <span class="save-badge">Save 20%</span></span>
+  </div>
+
+  <!-- Pricing Cards -->
+  <div class="pricing-cards container">
+    <!-- Starter Plan -->
+    <div class="pricing-card">
+      <div class="pricing-tier">Starter</div>
+      <div class="pricing-price monthly">₦2500</div>
+      <div class="pricing-price yearly" style="display: none;">₦2000<span class="pricing-period">/mo</span></div>
+      <div class="pricing-period monthly">per month</div>
+      <div class="pricing-period yearly" style="display: none;">billed annually (₦24000)</div>
+      <p>Perfect for individuals getting started with automation</p>
+      <ul class="pricing-features">
+        <li>3 social accounts</li>
+        <li>100 scheduled posts</li>
+        <li>Basic analytics</li>
+        <li>AI content generator</li>
+        <li class="disabled">Team members</li>
+      </ul>
+      <!-- 04/09/2025, 21:43. Set it in a way, using JS, that when the user clicks on start free trial button, a background script checks the session to see if the user has an account and it's logged in, then a system authenticates the specified user and adds the user to the list of users on free trial, then starts the countdown for fourteen days, once the fourteen days are over, the user's trial is terminated but the user's previous actions like generated posts, pinned captions, hashtags, and all those stuff, while waiting for the user to set up a payment plan. Quite straightforward, but requires a lot of logic. -->
+      <button id="startTrial" class="pricing-button btn-card-outline" data-trial="Starter">Start Free Trial</button>
+    </div>
+
+    <!-- Professional Plan (Popular) -->
+    <div class="pricing-card popular">
+      <div class="popular-badge">Most Popular</div>
+      <div class="pricing-tier">Professional</div>
+      <div class="pricing-price monthly">₦5500</div>
+      <div class="pricing-price yearly" style="display: none;">₦5000<span class="pricing-period">/mo</span></div>
+      <div class="pricing-period monthly">per month</div>
+      <div class="pricing-period yearly" style="display: none;">billed annually (₦60000)</div>
+      <p>For growing brands and small teams</p>
+      <ul class="pricing-features">
+        <li>10 social accounts</li>
+        <li>Unlimited posts</li>
+        <li>Advanced analytics</li>
+        <li>AI content generator</li>
+        <li>3 team members</li>
+      </ul>
+      <button id="startTrial" class="pricing-button btn-card-primary" data-trial="Professional">Start Free Trial</button>
+    </div>
+
+    <!-- Business Plan -->
+    <div class="pricing-card">
+      <div class="pricing-tier">Business</div>
+      <div class="pricing-price monthly">₦15500</div>
+      <div class="pricing-price yearly" style="display: none;">₦15000<span class="pricing-period">/mo</span></div>
+      <div class="pricing-period monthly">per month</div>
+      <div class="pricing-period yearly" style="display: none;">billed annually (₦180000)</div>
+      <p>For agencies and large organizations</p>
+      <ul class="pricing-features">
+        <li>Unlimited social accounts</li>
+        <li>Unlimited posts</li>
+        <li>Premium analytics</li>
+        <li>AI content generator</li>
+        <li>10+ team members</li>
+      </ul>
+      <button id="startTrial" class="pricing-button btn-card-outline" data-trial="Business" >Start Free Trial</button>
+    </div>
+  </div>
+
+  <!-- FAQ Section -->
+  <section class="faq-section container">
+    <h2 class="section-title">Frequently Asked Questions</h2>
+    <div class="faq-grid">
+      <div class="faq-item">
+        <div class="faq-question">
+          What's included in the free trial?
+          <i class="fas fa-chevron-down"></i>
+        </div>
+        <div class="faq-answer">
+          <p>Our 14-day free trial gives you full access to all features of the Professional plan. No credit card required. You can downgrade to a free limited plan or upgrade at any time.</p>
+        </div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-question">
+          Can I change plans later?
+          <i class="fas fa-chevron-down"></i>
+        </div>
+        <div class="faq-answer">
+          <p>Yes! You can upgrade or downgrade at any time. When you upgrade, you'll get immediate access to the new features. Downgrades take effect at your next billing cycle.</p>
+        </div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-question">
+          Do you offer discounts for nonprofits?
+          <i class="fas fa-chevron-down"></i>
+        </div>
+        <div class="faq-answer">
+          <p>We offer a 25% discount for registered nonprofits. Please contact our sales team with proof of your nonprofit status to get this discount applied to your account.</p>
+        </div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-question">
+          How does billing work?
+          <i class="fas fa-chevron-down"></i>
+        </div>
+        <div class="faq-answer">
+          <p>We bill monthly or annually in advance. Annual plans offer a 20% discount. You can cancel anytime before your next billing cycle.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA Section -->
+  <section class="cta-section container">
+    <h2>Still have questions?</h2>
+    <p>Our team is happy to help you choose the right plan for your needs.</p>
+    <div class="cta-buttons">
+      <a href="#" class="btn btn-outline">Contact Sales</a><br>
+      <a href="#" class="btn btn-primary">Live Chat</a>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="container">
+    <div class="footer-grid">
+      <div class="footer-links">
+        <h3>Product</h3>
+        <ul>
+          <li><a href="features.html">Features</a></li>
+          <li><a href="#">Pricing</a></li>
+          <li><a href="#">Integrations</a></li>
+          <li><a href="#">Updates</a></li>
+        </ul>
+      </div>
+      <div class="footer-links">
+        <h3>Resources</h3>
+        <ul>
+          <li><a href="blog.html">Blog</a></li>
+          <li><a href="#">Guides</a></li>
+          <li><a href="#">Help Center</a></li>
+          <li><a href="#">API Docs</a></li>
+        </ul>
+      </div>
+      <div class="footer-links">
+        <h3>Company</h3>
+        <ul>
+          <li><a href="about.html">About</a></li>
+          <li><a href="careers.html">Careers</a></li>
+          <li><a href="contact.html">Contact</a></li>
+          <li><a href="#">Legal</a></li>
+        </ul>
+      </div>
+      <div class="footer-links">
+        <h3>Connect</h3>
+        <ul>
+          <li><a href="#"><i class="fab fa-twitter"></i> X</a></li>
+          <li><a href="#"><i class="fab fa-linkedin"></i> LinkedIn</a></li>
+          <li><a href="#"><i class="fab fa-instagram"></i> Instagram</a></li>
+          <li><a href="#"><i class="fab fa-facebook"></i> Facebook</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="copyright">
+      <p>&copy; 2025 AutoPost. All rights reserved.</p>
+    </div>
+  </footer>
+
+  <script>
+    // Dark Mode Toggle 
+    const darkModeToggle = document.querySelector('.ttoggle');
+    const root = document.documentElement;
+
+    if (localStorage.getItem('theme') === 'dark') {
+      root.setAttribute('data-theme', 'dark');
+      darkModeToggle.checked = true;
+    }
+
+    darkModeToggle.addEventListener('change', (e) => {
+      if (e.target.checked) {
+        root.setAttribute('data-theme', 'dark');
+        localStorage.setItem('theme', 'dark');
+      } else {
+        root.removeAttribute('data-theme');
+        localStorage.setItem('theme', 'light');
+      }
+    }); 
+
+    // Billing Toggle
+    const billingToggle = document.getElementById('billingToggle');
+    const monthlyPrices = document.querySelectorAll('.monthly');
+    const yearlyPrices = document.querySelectorAll('.yearly');
+
+    billingToggle.addEventListener('change', function() {
+      if (this.checked) {
+        monthlyPrices.forEach(el => el.style.display = 'none');
+        yearlyPrices.forEach(el => el.style.display = 'block');
+      } else {
+        monthlyPrices.forEach(el => el.style.display = 'block');
+        yearlyPrices.forEach(el => el.style.display = 'none');
+      }
+    });
+
+    // FAQ Accordion
+    const faqItems = document.querySelectorAll('.faq-item');
+    faqItems.forEach(item => {
+      const question = item.querySelector('.faq-question');
+      question.addEventListener('click', () => {
+        item.classList.toggle('active');
+        
+        // Close other open items
+        faqItems.forEach(otherItem => {
+          if (otherItem !== item && otherItem.classList.contains('active')) {
+            otherItem.classList.remove('active');
+          }
+        });
+      });
+    });
+
+    function startTrial(){
+      const trialPlan = document.getElementById('data-trial');
+      localStorage.setItem('trialPlan', trialPlan);
+    }
+
+    
+            const startTrialButtons = document.querySelectorAll('#startTrial');
+                startTrialButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    const plan = this.getAttribute('data-trial');
+                    console.log(plan);
+                    // Check if user is logged in
+                    const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+                    
+                    if (!currentUser) {                      
+      localStorage.setItem('trialPlan', plan);        
+                      window.location.href = "signup.html";
+                    }
+                    
+                      // Check if user has active trial
+                    const trialData = JSON.parse(localStorage.getItem('trialData'));
+                    
+                    if (!trialData) {
+                      
+      localStorage.setItem('trialPlan', plan);
+                      window.href="signup.html";
+                    }
+                    
+                    if(trialData && currentUser){
+                 // Start free trial
+                const startDate = new Date();
+                const endDate = new Date(startDate.getTime() + 14 * 24 * 60 * 60 * 1000); // 14 days from now
+                
+                      localStorage.setItem('trialPlan', plan); 
+                const trialData = {
+                    plan: plan,
+                    startDate: startDate.toISOString(),
+                    endDate: endDate.toISOString()
+                };
+                
+                localStorage.setItem('trialData', JSON.stringify(trialData));       
+                      window.location.href='dashboard.html';
+                    }
+                    
+                  });
+                });
+  </script>
+</body>
+</html>

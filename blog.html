@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Blog | AutoPost</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="style.css">
+  <style>
+    /* (Same base styles as previous pages) */
+
+    /* Blog-Specific Styles */
+    .blog-hero {
+      text-align: center;
+      padding: 80px 0;
+      background: linear-gradient(135deg, var(--accent-blue) 0%, var(--accent-purple) 100%);
+    
+    }
+
+    .blog-hero h1 {
+      font-size: 42px;
+      margin-bottom: 20px;
+    }
+
+    .blog-container {
+      display: grid;
+      grid-template-columns: 1fr 300px;
+      gap: 40px;
+      margin: 60px 0;
+    }
+
+    .blog-main {
+      display: grid;
+      gap: 40px;
+    }
+
+    .blog-sidebar {
+      border-left: 1px solid var(--border-color);
+      padding-left: 30px;
+    }
+
+    .blog-card {
+      display: grid;
+      grid-template-columns: 1fr 2fr;
+      gap: 30px;
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      overflow: hidden;
+      transition: transform 0.3s ease;
+    }
+
+    .blog-card:hover {
+      transform: translateY(-5px);
+    }
+
+    .blog-card-image {
+      background-color: var(--bg-secondary);
+      min-height: 200px;
+      position: relative;
+    }
+
+    .blog-card-image img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .blog-card-content {
+      padding: 30px;
+    }
+
+    .blog-meta {
+      display: flex;
+      gap: 15px;
+      margin-bottom: 10px;
+      font-size: 14px;
+      color: var(--text-secondary);
+    }
+
+    .blog-tag {
+      display: inline-block;
+      padding: 3px 8px;
+      background-color: var(--accent-blue);
+      color: white;
+      border-radius: 4px;
+      font-size: 12px;
+      margin-right: 8px;
+      margin-bottom: 8px;
+    }
+
+    .sidebar-widget {
+      margin-bottom: 40px;
+    }
+
+    .search-box {
+      position: relative;
+    }
+
+    .search-box input {
+      width: 100%;
+      padding: 12px 15px 12px 40px;
+      border: 1px solid var(--border-color);
+      border-radius: 6px;
+      background-color: var(--bg-primary);
+      color: var(--text-primary);
+    }
+
+    .search-box i {
+      position: absolute;
+      left: 15px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--text-secondary);
+    }
+
+    .categories-list, .popular-posts {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    .categories-list li, .popular-posts li {
+      margin-bottom: 12px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .categories-list a, .popular-posts a {
+      text-decoration: none;
+      color: var(--text-primary);
+      transition: color 0.3s ease;
+    }
+
+    .categories-list a:hover, .popular-posts a:hover {
+      color: var(--accent-blue);
+    }
+
+    .popular-posts .post-meta {
+      font-size: 12px;
+      color: var(--text-secondary);
+      margin-top: 5px;
+    }
+
+    .newsletter-form {
+      margin-top: 20px;
+    }
+
+    .newsletter-form input {
+      width: 100%;
+      padding: 12px 15px;
+      margin-bottom: 10px;
+      border: 1px solid var(--border-color);
+      border-radius: 6px;
+    }
+
+    .pagination {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      margin-top: 40px;
+    }
+
+    .page-link {
+      display: inline-block;
+      padding: 8px 16px;
+      border: 1px solid var(--border-color);
+      border-radius: 4px;
+      text-decoration: none;
+      color: var(--text-primary);
+    }
+
+    .page-link.active {
+      background-color: var(--accent-blue);
+      color: white;
+      border-color: var(--accent-blue);
+    }
+ footer {
+      background-color: var(--bg-secondary);
+      padding: 40px 10%;
+      border-top: 1px solid var(--border-color);
+      margin:0;
+    }
+    @media (max-width: 768px) {
+      .blog-container {
+        grid-template-columns: 1fr;
+      }
+      
+      .blog-sidebar {
+        border-left: none;
+        padding-left: 0;
+        border-top: 1px solid var(--border-color);
+        padding-top: 40px;
+      }
+      
+      .blog-card {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Header (Same as previous pages) -->
+<header>
+
+        <h1>Auto<span>Post</span></h1>
+        <nav>
+            <a href="home.html">Home</a>
+            <a href="pricing.html">Pricing</a>
+            <a href="signup.html">Sign Up!</a>
+        </nav>
+  <!-- Theme Toggle -->
+  <div class="theme-toggle">
+    
+    <label class="toggle-switch">
+      <input type="checkbox" id="toggle">
+      <span class="toggle-slider"></span>
+    </label>
+  </div>
+    </header>
+  <!-- Hero -->
+  <section class="blog-hero">
+    <div class="container">
+      <h1>AutoPost Blog</h1>
+      <p>Tips, strategies, and insights for AI powered social media automation</p>
+    </div>
+  </section>
+
+  <!-- Blog Content -->
+  <div class="container">
+    <div class="blog-container">
+      <!-- Main Content -->
+      <main class="blog-main">
+        <article class="blog-card">
+          <div class="blog-card-image">
+            <img src="https://via.placeholder.com/400x300/2962FF/FFFFFF?text=AI+Content" alt="AI Content">
+          </div>
+          <div class="blog-card-content">
+            <div class="blog-meta">
+              <span><i class="far fa-calendar"></i> June 15, 2023</span>
+              <span><i class="far fa-clock"></i> 5 min read</span>
+            </div>
+            <span class="blog-tag">AI</span>
+            <span class="blog-tag">Content</span>
+            <h3>How to Use AI for Authentic Social Media Content</h3>
+            <p>Discover how to leverage AI tools without losing your brand's authentic voice in this comprehensive guide.</p>
+            <a href="#" style="color: var(--accent-blue); text-decoration: none; font-weight: 500;">Read More →</a>
+          </div>
+        </article>
+
+        <article class="blog-card">
+          <div class="blog-card-image">
+            <img src="https://via.placeholder.com/400x300/2962FF/FFFFFF?text=Scheduling" alt="Scheduling">
+          </div>
+          <div class="blog-card-content">
+            <div class="blog-meta">
+              <span><i class="far fa-calendar"></i> May 28, 2023</span>
+              <span><i class="far fa-clock"></i> 4 min read</span>
+            </div>
+            <span class="blog-tag">Scheduling</span>
+            <span class="blog-tag">Strategy</span>
+            <h3>The Science Behind Optimal Posting Times</h3>
+            <p>New research reveals when your audience is most active across different platforms and industries.</p>
+            <a href="#" style="color: var(--accent-blue); text-decoration: none; font-weight: 500;">Read More →</a>
+          </div>
+        </article>
+
+        <article class="blog-card">
+          <div class="blog-card-image">
+            <img src="https://via.placeholder.com/400x300/2962FF/FFFFFF?text=Analytics" alt="Analytics">
+          </div>
+          <div class="blog-card-content">
+            <div class="blog-meta">
+              <span><i class="far fa-calendar"></i> May 10, 2023</span>
+              <span><i class="far fa-clock"></i> 7 min read</span>
+            </div>
+            <span class="blog-tag">Analytics</span>
+            <span class="blog-tag">ROI</span>
+            <h3>Measuring the Real ROI of Social Media Automation</h3>
+            <p>Learn which metrics actually matter when evaluating your automation investment.</p>
+            <a href="#" style="color: var(--accent-blue); text-decoration: none; font-weight: 500;">Read More →</a>
+          </div>
+        </article>
+
+        <div class="pagination">
+          <a href="#" class="page-link active">1</a>
+          <a href="#" class="page-link">2</a>
+          <a href="#" class="page-link">3</a>
+          <a href="#" class="page-link">Next →</a>
+        </div>
+      </main>
+
+      <!-- Sidebar -->
+      <aside class="blog-sidebar">
+        <div class="sidebar-widget">
+          <h3>Search</h3>
+          <div class="search-box">
+            <input type="text" placeholder="Search articles...">
+            <i class="fas fa-search"></i>
+          </div>
+        </div>
+
+        <div class="sidebar-widget">
+          <h3>Categories</h3>
+          <ul class="categories-list">
+            <li><a href="#">AI Content (12)</a></li>
+            <li><a href="#">Scheduling (8)</a></li>
+            <li><a href="#">Analytics (5)</a></li>
+            <li><a href="#">Case Studies (7)</a></li>
+            <li><a href="#">Product Updates (4)</a></li>
+          </ul>
+        </div>
+
+        <div class="sidebar-widget">
+          <h3>Popular Posts</h3>
+          <ul class="popular-posts">
+            <li>
+              <a href="#">10 Time-Saving Automation Hacks</a>
+              <div class="post-meta">April 22, 2023 · 3 min read</div>
+            </li>
+            <li>
+              <a href="#">Instagram Algorithm Changes 2023</a>
+              <div class="post-meta">March 15, 2023 · 5 min read</div>
+            </li>
+            <li>
+              <a href="#">Building a Content Calendar That Works</a>
+              <div class="post-meta">February 28, 2023 · 4 min read</div>
+            </li>
+          </ul>
+        </div>
+
+        <div class="sidebar-widget">
+          <h3>Newsletter</h3>
+          <p>Get the latest articles and tips delivered to your inbox.</p>
+          <form class="newsletter-form">
+            <input type="email" placeholder="Your email address">
+            <button type="submit" class="btn btn-primary" style="width: 100%;">Subscribe</button>
+          </form>
+        </div>
+      </aside>
+    </div>
+  </div>
+
+  <!-- Footer (Same as previous pages) -->
+<footer class="container">
+    <div class="footer-grid">
+      <div class="footer-links">
+        <h3>Product</h3>
+        <ul>
+          <li><a href="features.html">Features</a></li>
+          <li><a href="pricing.html">Pricing</a></li>
+          <li><a href="#">Integrations</a></li>
+          <li><a href="#">Updates</a></li>
+        </ul>
+      </div>
+      <div class="footer-links">
+        <h3>Resources</h3>
+        <ul>
+          <li><a href="#">Blog</a></li>
+          <li><a href="#">Guides</a></li>
+          <li><a href="#">Help Center</a></li>
+          <li><a href="#">API Docs</a></li>
+        </ul>
+      </div>
+      <div class="footer-links">
+        <h3>Company</h3>
+        <ul>
+          <li><a href="about.html">About</a></li>
+          <li><a href="careers.html">Careers</a></li>
+          <li><a href="contact.html">Contact</a></li>
+          <li><a href="#">Legal</a></li>
+        </ul>
+      </div>
+      <div class="footer-links">
+        <h3>Connect</h3>
+        <ul>
+          <li><a href="#"><i class="fab fa-twitter"></i> X</a></li>
+          <li><a href="#"><i class="fab fa-linkedin"></i> LinkedIn</a></li>
+          <li><a href="#"><i class="fab fa-instagram"></i> Instagram</a></li>
+          <li><a href="#"><i class="fab fa-facebook"></i> Facebook</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="copyright">
+      <p>&copy; 2025 AutoPost. All rights reserved.</p>
+    </div>
+  </footer>
+  <script>
+    // (Same JS as pricing page for dark mode)
+  </script>
+  <script src="script.js"></script>
+
+</body>
+</html>

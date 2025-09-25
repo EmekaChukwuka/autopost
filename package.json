@@ -1,0 +1,42 @@
+{
+  "name": "autopost",
+  "version": "1.0.0",
+  "description": "A tool which enables content creators to upload AI generated content to their social media handles",
+  "main": "app.js",
+  "type": "module",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "setup-db": "mysql -u root -p < sql/setup.sql"
+  },
+  "keywords": [
+    "social",
+    "media",
+    "management",
+    "tool",
+    "AI",
+    "generator",
+    "social",
+    "media",
+    "manager"
+  ],
+  "author": "Emeka Chukwuka",
+  "license": "ISC",
+  "dependencies": {
+    "@google/genai": "^0.12.0",
+    "@mistralai/mistralai": "^1.10.0",
+    "@ngrok/ngrok": "^1.5.2",
+    "axios": "^1.8.4",
+    "bcrypt": "^6.0.0",
+    "cors": "^2.8.5",
+    "crypto": "^1.0.1",
+    "dotenv": "^16.5.0",
+    "express": "^5.1.0",
+    "express-session": "^1.18.1",
+    "google-auth-library": "^10.2.0",
+    "jsonwebtoken": "^9.0.2",
+    "mysql2": "^3.14.3",
+    "node-schedule": "^2.1.1",
+    "openai": "^4.96.0",
+    "twitter-api-v2": "^1.22.0"
+  }
+}

@@ -1,0 +1,454 @@
+Excellent choice! **Paystack** is perfect for AutoPost - it's reliable, has excellent Nigerian bank coverage, and offers great developer experience. Here's the complete implementation:
+
+## 🚀 Quick Start Guide
+
+### 1. **Get Your Paystack API Keys**
+- Go to [Paystack Dashboard](https://dashboard.paystack.com/)
+- Sign up and verify your account
+- Go to Settings → API Keys & Webhooks
+- Copy your **Test Secret Key** and **Test Public Key**
+
+### 2. **Environment Setup (`.env`)**
+```env
+# Paystack Configuration
+PAYSTACK_PUBLIC_KEY=pk_test_your_public_key_here
+PAYSTACK_SECRET_KEY=sk_test_your_secret_key_here
+PAYSTACK_WEBHOOK_SECRET=whsec_your_webhook_secret_here
+
+# Server Configuration
+CLIENT_URL=http://localhost:3000
+PORT=5000
+NODE_ENV=development
+```
+
+### 3. **Install Required Package**
+```bash
+npm install axios
+```
+
+## 🔧 Complete Implementation
+
+### 1. **Payment Routes (`routes/paymentRoutes.js`)**
+```javascript
+import express from 'express';
+import { PaymentController } from '../controllers/paymentController.js';
+import { requireAuth } from '../middlewares/authMiddleware.js';
+
+const router = express.Router();
+
+// Public routes
+router.get('/plans', PaymentController.getSubscriptionPlans);
+
+// Protected routes
+router.post('/initialize', requireAuth, PaymentController.initializePayment);
+router.post('/verify', requireAuth, PaymentController.verifyPayment);
+router.post('/webhook', PaymentController.handleWebhook);
+router.get('/transactions', requireAuth, PaymentController.getUserTransactions);
+
+export default router;
+```
+
+### 2. **Payment Controller (`controllers/paymentController.js`)**
+```javascript
+import axios from 'axios';
+import { pool } from '../config/db.js';
+
+const PAYSTACK_BASE_URL = 'https://api.paystack.co';
+
+export class PaymentController {
+  // Initialize payment
+  static async initializePayment(req, res) {
+    try {
+      const { plan, amount } = req.body;
+      const userId = req.session.user.id;
+      const userEmail = req.session.user.email;
+
+      // Generate unique reference
+      const reference = `AUTOPOST_${Date.now()}_${userId}`;
+
+      const paymentData = {
+        email: userEmail,
+        amount: amount * 100, // Convert to kobo
+        reference: reference,
+        currency: 'NGN',
+        channels: ['card', 'bank', 'ussd'],
+        metadata: {
+          user_id: userId,
+          plan: plan,
+          plan_name: `${plan} Plan`
+        },
+        callback_url: `${process.env.CLIENT_URL}/payment/verify`
+      };
+
+      // Initialize payment with Paystack
+      const response = await axios.post(
+        `${PAYSTACK_BASE_URL}/transaction/initialize`,
+        paymentData,
+        {
+          headers: {
+            Authorization: `Bearer ${process.env.PAYSTACK_SECRET_KEY}`,
+            'Content-Type': 'application/json'
+          }
+        }
+      );
+
+      // Store transaction in database
+      await pool.execute(
+        `INSERT INTO transactions (user_id, amount, plan, reference, status) 
+         VALUES (?, ?, ?, ?, 'initiated')`,
+        [userId, amount, plan, reference]
+      );
+
+      res.json({
+        success: true,
+        message: 'Payment initialized successfully',
+        data: {
+          authorization_url: response.data.data.authorization_url,
+          reference: reference,
+          access_code: response.data.data.access_code
+        }
+      });
+
+    } catch (error) {
+      console.error('Payment initialization error:', error.response?.data || error.message);
+      res.status(500).json({
+        success: false,
+        message: 'Failed to initialize payment'
+      });
+    }
+  }
+
+  // Verify payment
+  static async verifyPayment(req, res) {
+    try {
+      const { reference } = req.body;
+      const userId = req.session.user.id;
+
+      // Verify payment with Paystack
+      const response = await axios.get(
+        `${PAYSTACK_BASE_URL}/transaction/verify/${encodeURIComponent(reference)}`,
+        {
+          headers: {
+            Authorization: `Bearer ${process.env.PAYSTACK_SECRET_KEY}`
+          }
+        }
+      );
+
+      const transaction = response.data.data;
+
+      if (transaction.status === 'success') {
+        // Update transaction status
+        await pool.execute(
+          `UPDATE transactions SET 
+           status = 'completed', 
+           paystack_id = ?,
+           updated_at = NOW()
+           WHERE reference = ? AND user_id = ?`,
+          [transaction.id, reference, userId]
+        );
+
+        // Update user subscription
+        await pool.execute(
+          `UPDATE users SET 
+           subscription_plan = ?,
+           subscription_status = 'active',
+           subscription_end = DATE_ADD(NOW(), INTERVAL 1 MONTH)
+           WHERE id = ?`,
+          [transaction.metadata.plan, userId]
+        );
+
+        res.json({
+          success: true,
+          message: 'Payment verified successfully',
+          data: transaction
+        });
+      } else {
+        await pool.execute(
+          `UPDATE transactions SET status = 'failed' WHERE reference = ?`,
+          [reference]
+        );
+
+        res.status(400).json({
+          success: false,
+          message: 'Payment verification failed'
+        });
+      }
+
+    } catch (error) {
+      console.error('Payment verification error:', error.response?.data || error.message);
+      res.status(500).json({
+        success: false,
+        message: 'Payment verification failed'
+      });
+    }
+  }
+
+  // Handle Paystack webhook
+  static async handleWebhook(req, res) {
+    try {
+      const secret = process.env.PAYSTACK_WEBHOOK_SECRET;
+      const signature = req.headers['x-paystack-signature'];
+
+      if (!signature) {
+        return res.status(401).json({ error: 'No signature provided' });
+      }
+
+      // Verify webhook signature
+      const crypto = await import('crypto');
+      const hash = crypto.createHmac('sha512', secret)
+        .update(JSON.stringify(req.body))
+        .digest('hex');
+
+      if (hash !== signature) {
+        return res.status(401).json({ error: 'Invalid signature' });
+      }
+
+      const event = req.body;
+
+      if (event.event === 'charge.success') {
+        const transaction = event.data;
+
+        await pool.execute(
+          `UPDATE transactions SET 
+           status = 'completed',
+           paystack_id = ?,
+           updated_at = NOW()
+           WHERE reference = ?`,
+          [transaction.id, transaction.reference]
+        );
+
+        // Update user subscription
+        if (transaction.metadata && transaction.metadata.user_id) {
+          await pool.execute(
+            `UPDATE users SET 
+             subscription_plan = ?,
+             subscription_status = 'active',
+             subscription_end = DATE_ADD(NOW(), INTERVAL 1 MONTH)
+             WHERE id = ?`,
+            [transaction.metadata.plan, transaction.metadata.user_id]
+          );
+        }
+      }
+
+      res.status(200).json({ received: true });
+
+    } catch (error) {
+      console.error('Webhook error:', error);
+      res.status(500).json({ error: 'Webhook processing failed' });
+    }
+  }
+
+  // Get subscription plans
+  static async getSubscriptionPlans(req, res) {
+    try {
+      const [plans] = await pool.execute(
+        `SELECT id, name, price, duration, features 
+         FROM subscription_plans 
+         WHERE active = true 
+         ORDER BY price ASC`
+      );
+
+      res.json({
+        success: true,
+        data: plans
+      });
+    } catch (error) {
+      console.error('Get plans error:', error);
+      res.status(500).json({
+        success: false,
+        message: 'Failed to fetch plans'
+      });
+    }
+  }
+
+  // Get user transactions
+  static async getUserTransactions(req, res) {
+    try {
+      const userId = req.session.user.id;
+      
+      const [transactions] = await pool.execute(
+        `SELECT * FROM transactions 
+         WHERE user_id = ? 
+         ORDER BY created_at DESC 
+         LIMIT 20`,
+        [userId]
+      );
+
+      res.json({
+        success: true,
+        data: transactions
+      });
+    } catch (error) {
+      console.error('Get transactions error:', error);
+      res.status(500).json({
+        success: false,
+        message: 'Failed to fetch transactions'
+      });
+    }
+  }
+}
+```
+
+### 3. **Database Schema (`sql/payment_setup.sql`)**
+```sql
+-- Transactions table
+CREATE TABLE IF NOT EXISTS transactions (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  user_id INT NOT NULL,
+  amount DECIMAL(10, 2) NOT NULL,
+  currency VARCHAR(3) DEFAULT 'NGN',
+  plan VARCHAR(50) NOT NULL,
+  reference VARCHAR(255) NOT NULL UNIQUE,
+  paystack_id VARCHAR(255),
+  status ENUM('initiated', 'pending', 'completed', 'failed') DEFAULT 'initiated',
+  payment_method VARCHAR(50),
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+);
+
+-- Subscription plans
+CREATE TABLE IF NOT EXISTS subscription_plans (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  name VARCHAR(100) NOT NULL,
+  description TEXT,
+  price DECIMAL(10, 2) NOT NULL,
+  duration INT DEFAULT 30,
+  features JSON,
+  active BOOLEAN DEFAULT TRUE,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Insert default plans
+INSERT INTO subscription_plans (name, description, price, duration, features) VALUES
+('Starter', 'Perfect for individuals', 2500, 30, '["3 social accounts", "100 scheduled posts", "Basic analytics", "Email support"]'),
+('Professional', 'For content creators', 5500, 30, '["10 social accounts", "Unlimited posts", "AI content generator", "Advanced analytics", "Priority support"]'),
+('Business', 'For teams & agencies', 15500, 30, '["Unlimited accounts", "Team collaboration", "White-label reports", "API access", "24/7 support"]');
+
+-- Add subscription columns to users table
+ALTER TABLE users 
+ADD COLUMN subscription_plan VARCHAR(50) DEFAULT NULL,
+ADD COLUMN subscription_status ENUM('active', 'inactive', 'canceled') DEFAULT 'inactive',
+ADD COLUMN subscription_end TIMESTAMP NULL DEFAULT NULL;
+
+-- Create indexes
+CREATE INDEX idx_transactions_user ON transactions(user_id);
+CREATE INDEX idx_transactions_reference ON transactions(reference);
+CREATE INDEX idx_users_subscription ON users(subscription_status);
+```
+
+### 4. **Frontend Payment Component (`payment.js`)**
+```javascript
+export class PaymentManager {
+  static async initializePayment(plan, amount) {
+    try {
+      const response = await fetch('/api/payments/initialize', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('token')}`
+        },
+        credentials: 'include',
+        body: JSON.stringify({ plan, amount })
+      });
+
+      const data = await response.json();
+      
+      if (data.success) {
+        return data.data;
+      } else {
+        throw new Error(data.message);
+      }
+    } catch (error) {
+      console.error('Payment initialization failed:', error);
+      throw error;
+    }
+  }
+
+  static async verifyPayment(reference) {
+    try {
+      const response = await fetch('/api/payments/verify', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('token')}`
+        },
+        credentials: 'include',
+        body: JSON.stringify({ reference })
+      });
+
+      return await response.json();
+    } catch (error) {
+      console.error('Payment verification failed:', error);
+      throw error;
+    }
+  }
+
+  static openPaystackPopup(paymentData) {
+    const handler = PaystackPop.setup({
+      key: process.env.PAYSTACK_PUBLIC_KEY,
+      email: paymentData.email,
+      amount: paymentData.amount,
+      ref: paymentData.reference,
+      currency: 'NGN',
+      callback: function(response) {
+        PaymentManager.verifyPayment(response.reference)
+          .then(result => {
+            if (result.success) {
+              window.location.href = '/dashboard?payment=success';
+            } else {
+              alert('Payment verification failed: ' + result.message);
+            }
+          });
+      },
+      onClose: function() {
+        alert('Payment window closed.');
+      }
+    });
+
+    handler.openIframe();
+  }
+}
+```
+
+### 5. **Server Integration (`server.js`)**
+```javascript
+import paymentRoutes from './routes/paymentRoutes.js';
+
+// Add this to your existing server setup
+app.use('/api/payments', paymentRoutes);
+```
+
+## 🎯 Usage Example
+
+```javascript
+// Frontend usage
+const paymentData = await PaymentManager.initializePayment('pro', 2500);
+PaymentManager.openPaystackPopup({
+  email: user.email,
+  amount: 2500 * 100, // in kobo
+  reference: paymentData.reference
+});
+```
+
+## 🔒 Webhook Setup
+
+1. **In Paystack Dashboard**: Settings → Webhooks
+2. **Add Webhook URL**: `https://yourdomain.com/api/payments/webhook`
+3. **Set Secret**: Use a strong random string
+4. **Subscribe to Events**: `charge.success`, `subscription.create`
+
+## 💰 Pricing
+- **Transaction Fee**: 1.5% + ₦100 per successful transaction
+- **No Setup Fees**: Completely free to integrate
+- **No Monthly Fees**: Only pay when you receive payments
+
+## 🚀 Deployment Checklist
+
+1. [ ] Replace test keys with live keys in production
+2. [ ] Set up webhooks in Paystack dashboard
+3. [ ] Run database migration script
+4. [ ] Test complete payment flow
+5. [ ] Set up SSL certificate (HTTPS required for webhooks)
+
+Paystack is an excellent choice for AutoPost - it's reliable, well-documented, and has fantastic support for Nigerian payment methods!
