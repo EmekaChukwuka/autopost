@@ -58,17 +58,10 @@
   color:var(--accent-blue);
   font-weight:bold;
 }
- /* Theme Toggle 
-    .theme-toggle {
-      display: inline-flex;
-      align-items: center;
-      margin-left: 20px;
-    }*/
-
+ 
   .theme-toggle {
-      top: 20px;
-      right: 20px;
-      float:right;
+    display: flex;
+    align-items: center;
     }
     .toggle-label {
       margin: 0 15px;
@@ -80,6 +73,7 @@
       display: inline-block;
       width: 60px;
       height: 30px;
+      margin:0 15px;
     }
 
     .toggle-switch input {
@@ -119,6 +113,7 @@
     input:checked + .toggle-slider:before {
       transform: translateX(30px);
     }
+    
 .auth-right {
       flex: 1;
       display: flex;

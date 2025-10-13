@@ -37,17 +37,62 @@ app.use(session({
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.static(path.join(__dirname, '../public')));
 
 app.use("/api", newAIRouter);
 app.use("/auth", authRouter);
 app.use("/register", router);
 app.use("/paymentApi", paymentRouter);
+app.get('/', (req, res) => {
+   res.redirect(`${req.protocol}://${req.get('host')}/home.html`);
+});
+app.get('/pricing', (req, res) => {
+   res.redirect(`${req.protocol}://${req.get('host')}/pricing.html`);
+});
+app.get('/signup', (req, res) => {
+   res.redirect(`${req.protocol}://${req.get('host')}/signup.html`);
+});
+app.get('/signin', (req, res) => {
+   res.redirect(`${req.protocol}://${req.get('host')}/signin.html`);
+});
+app.get('/logout', (req, res) => {
+   res.redirect(`${req.protocol}://${req.get('host')}/logout.html`);
+});
+app.get('/about', (req, res) => {
+   res.redirect(`${req.protocol}://${req.get('host')}/about.html`);
+});
+app.get('/blog', (req, res) => {
+   res.redirect(`${req.protocol}://${req.get('host')}/blog.html`);
+});
+app.get('/contact', (req, res) => {
+   res.redirect(`${req.protocol}://${req.get('host')}/contact.html`);
+});
+app.get('/features', (req, res) => {
+   res.redirect(`${req.protocol}://${req.get('host')}/features.html`);
+});
+app.get('/create', (req, res) => {
+   res.redirect(`${req.protocol}://${req.get('host')}/create.html`);
+});
+app.get('/dashboard', (req, res) => {
+   res.redirect(`${req.protocol}://${req.get('host')}/dashboard.html`);
+});
+app.get('/settings', (req, res) => {
+   res.redirect(`${req.protocol}://${req.get('host')}/settings.html`);
+});
+app.get('/payment', (req, res) => {
+   res.redirect(`${req.protocol}://${req.get('host')}/payment.html`);
+});
+app.get('/careers', (req, res) => {
+   res.redirect(`${req.protocol}://${req.get('host')}/careers.html`);
+});
+app.get('/analytics', (req, res) => {
+   res.redirect(`${req.protocol}://${req.get('host')}/analytics.html`);
+});
 
 app.get('/payment-verification', async (req, res) => {
-   //res.redirect(`${req.protocol}://${req.get('host')}/payment-verification.html?reference=${req.query.reference}`);
+   res.redirect(`${req.protocol}://${req.get('host')}/payment-verification.html?reference=${req.query.reference}`);
   //console.log(`${req.protocol}://${req.get('host')}/verifyPayment?reference=${req.query.reference}`);
-  res.redirect(`${req.protocol}://${req.get('host')}/verifyPayment?reference=${req.query.reference}`);
+  //res.redirect(`${req.protocol}://${req.get('host')}/verifyPayment?reference=${req.query.reference}`);
 /*try {
   let reference = req.query.reference;
   console.log(reference);
@@ -140,4 +185,4 @@ server.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);
 });
 ngrok.connect({ addr: 3000, authtoken: process.env.NGROK_AUTH_TOKEN })
-	.then(listener => console.log(`Ingress established at: ${listener.url()}`));
+ .then(listener => console.log(`Ingress established at: ${listener.url()}`));

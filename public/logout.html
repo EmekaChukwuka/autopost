@@ -6,6 +6,7 @@
   <title>Sign Out | AutoPost</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   
+  <link rel="icon" href="autopost-icon.jpg">
   <link rel="stylesheet" href="style.css">
   <style>
       /* Shared Styles */
@@ -210,20 +211,7 @@
       }
     }
 
-    /* Theme Toggle */
-    .theme-toggle {
-      position: absolute;
-      top: 20px;
-      right: 20px;
-    }
-
-    .toggle-label {
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      color: var(--text-secondary);
-    }
+   
   </style>
 </head>
 <body>
@@ -238,14 +226,16 @@
     <!-- Right Side (Form) -->
     <div class="auth-right">
       <div class="auth-form">
+                                
   <!-- Theme Toggle -->
   <div class="theme-toggle">
-    
+    <i class="fas fa-sun"></i>
     <label class="toggle-switch">
       <input type="checkbox" id="toggle">
       <span class="toggle-slider"></span>
-    </label>
+    </label><i class="fas fa-moon"></i>
   </div>
+        
 
         <div class="auth-logo">Auto<span>Post</span></div>
 

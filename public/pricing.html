@@ -6,6 +6,7 @@
   <title>Pricing | AutoPost</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <link rel="stylesheet" href="style.css">
+  <link rel="icon" href="autopost-icon.jpg">
   <style>
     /* ===== Base Styles ===== */
     :root {
@@ -525,14 +526,16 @@
             <a href="features.html">Features</a>
             <a href="signup.html">Sign Up!</a>
         </nav>
+                                
   <!-- Theme Toggle -->
   <div class="theme-toggle">
-    
+    <i class="fas fa-sun"></i>
     <label class="Toggle-switch">
       <input type="checkbox" class="ttoggle">
       <span class="Toggle-slider"></span>
-    </label>
+    </label><i class="fas fa-moon"></i>
   </div>
+        
     </header>
     
   <!-- Pricing Hero -->
@@ -773,21 +776,18 @@
                     // Check if user is logged in
                     const currentUser = JSON.parse(localStorage.getItem('currentUser'));
                     
-                    if (!currentUser) {                      
+                      // Check if user has active trial
+                    const trialData = JSON.parse(localStorage.getItem('trialData'));
+                      const paidPlan = JSON.parse(localStorage.getItem('paymentSuccess'));
+           
+                    
+                    if (!currentUser && !trialData) {                      
       localStorage.setItem('trialPlan', plan);        
                       window.location.href = "signup.html";
                     }
-                    
-                      // Check if user has active trial
-                    const trialData = JSON.parse(localStorage.getItem('trialData'));
-                    
-                    if (!trialData) {
-                      
-      localStorage.setItem('trialPlan', plan);
-                      window.href="signup.html";
-                    }
-                    
-                    if(trialData && currentUser){
+                    console.log(currentUser)
+                                
+                    if(!trialData && currentUser && !paidPlan){
                  // Start free trial
                 const startDate = new Date();
                 const endDate = new Date(startDate.getTime() + 14 * 24 * 60 * 60 * 1000); // 14 days from now
@@ -802,8 +802,42 @@
                 localStorage.setItem('trialData', JSON.stringify(trialData));       
                       window.location.href='dashboard.html';
                     }
+
+                   if(trialData && currentUser){
+
+                     const now = new Date();
+                const endDate = new Date(trialData.endDate);
+                
+                if (now > endDate) {
+                  alert('Your Free Trial Has Expired');
+                }else{
+                    localStorage.removeItem('trialData');
+                 // Start free trial
+                const startDate = new Date();
+                const endDate = new Date(startDate.getTime() + 14 * 24 * 60 * 60 * 1000); // 14 days from now
+                
+                      localStorage.setItem('trialPlan', plan); 
+                const trialData = {
+                    plan: plan,
+                    startDate: startDate.toISOString(),
+                    endDate: endDate.toISOString()
+                };
+                
+                localStorage.setItem('trialData', JSON.stringify(trialData));       
+                      window.location.href='dashboard.html';
+                    }
+                  }
+
+                   if(!trialData && paidPlan){
+                    alert('You are already on a paid plan');
+                    
+                localStorage.removeItem('trialData');  
+                  }
                     
                   });
+                  
+                 
+
                 });
   </script>
 </body>

@@ -3,6 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" href="autopost-icon.jpg">
   <title>Your Dashboard | AutoPost</title>
   <style>
       /* Base Styles */
@@ -31,7 +32,7 @@ body {
   font-family: 'Inter', sans-serif;
   margin: 0;
   padding: 0;
-  background-color: var(--white);
+  background-color: var(--bg-primary);
 }
 
 /* Mobile Top Bar */
@@ -250,7 +251,7 @@ body {
 }
 
 /* FAB Button */
-.fab {
+.bfab {
   position: fixed;
   bottom: 70px;
   right: 20px;
@@ -332,6 +333,39 @@ textarea {
   cursor: pointer;
   width: 100%;
 }
+
+/* === Search Bar Styles === */
+.search-container {
+  display: flex;
+  justify-content: center;
+  margin: 1rem 0 2rem;
+}
+
+.search-container input {
+  width: 100%;
+  max-width: 420px;
+  padding: 12px 18px;
+  font-size: 16px;
+  color: var(--text-primary);
+  background: var(--bg-secondary);
+  border: 1.5px solid var(--border-color);
+  border-radius: 30px;
+  outline: none;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+}
+
+.search-container input:focus {
+  background: var(--bg-secondary);
+  border-color: var(--accent-blue);
+  box-shadow: 0 3px 10px rgba(0, 123, 255, 0.15);
+}
+
+.search-container input::placeholder {
+  color: var(--text-primary);
+  font-style: italic;
+}
+
 @media (max-width: 768px) {
 .history-item {
         grid-template-columns: 1fr;
@@ -343,9 +377,6 @@ textarea {
     display: block;
   }
   .bottom-nav {
-    display: none;
-  }
-  .fab {
     display: none;
   }
 .content{
@@ -385,7 +416,16 @@ a{
         </div>
     <!-- Main Content -->
     <main class="content">
-       <h2>Generated Posts</h2>
+      <h2>Generated Posts</h2>
+<div class="search-container">
+  <input 
+    type="text" 
+    id="searchInput" 
+    placeholder="🔍 Search your posts..."
+  />
+</div>
+
+
      <!-- <section class="upcoming-posts">
        
         <div class="post-card">
@@ -407,7 +447,7 @@ a{
 
 
       <!-- Compose Button (Mobile) -->
-      <button class="fab"><i class="fas fa-plus"></i></button>
+      <button class="bfab"><i class="fas fa-plus"></i></button>
     </main>
   </div>
 
@@ -445,7 +485,7 @@ a{
 
     
       // Toggle Compose Modal
-const fab = document.querySelector('.fab');
+const fab = document.querySelector('.bfab');
 const content = document.querySelector('.content');
 const modal = document.getElementById('composeModal');
 const closeBtn = document.querySelector('.close');
@@ -492,32 +532,81 @@ document.addEventListener('DOMContentLoaded', async () => {
             
             const result = await response.json();
             console.log(result.data);
-        
+            for(i = 0; i < result.data.length; i++){
+           const adate = new Date(result.data[i].date);
+           const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sept', 'Oct', 'Nov', 'Dec'];
+              const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+          const dateString = `${days[adate.getDay()]} ${adate.getDate()} ${months[adate.getMonth()]} ${adate.getFullYear()}`;
+          
       const historySection = document.querySelector('.content-history');
-      const generatedPost = JSON.parse(localStorage.getItem('generatedPost'));
-      console.log(generatedPost);
+      
             const newItem = document.createElement('div');
             
       newItem.className = 'history-item';
+      newItem.style = 'cursor: pointer;';
       newItem.innerHTML = `
       
-        <div class="post-preview">
-          <p>${result.data.post}</p>
+        <div class="post-preview" id="post-preview">
+          <p>${result.data[i].post}</p>
         </div>
         <div class="post-meta">
-          <span><i class="fab fa-${result.data.platform.toLowerCase()}" style="color: var(--accent-blue);"></i> ${result.data.platform}</span>
-          <span>Created: ${result.data.date}</span>
-          <span class="status-badge success">Scheduled</span>
+          <span><i class="fab fa-${result.data[i].platform.toLowerCase()}" style="color: var(--accent-blue);"></i> ${result.data[i].platform}</span>
+          <span>Created: ${dateString} </span>
         </div>
       `;
       historySection.insertBefore(newItem, historySection.firstChild.nextSibling);
       
-         
+         // === SEARCH FEATURE === //
+const searchInput = document.getElementById('searchInput');
+
+searchInput.addEventListener('input', () => {
+  const searchTerm = searchInput.value.toLowerCase();
+  const posts = document.querySelectorAll('.history-item');
+
+  posts.forEach(post => {
+    const postText = post.querySelector('.post-preview p').textContent.toLowerCase();
+
+    // Show only posts that contain the search term
+    if (postText.includes(searchTerm)) {
+      post.style.display = 'grid';
+    } else {
+      post.style.display = 'none';
+    }
+  });
+});
+
           //const schHeader = document.createElement('div');
           //schHeader.innerHTML = ` <h3>Your Scheduled Posts</h3>`; historySection.insertBefore(schHeader, historySection.firstChild.nextSibling);               
-      }catch(error){
+      }
+
+      /*const postPreview = document.querySelectorAll('.post-preview');
+    postPreview.forEach(post => {
+      post.addEventListener('click', () => {
+        
+                const newItem = document.createElement('div');
+            
+      newItem.className = 'history-item';
+      newItem.innerHTML = `
+      
+        <div class="post-preview" id="post-preview">
+          <p>${result.data[i].post}</p>
+        </div>
+        <div class="post-meta">
+          <span><i class="fab fa-${result.data[i].platform.toLowerCase()}" style="color: var(--accent-blue);"></i> ${result.data[i].platform}</span>
+          <span>Created: ${result.data[i].date}</span>
+          <span class="status-badge success">Generated</span>
+        </div>
+      `;
+      alert(newItem)
+      
+      });
+    });*/
+
+        }catch(error){
         console.log('An error occured', error);
-      }    
+      } 
+      
+      
 });
   </script>
   <script src="script.js"></script>

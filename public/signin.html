@@ -3,11 +3,13 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Sign Up | AutoPost</title>
+  <title>Sign In | AutoPost</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <link rel="icon" href="autopost-icon.jpg">
   <link rel="stylesheet" href="style.css">
   <style>
-    /* Shared Styles */
+      /* Shared Styles */
     :root {
       --bg-primary: #ffffff;
       --bg-secondary: #f5f5f5;
@@ -118,7 +120,7 @@
     }
 
     .password-wrapper {
-    position: relative;
+      position: relative;
     }
 
     .password-toggle {
@@ -157,9 +159,11 @@
       justify-content: center;
       gap: 10px;
     }
-.btn-google i{
+    
+    .btn-google i{
         margin-right:5px;
     }
+
     .divider {
       display: flex;
       align-items: center;
@@ -207,20 +211,7 @@
       }
     }
 
-    /* Theme Toggle */
-    .theme-toggle {
-      position: absolute;
-      top: 20px;
-      right: 20px;
-    }
-
-    .toggle-label {
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      color: var(--text-secondary);
-    }
+    
   </style>
 </head>
 <body>
@@ -229,42 +220,37 @@
     <div class="auth-left">
       <div>
         <img src="autopost-dashboard.jpg" alt="AutoPost Illustration" style="max-width: 100%;">
-        <h2 style="text-align: center; margin-top: 20px;">Automate Your Social Media</h2>
-        <p style="text-align: center; color: var(--text-secondary);">Join 15+ marketers saving time</p>
+        <h2 style="text-align: center; margin-top: 20px;">Welcome Back</h2>
+        <p style="text-align: center; color: var(--text-secondary);">Automate your social media like a pro</p>
       </div>
     </div>
 
     <!-- Right Side (Form) -->
     <div class="auth-right">
       <div class="auth-form">
+                                 
   <!-- Theme Toggle -->
   <div class="theme-toggle">
-    
+    <i class="fas fa-sun"></i>
     <label class="toggle-switch">
       <input type="checkbox" id="toggle">
       <span class="toggle-slider"></span>
-    </label>
+    </label><i class="fas fa-moon"></i>
   </div>
+        
 
         <div class="auth-logo">Auto<span>Post</span></div>
-        <h1 class="auth-title">Create Your Account</h1>
-        <p class="auth-subtitle">Start automating your social media in minutes</p>
+        <h1 class="auth-title">Welcome Back</h1>
+        <p class="auth-subtitle">Sign in to manage your automated posts</p>
 
-        <form id="signupForm">
+        <form id="signinForm">
           <div class="form-group">
-            <button type="button" class="btn btn-google" id="gSignIn">
-              <i class="fab fa-google"></i> Sign up with Google
+            <button type="button" class="btn btn-google">
+              <i class="fab fa-google"></i>  Sign in with Google
             </button>
-            
           </div>
 
           <div class="divider">or</div>
-
-          <div class="form-group">
-            <label for="name" class="form-label">Full Name</label>
-            <input type="text" id="name" class="form-input" placeholder="John Doe" required>
-            <div class="error-message" id="nameError">Please enter your name</div>
-          </div>
 
           <div class="form-group">
             <label for="email" class="form-label">Email Address</label>
@@ -275,33 +261,37 @@
           <div class="form-group">
             <label for="password" class="form-label">Password</label>
             <div class="password-wrapper">
-              <input type="password" id="password" class="form-input" placeholder="At least 8 characters" required>
+              <input type="password" id="password" class="form-input" placeholder="Enter your password" required>
               <i class="fas fa-eye password-toggle" id="togglePassword"></i>
             </div>
-            <div class="error-message" id="passwordError">Password must be 8+ characters</div>
+            <div class="error-message" id="passwordError">Incorrect password</div>
+          </div>
+
+          <div class="form-group" style="display: flex; justify-content: space-between; align-items: center;">
+            <div>
+              <input type="checkbox" id="remember">
+              <label for="remember">Remember me</label>
+            </div>
+            <div>
+              <a href="#" style="color: var(--accent-blue); text-decoration: none;">Forgot password?</a>
+            </div>
           </div>
 
           <div class="form-group">
-            <input type="checkbox" id="terms" required>
-            <label for="terms">I agree to the <a href="#" style="color: var(--accent-blue);">Terms</a> and <a href="#" style="color: var(--accent-blue);">Privacy Policy</a></label>
-            <div class="error-message" id="termsError">You must agree to the terms</div>
-          </div>
-
-          <div class="form-group">
-            <button type="submit" class="btn btn-primary">Create Account</button>
+            <button type="submit" class="btn btn-primary">Sign In</button>
           </div>
           <div id="message"></div>
         </form>
 
         <div class="auth-footer">
-          Already have an account? <a href="signin.html">Sign in</a>
+          Don't have an account? <a href="signup.html">Sign up</a>
         </div>
       </div>
     </div>
   </div>
 
-<script>
-    // Dark Mode Toggle
+  <script>
+    // Dark Mode Toggle (Same as signup.html)
     const darkModeToggle = document.getElementById('toggle');
     const root = document.documentElement;
 
@@ -320,7 +310,7 @@
       }
     });
 
-    // Password Toggle
+    // Password Toggle (Same as signup.html)
     const togglePassword = document.getElementById('togglePassword');
     const password = document.getElementById('password');
 
@@ -330,136 +320,47 @@
       togglePassword.classList.toggle('fa-eye-slash');
     });
 
-    console.log(localStorage.getItem('trialPlan'));
-    // Form Validation
-    const signupForm = document.getElementById('signupForm');
-    
-    signupForm.addEventListener('submit', async (e) => {
+    // Form Submission
+    document.getElementById('signinForm').addEventListener('submit', async (e) => {
       e.preventDefault();
-      let isValid = true;
-
-      // Name validation
-      if (!document.getElementById('name').value.trim()) {
-        document.getElementById('nameError').style.display = 'block';
-        isValid = false;
-      } else {
-        document.getElementById('nameError').style.display = 'none';
-      }
-
-      // Email validation
-      const email = document.getElementById('email').value;
-      if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-        document.getElementById('emailError').style.display = 'block';
-        isValid = false;
-      } else {
-        document.getElementById('emailError').style.display = 'none';
-      }
-
-      // Password validation
-      if (document.getElementById('password').value.length < 8) {
-        document.getElementById('passwordError').style.display = 'block';
-        isValid = false;
-      } else {
-        document.getElementById('passwordError').style.display = 'none';
-      }
-
-      // Terms checkbox
-      if (!document.getElementById('terms').checked) {
-        document.getElementById('termsError').style.display = 'block';
-        isValid = false;
-      } else {
-        document.getElementById('termsError').style.display = 'none';
-      }
-
-      if (isValid) {
-         try {
-          
-      const name = document.getElementById('name').value;
+     try {
+      
       const email = document.getElementById('email').value;
       const password = document.getElementById('password').value;
-                    const response = await fetch('http://localhost:3000/register/signup', {
+                    const response = await fetch('http://localhost:3000/register/login', {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
                         },
-                        body: JSON.stringify({ name, email, password })
+                        body: JSON.stringify({ email, password })
                     });
                     
                     const data = await response.json();
                     
                     if (response.ok) {
-                        document.getElementById('message').textContent = 'Registration successful!';
-                                            const user = {
-                    id: data.user.id,
-                    name: data.user.name,
-                    email: email
+                        document.getElementById('message').textContent = 'Login successful!';
+                       const user = {
+                        id: data.user.id,
+                        name: data.user.name,
+                        email: email
                 };
-                
                         localStorage.setItem('authToken', data.token);
                 localStorage.setItem('currentUser', JSON.stringify(user));
-                const trialPlan = localStorage.getItem('trialPlan');
-                console.log(trialPlan);
-
-                 // Start free trial
-                const startDate = new Date();
-                const endDate = new Date(startDate.getTime() + 14 * 24 * 60 * 60 * 1000); // 14 days from now
-                
-                const trialData = {
-                    plan: trialPlan,
-                    startDate: startDate.toISOString(),
-                    endDate: endDate.toISOString()
-                };
-                
-                            startFreeTrial(trialPlan);
-                localStorage.setItem('trialData', JSON.stringify(trialData));
-                
-                
-           
                         window.location.href="dashboard.html";
                     } else {
-                        document.getElementById('message').textContent = data.message || 'Registration failed';
+                        document.getElementById('message').textContent = 'Incorrect email or password';
                     }
                 } catch (error) {
                     console.error('Error:', error);
-                    alert(error);
-                    document.getElementById('message').textContent = 'An error occurred during registration';
-                } finally {
-                    // Reset loading state
-                }
-                            async function startFreeTrial(trialPlan) {
-                try {
-                  const plan = trialPlan;
-                    const token = localStorage.getItem('authToken');
-                    const response = await fetch(`http://localhost:3000/register/trials/start`, {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'Authorization': `Bearer ${token}`
-                        },
-                        body: JSON.stringify({ plan })
-                    });
-                    
-                    const data = await response.json();
-                    
-                    if (response.ok) {
-                        
-                        const endDate = new Date(data.end_date);
-                        startCountdown(endDate);
-                        
-                        alert(`Your ${plan} plan free trial has started! You have 14 days to explore all features.`);
-                        return;
-                    } else {
-                        alert(data.message || 'Failed to start trial');
-                    }
-                } catch (error) {
-                    console.error('Error starting trial:', error);
-                    alert('Failed to start trial. Please try again.');
-                }
-            }
-      }
+                    document.getElementById('message').textContent = 'An error occurred during login';
+                } 
+
+           
+            
     });
   </script>
-  <!--<script src="https://accounts.google.com/gsi/client" async defer></script>
+   <!--
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
   <script src="auth.js"></script>-->
   <script src="script.js"></script>
 </body>

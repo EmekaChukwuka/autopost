@@ -86,9 +86,9 @@ export class PaymentController {
 
   static async verifyPayment(req, res) {
     try {
-      const { reference } = req.query;
+      const { reference, email } = req.body;
       console.log(reference);
-      const existingUser = await User.findByEmail(userEmail);
+      const existingUser = await User.findByEmail(email);
           if (existingUser) {
             console.log(existingUser);
           let userId = existingUser.id;
@@ -125,12 +125,20 @@ export class PaymentController {
            subscription_end = DATE_ADD(NOW(), INTERVAL 1 MONTH)
            WHERE id = ?`,
           [transaction.metadata.plan, userId]
-        );
-        res.json({
-          success: true,
-          message: 'Payment verified successfully',
-          data: transaction
-        });
+        ); 
+
+        // Activate subscription
+     /* await User.activateSubscription(userId, 'PLN_vk5xa0fv3n5v1mm', transaction.id);
+
+      const subscription = await User.getUserSubscription(userId);*/
+
+      res.json({
+        success: true,
+        message: 'Payment verified successfully',
+        data: {
+          transaction: transaction
+        }
+      });
       } else {
         await pool.execute(
           `UPDATE transactions SET status = 'failed' WHERE reference = ?`,
@@ -142,6 +150,8 @@ export class PaymentController {
           message: 'Payment verification failed'
         });
       }
+    }else{
+      console.log('error');
     }
     } catch (error) {
       console.error('Payment verification error:', error.response?.data || error.message);
@@ -200,6 +210,23 @@ export class PaymentController {
 
         console.log('success');
       }
+
+      if (event.event === 'subscription.create') {
+  const sub = event.data; // subscription object
+  await pool.execute(
+    'INSERT INTO subscriptions (customer_email, plan_code, subscription_code, status, paystack_response) VALUES (?, ?, ?, ?, ?) ON DUPLICATE KEY UPDATE status=?, paystack_response=?',
+    [
+      sub.customer.email,
+      sub.plan.plan_code,
+      sub.subscription_code,
+      sub.status,
+      JSON.stringify(sub),
+      sub.status,
+      JSON.stringify(sub)
+    ]
+  );
+}
+
       res.status(200).json({ received: true });
     } catch (error) {
       console.error('Webhook error:', error);

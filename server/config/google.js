@@ -1,12 +1,12 @@
 
 import { OAuth2Client } from 'google-auth-library';
-const client = new OAuth2Client('49790761791-ifon1ncmkvil2u5umq1mvsie2hu6p16i.apps.googleusercontent.com');
+const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
 export const verifyGoogleToken = async (token) => {
   try {
     const ticket = await client.verifyIdToken({
       idToken: token,
-      audience: 49790761791-ifon1ncmkvil2u5umq1mvsie2hu6p16i.apps.googleusercontent.com,
+      audience: process.env.GOOGLE_CLIENT_ID,
     });
     return { payload: ticket.getPayload() };
   } catch (error) {

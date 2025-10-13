@@ -5,6 +5,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Settings | AutoPost</title>
+  <link rel="icon" href="autopost-icon.jpg">
    <style>
         /* ===== Global Styles ===== */
        
@@ -273,6 +274,71 @@
             margin-left: auto;
         }
 
+  .theme-toggle {
+    display: flex;
+    align-items: center;
+    }
+    .toggle-label {
+      margin: 0 15px;
+      font-weight: 500;
+    }
+
+    .toggle-switch {
+      position: relative;
+      display: inline-block;
+      width: 60px;
+      height: 30px;
+      margin:0 15px;
+    }
+
+    .toggle-switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+
+    .toggle-slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: var(--border-color);
+      transition: .4s;
+      border-radius: 34px;
+    }
+
+    .toggle-slider:before {
+      position: absolute;
+      content: "";
+      height: 22px;
+      width: 22px;
+      left: 4px;
+      bottom: 4px;
+      background-color: var(--bg-primary);
+      transition: .4s;
+      border-radius: 50%;
+    }
+
+    input:checked + .toggle-slider {
+      background-color: var(--accent-blue);
+    }
+
+    input:checked + .toggle-slider:before {
+      transform: translateX(30px);
+    }
+
+    
+        #card {
+            background: var(--bg-primary);
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            margin-bottom: 24px;
+            border: 1px solid var(--bg-secondary);
+        }
+
         /* ===== Responsive ===== */
         @media (max-width: 1024px) {
             .metrics-grid {
@@ -317,7 +383,12 @@
 .bottom-nav a.active {
   color: var(--accent-blue);
 }
+ 
         /* ===== Settings Page ===== */
+        #settings-page{
+            margin-bottom: 10vh;
+        }
+        
         .settings-tabs {
             display: flex;
             border-bottom: 1px solid var(--border-color);
@@ -325,7 +396,7 @@
         }
 
         .settings-tab {
-            padding: 12px 16px;
+            padding: 12px 16px; 
             cursor: pointer;
             font-weight: 500;
             color: var(--text-secondary);
@@ -415,6 +486,12 @@
         .account-actions {
             margin-left: auto;
         }
+        #card{
+            width: 80%;
+            margin: 5% auto;
+
+          }
+        
 
         }
         
@@ -477,13 +554,21 @@
                             <label>Email</label>
                             <input type="email" id="email_input">
                         </div>
-                        <div class="form-group">
-                            <label>Timezone</label>
-                            <select>
-                                <option>(UTC-05:00) Eastern Time</option>
-                            </select>
-                        </div>
+                       
                         <button id="editName" class="btn btn-primary">Save Changes</button>
+                    </div>
+
+                    <div class="settings-section" id="card">
+                        <h2>Theme</h2>
+                                    
+  <!-- Theme Toggle -->
+  <div class="theme-toggle">
+    <i class="fas fa-sun"></i>
+    <label class="toggle-switch">
+      <input type="checkbox" id="toggle">
+      <span class="toggle-slider"></span>
+    </label><i class="fas fa-moon"></i>
+  </div>
                     </div>
 
                     <div class="settings-section">
@@ -568,21 +653,12 @@
 
                     <div class="settings-section">
                         <h2>Payment Method</h2>
-                        <div class="card">
-                            <!--<p>VISA •••• •••• •••• 4242</p>
-                            <p>Expires 04/2025</p>-->
-                            <a href="payment.html" class="btn btn-outline" style="margin-top: 16px;" >Update Payment</a>
-                        </div>
+                        <div class="card" id="paymentMethodCard">  </div>
                     </div>
 
                     <div class="settings-section">
                         <h2>Billing History</h2>
-                        <div class="card">
-                            <!--
-                            <p>Dec 15, 2023 - $29.00</p>
-                            <p>Nov 15, 2023 - $29.00</p>-->
-                            <button class="btn btn-outline" style="margin-top: 16px;">View All</button>
-                        </div>
+                        <div class="card" id="billingHistoryCard"></div>
                     </div>
                 </div>
             </div>
@@ -598,12 +674,26 @@
   </nav>
 
     <script>
-    // Dark Mode Toggle
+     // Dark Mode Toggle
+    const darkModeToggle = document.getElementById('toggle');
     const root = document.documentElement;
-
+    let dashboardImg = document.getElementsByClassName('dashboard-preview');
     if (localStorage.getItem('theme') === 'dark') {
       root.setAttribute('data-theme', 'dark');
+      darkModeToggle.checked = true;
+      dashboardImg.srcObject= "autopost-dashboard-dark,jpg";
     }
+
+    darkModeToggle.addEventListener('change', (e) => {
+      if (e.target.checked) {
+        root.setAttribute('data-theme', 'dark');
+        localStorage.setItem('theme', 'dark');
+      dashboardImg.srcObject= "autopost-dashboard-dark,jpg";
+      } else {
+        root.removeAttribute('data-theme');
+        localStorage.setItem('theme', 'light');
+      }
+    });
 
 
         // Settings Tabs
@@ -627,7 +717,7 @@
 
         document.addEventListener('DOMContentLoaded', async () => {
             const trialData = JSON.parse(localStorage.getItem('trialData'));
-          
+            console.log(trialData);
            /* plan = trialData.plan;
                 try {
                     const token = localStorage.getItem('authToken');
@@ -676,12 +766,92 @@
 
             }
 
+             const paidPlan = JSON.parse(localStorage.getItem('paymentSuccess'));
+            const user = JSON.parse(localStorage.getItem('currentUser'));
+        console.log(paidPlan)
+
+        if(paidPlan && user){
+            const paymentDate = new Date(localStorage.getItem('paymentDate'));
+            const paymentMethod = localStorage.getItem('paymentMethod');
+            const paymentAmount = localStorage.getItem('paymentAmount');
+            const now = new Date();
+            const endDate = new Date(paymentDate.getTime() + 30 * 24 * 60 * 60 * 1000);
+             const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+                const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sept', 'Oct', 'Nov', 'Dec'];
+                const endDateString = `${days[endDate.getDay()]} ${endDate.getDate()} ${months[endDate.getMonth()]} ${endDate.getFullYear()}`;
+                const paymentDateString = `${days[paymentDate.getDay()]} ${paymentDate.getDate()} ${months[paymentDate.getMonth()]} ${paymentDate.getFullYear()}`;
+                const paymentNAmount = paymentAmount / 100;
+                         document.getElementById('paymentMethodCard').innerHTML = `
+                            <p>VISA •••• •••• •••• 4242</p>
+                            <p>Expires ${endDateString}</p>
+                            <a href="payment.html" class="btn btn-outline" style="margin-top: 16px;" >Update Payment</a>
+                      
+                        `;
+                         document.getElementById('billingHistoryCard').innerHTML = `
+                            
+                            <p>${paymentDateString} - ₦${paymentNAmount}</p>
+                            <button class="btn btn-outline" style="margin-top: 16px;">View All</button>
+                         
+                        `;
+                     if (now > endDate) {
+                    console.log('paid plan expired');
+
+                    if(paymentAmount === '250000'){
+                           document.getElementById('plan').innerHTML = ` <h3>Starter Plan</h3>
+                            <p>Expired, update payment</p>
+                            <p>₦2500</p>
+                            <a href="payment.html" class="btn btn-outline" style="margin-top: 16px;">Update Payment</a>
+                    `;
+                }
+                if(paymentAmount === '550000'){
+                           document.getElementById('plan').innerHTML = ` <h3>Profesional Plan</h3>
+                            <p>Expired, update payment</p>
+                            <p>₦5500</p>
+                            <a href="payment.html" class="btn btn-outline" style="margin-top: 16px;">Update Payment</a>
+                    `;
+            }
+            if(paymentAmount === '1500000'){
+                            document.getElementById('plan').innerHTML = ` <h3>Business Plan</h3>
+                             <p>Expired, update payment</p>
+                             <p>₦15500</p>
+                             <a href="payment.html" class="btn btn-outline" style="margin-top: 16px;">Update Payment</a>
+                      `;
+                }
+        }   
+
+
+            console.log(paymentAmount);
+            if(paymentAmount === '250000'){
+               
+             document.getElementById('plan').innerHTML = ` <h3>Starter Plan</h3>
+                            <p>Expiring: ${endDateString}</p>
+                            <a href='pricing.html' class="btn btn-outline" >Change Plan</a>
+                        `;
+            }
+            if(paymentAmount === '₦5500'){
+               
+             document.getElementById('plan').innerHTML = ` <h3>Professional Plan</h3>
+                            <p>Expiring: ${endDateString}</p>
+                            <a href='pricing.html' class="btn btn-outline" >Change Plan</a>
+                        `;
+            }
+            if(paymentAmount === '₦15500'){
+               
+             document.getElementById('plan').innerHTML = ` <h3>Business Plan</h3>
+                            <p>Expiring: ${endDateString}</p>
+                            <a href='pricing.html' class="btn btn-outline" >Change Plan</a>
+                        `;
+            }
+        }
+
+
+
             let currentUser = JSON.parse(localStorage.getItem('currentUser'));
             console.log(currentUser);
 
             
             // Check if user has an active trial (simulated with localStorage)
-            const user = JSON.parse(localStorage.getItem('currentUser'));
+            
             console.log(trialData);
             checkTrialStatus();
             
@@ -707,16 +877,43 @@
                     // Trial is still active
                     showTrialStatus(trialData);
                     startCountdown(endDate, trialData);
+                }else{
+                    console.log('free trial expired');
+
+                    if(trialData.plan === 'Starter'){
+                           document.getElementById('plan').innerHTML = ` <h3>${trialData.plan} Plan</h3>
+                            <p>Expired, update payment</p>
+                            <p>₦2500</p>
+                            <a href="payment.html" class="btn btn-outline" style="margin-top: 16px;">Update Payment</a>
+                    `;
                 }
+                if(trialData.plan === 'Professional'){
+                           document.getElementById('plan').innerHTML = ` <h3>${trialData.plan} Plan</h3>
+                            <p>Expired, update payment</p>
+                            <p>₦5500</p>
+                            <a href="payment.html" class="btn btn-outline" style="margin-top: 16px;">Update Payment</a>
+                    `;
             }
+            if(trialData.plan === 'Business'){
+                            document.getElementById('plan').innerHTML = ` <h3>${trialData.plan} Plan</h3>
+                             <p>Expired, update payment</p>
+                             <p>₦15500</p>
+                             <a href="payment.html" class="btn btn-outline" style="margin-top: 16px;">Update Payment</a>
+                      `;
+                }
+        }
+        }
+            
              
             async function showTrialStatus(trialData) {
                 const startDate = new Date(trialData.startDate);
                 const endDate = new Date(trialData.endDate);
-
+                const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+                const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sept', 'Oct', 'Nov', 'Dec'];
+                const endDateString = `${days[endDate.getDay()]} ${endDate.getDate()} ${months[endDate.getMonth()]} ${endDate.getFullYear()}`;
                 document.getElementById('plan').innerHTML = ` <h3>${trialData.plan} Plan</h3>
                             <p>Free Trial</p>
-                            <p></p>
+                            <p>Ending: ${endDateString}</p>
                             <a href='pricing.html' class="btn btn-outline" >Change Plan</a>
                         `;
                         
@@ -741,12 +938,18 @@
 
             async function startCountdown(endDate, trialData) {
               async  function updateCountdown() {
+                    const endDate = new Date(trialData.endDate);
                     const now = new Date();
                     const timeRemaining = endDate - now;
                     
-                    if (timeRemaining <= 0) {
+                if (now > endDate) {
                         clearInterval(countdownInterval);
-                        
+                        console.log('Free trial has expired');
+                                        document.getElementById('plan').innerHTML = ` <h3>${trialData.name} Plan</h3>
+                            <p>Expired, update payment</p>
+                            <p>${trialData.price}</p>
+                            <a href="payment.html" class="btn btn-outline" style="margin-top: 16px;">Update Payment</a>
+                    `;
                         const a = trialData.plan;
                                             const response = await fetch('http://localhost:3000/trialInfo', {
                         method: 'POST',

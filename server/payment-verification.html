@@ -51,7 +51,14 @@
 
             try {
                 // Verify payment with backend
-                const response = await fetch(`http://localhost:3000/paymentApi/verify?reference=${reference}`);
+                 const user = JSON.parse(localStorage.getItem('currentUser'));
+                 const email = user.email;
+                 console.log(user.email);
+                const response = await fetch(`http://localhost:3000/paymentApi/verify`,{
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ reference, email })
+                });
                 const result = await response.json();
 
                 if (result.status === 'success') {

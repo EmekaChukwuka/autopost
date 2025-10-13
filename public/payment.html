@@ -2,8 +2,11 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+ 
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Payment - AutoPost</title>
+  <link rel="icon" href="autopost-icon.jpg">
     <script src="https://js.paystack.co/v1/inline.js"></script>
     <style>
     :root {
@@ -326,7 +329,7 @@
     document.addEventListener('DOMContentLoaded', async ()=>{
         const trialPlan = localStorage.getItem('trialPlan');
         const trialData = localStorage.getItem('trialData');
-        if(trialData && trialPlan){
+        if(trialData || trialPlan ){
         console.log(trialData);
         console.log(trialPlan);
           const a = trialPlan;
@@ -346,7 +349,6 @@
                 document.getElementById('plan-priceb').innerHTML = ` ${data.plan.Details.price} `;
             
         
-        let selectedMethod = 'card';
         let planName = `${data.plan.Details.name}`;
         let planAmount = `${data.plan.Details.price}`;
         const plan = { id: planName, amount: planAmount, name: planName+'plan' };
@@ -363,6 +365,8 @@
             });
         });
          let callbackUrl = 'http://localhost:3000/payment-verification';
+
+         
         // Payment initialization
         document.getElementById('payButton').addEventListener('click', async () => {
             const btn = document.getElementById('payButton');
@@ -446,12 +450,40 @@
             pollPaymentStatus(newWindow, paymentReference);
         }
     }
+    
+    async function checkRedirectReference() {
+      const urlParams = new URLSearchParams(window.location.search);
+      const reference = urlParams.get('reference');
+      if (!reference) return;
+      document.getElementById('message').innerText = 'Verifying payment...';
+
+      try {
+        const resp = await fetch(`http://localhost:3000/paymentApi/verify`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ reference })
+        });
+        const data = await resp.json();
+        if (!resp.ok) {
+          document.getElementById('message').innerText = 'Verify error: ' + JSON.stringify(data);
+          return;
+        }
+        document.getElementById('message').innerText = 'Payment verification result: ' + JSON.stringify(data);
+      } catch (err) {
+        console.error(err);
+        document.getElementById('message').innerText = 'Verification network error';
+      }
+    }
+
+    checkRedirectReference();
+
 
     function pollPaymentStatus(paymentWindow, paymentReference) {
         const checkInterval = setInterval(async () => {
             if (paymentWindow.closed) {
                 clearInterval(checkInterval);
                 verifyPayment(paymentReference);
+                
             }
         }, 1000);
 

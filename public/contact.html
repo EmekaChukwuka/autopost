@@ -6,6 +6,7 @@
   <title>Contact Us | AutoPost</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <link rel="stylesheet" href="style.css">
+  <link rel="icon" href="autopost-icon.jpg">
   <style>
     /* (Same base styles as pricing page) */
 
@@ -137,14 +138,16 @@
             <a href="pricing.html">Pricing</a>
             <a href="signup.html">Sign Up!</a>
         </nav>
+                                 
   <!-- Theme Toggle -->
   <div class="theme-toggle">
-    
+    <i class="fas fa-sun"></i>
     <label class="toggle-switch">
       <input type="checkbox" id="toggle">
       <span class="toggle-slider"></span>
-    </label>
+    </label><i class="fas fa-moon"></i>
   </div>
+        
     </header>
   <!-- Hero -->
   <section class="contact-hero">
@@ -186,7 +189,7 @@
     <!-- Contact Form -->
     <div class="contact-form">
       <h2 class="section-title">Send a Message</h2>
-      <form id="contactForm">
+      <form action="mailto:autopost26@gmail.com" method="post" enctype="text/plain" id="contactForm">
         <div class="form-row two-col">
           <div class="form-group">
             <label for="name" class="form-label">Name</label>
@@ -209,7 +212,7 @@
             <textarea id="message" class="form-input" required></textarea>
           </div>
         </div>
-        <button type="submit" class="btn btn-primary">Send Message</button>
+        <input type="submit" class="btn btn-primary" value="Send Message">
       </form>
   </div>  
 

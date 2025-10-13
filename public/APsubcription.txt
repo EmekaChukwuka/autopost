@@ -1,0 +1,658 @@
+Here's the complete implementation for **plan subscriptions and expiry logic**:
+
+## 🗄️ Database Schema Updates
+
+### 1. Enhanced Database Schema (`sql/subscriptions.sql`)
+```sql
+-- Enhanced subscription plans table
+CREATE TABLE IF NOT EXISTS subscription_plans (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  name VARCHAR(100) NOT NULL,
+  description TEXT,
+  price DECIMAL(10, 2) NOT NULL,
+  duration_days INT DEFAULT 30,
+  social_accounts_limit INT DEFAULT 3,
+  monthly_posts_limit INT DEFAULT 100,
+  ai_content_access BOOLEAN DEFAULT FALSE,
+  analytics_access BOOLEAN DEFAULT FALSE,
+  team_members_limit INT DEFAULT 1,
+  priority_support BOOLEAN DEFAULT FALSE,
+  active BOOLEAN DEFAULT TRUE,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+
+-- Enhanced users subscription fields
+ALTER TABLE users 
+ADD COLUMN subscription_plan_id INT DEFAULT NULL,
+ADD COLUMN subscription_status ENUM('active', 'inactive', 'canceled', 'expired') DEFAULT 'inactive',
+ADD COLUMN subscription_start_date TIMESTAMP NULL DEFAULT NULL,
+ADD COLUMN subscription_end_date TIMESTAMP NULL DEFAULT NULL,
+ADD COLUMN auto_renew BOOLEAN DEFAULT FALSE,
+ADD COLUMN canceled_at TIMESTAMP NULL DEFAULT NULL,
+ADD FOREIGN KEY (subscription_plan_id) REFERENCES subscription_plans(id);
+
+-- Insert subscription plans
+INSERT INTO subscription_plans 
+(name, description, price, duration_days, social_accounts_limit, monthly_posts_limit, ai_content_access, analytics_access, team_members_limit, priority_support) 
+VALUES
+('Starter', 'Perfect for individuals getting started', 1000, 30, 3, 100, FALSE, FALSE, 1, FALSE),
+('Professional', 'For serious content creators', 2500, 30, 10, 1000, TRUE, TRUE, 3, TRUE),
+('Business', 'For agencies and teams', 5000, 30, 50, 10000, TRUE, TRUE, 10, TRUE);
+
+-- Subscription history table
+CREATE TABLE IF NOT EXISTS subscription_history (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  user_id INT NOT NULL,
+  plan_id INT NOT NULL,
+  transaction_id INT,
+  action ENUM('created', 'renewed', 'upgraded', 'downgraded', 'canceled', 'expired'),
+  old_plan_id INT NULL,
+  new_plan_id INT NULL,
+  amount_paid DECIMAL(10, 2),
+  start_date TIMESTAMP,
+  end_date TIMESTAMP,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (user_id) REFERENCES users(id),
+  FOREIGN KEY (plan_id) REFERENCES subscription_plans(id),
+  FOREIGN KEY (transaction_id) REFERENCES transactions(id)
+);
+
+-- Add plan_id to transactions table
+ALTER TABLE transactions ADD COLUMN plan_id INT NULL;
+```
+
+## 🔧 Backend Implementation
+
+### 2. Subscription Service (`services/subscriptionService.js`)
+```javascript
+import { pool } from '../config/db.js';
+
+export class SubscriptionService {
+  // Get user's current subscription
+  static async getUserSubscription(userId) {
+    const [rows] = await pool.execute(
+      `SELECT u.*, sp.name as plan_name, sp.social_accounts_limit, 
+              sp.monthly_posts_limit, sp.ai_content_access, sp.analytics_access,
+              sp.team_members_limit, sp.priority_support
+       FROM users u
+       LEFT JOIN subscription_plans sp ON u.subscription_plan_id = sp.id
+       WHERE u.id = ?`,
+      [userId]
+    );
+    
+    return rows[0];
+  }
+
+  // Activate subscription after payment
+  static async activateSubscription(userId, planId, transactionId = null) {
+    const connection = await pool.getConnection();
+    
+    try {
+      await connection.beginTransaction();
+
+      // Get plan details
+      const [planRows] = await connection.execute(
+        'SELECT * FROM subscription_plans WHERE id = ?',
+        [planId]
+      );
+      
+      if (planRows.length === 0) {
+        throw new Error('Plan not found');
+      }
+
+      const plan = planRows[0];
+      const startDate = new Date();
+      const endDate = new Date();
+      endDate.setDate(endDate.getDate() + plan.duration_days);
+
+      // Get current subscription for history
+      const [currentSub] = await connection.execute(
+        'SELECT subscription_plan_id FROM users WHERE id = ?',
+        [userId]
+      );
+
+      const oldPlanId = currentSub[0]?.subscription_plan_id;
+
+      // Update user subscription
+      await connection.execute(
+        `UPDATE users SET 
+         subscription_plan_id = ?,
+         subscription_status = 'active',
+         subscription_start_date = ?,
+         subscription_end_date = ?,
+         auto_renew = TRUE,
+         canceled_at = NULL
+         WHERE id = ?`,
+        [planId, startDate, endDate, userId]
+      );
+
+      // Add to subscription history
+      await connection.execute(
+        `INSERT INTO subscription_history 
+         (user_id, plan_id, transaction_id, action, old_plan_id, new_plan_id, 
+          amount_paid, start_date, end_date)
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+        [
+          userId,
+          planId,
+          transactionId,
+          oldPlanId ? 'renewed' : 'created',
+          oldPlanId,
+          planId,
+          plan.price,
+          startDate,
+          endDate
+        ]
+      );
+
+      await connection.commit();
+      
+      return {
+        plan: plan.name,
+        start_date: startDate,
+        end_date: endDate,
+        status: 'active'
+      };
+
+    } catch (error) {
+      await connection.rollback();
+      throw error;
+    } finally {
+      connection.release();
+    }
+  }
+
+  // Cancel subscription
+  static async cancelSubscription(userId) {
+    const connection = await pool.getConnection();
+    
+    try {
+      await connection.beginTransaction();
+
+      const [user] = await connection.execute(
+        `SELECT subscription_plan_id FROM users WHERE id = ?`,
+        [userId]
+      );
+
+      if (!user[0]?.subscription_plan_id) {
+        throw new Error('No active subscription found');
+      }
+
+      // Update user subscription
+      await connection.execute(
+        `UPDATE users SET 
+         subscription_status = 'canceled',
+         auto_renew = FALSE,
+         canceled_at = NOW()
+         WHERE id = ?`,
+        [userId]
+      );
+
+      // Add to subscription history
+      await connection.execute(
+        `INSERT INTO subscription_history 
+         (user_id, plan_id, action, start_date, end_date)
+         VALUES (?, ?, 'canceled', NOW(), NOW())`,
+        [userId, user[0].subscription_plan_id]
+      );
+
+      await connection.commit();
+
+    } catch (error) {
+      await connection.rollback();
+      throw error;
+    } finally {
+      connection.release();
+    }
+  }
+
+  // Check and expire outdated subscriptions
+  static async checkExpiredSubscriptions() {
+    const connection = await pool.getConnection();
+    
+    try {
+      await connection.beginTransaction();
+
+      // Find expired subscriptions
+      const [expiredSubs] = await connection.execute(
+        `SELECT id, subscription_plan_id FROM users 
+         WHERE subscription_status = 'active' 
+         AND subscription_end_date < NOW()`
+      );
+
+      for (const user of expiredSubs) {
+        // Update user to expired status
+        await connection.execute(
+          `UPDATE users SET 
+           subscription_status = 'expired',
+           auto_renew = FALSE
+           WHERE id = ?`,
+          [user.id]
+        );
+
+        // Add to subscription history
+        await connection.execute(
+          `INSERT INTO subscription_history 
+           (user_id, plan_id, action, start_date, end_date)
+           VALUES (?, ?, 'expired', NOW(), NOW())`,
+          [user.id, user.subscription_plan_id]
+        );
+      }
+
+      await connection.commit();
+      
+      return {
+        expired_count: expiredSubs.length,
+        expired_users: expiredSubs
+      };
+
+    } catch (error) {
+      await connection.rollback();
+      throw error;
+    } finally {
+      connection.release();
+    }
+  }
+
+  // Get subscription usage
+  static async getSubscriptionUsage(userId) {
+    const [usage] = await pool.execute(
+      `SELECT 
+        COUNT(DISTINCT platform) as used_social_accounts,
+        COUNT(*) as posts_this_month
+       FROM scheduled_posts 
+       WHERE user_id = ? 
+       AND MONTH(created_at) = MONTH(CURRENT_DATE())
+       AND YEAR(created_at) = YEAR(CURRENT_DATE())`,
+      [userId]
+    );
+
+    return usage[0];
+  }
+
+  // Check if user can perform action based on subscription
+  static async checkFeatureAccess(userId, feature) {
+    const subscription = await this.getUserSubscription(userId);
+    const usage = await this.getSubscriptionUsage(userId);
+
+    if (subscription.subscription_status !== 'active') {
+      return { allowed: false, reason: 'No active subscription' };
+    }
+
+    switch (feature) {
+      case 'add_social_account':
+        const accountLimit = subscription.social_accounts_limit || 1;
+        if (usage.used_social_accounts >= accountLimit) {
+          return { 
+            allowed: false, 
+            reason: `Account limit reached (${usage.used_social_accounts}/${accountLimit})` 
+          };
+        }
+        break;
+
+      case 'schedule_post':
+        const postLimit = subscription.monthly_posts_limit || 10;
+        if (usage.posts_this_month >= postLimit) {
+          return { 
+            allowed: false, 
+            reason: `Monthly post limit reached (${usage.posts_this_month}/${postLimit})` 
+          };
+        }
+        break;
+
+      case 'ai_content':
+        if (!subscription.ai_content_access) {
+          return { allowed: false, reason: 'AI content not available in your plan' };
+        }
+        break;
+
+      case 'analytics':
+        if (!subscription.analytics_access) {
+          return { allowed: false, reason: 'Analytics not available in your plan' };
+        }
+        break;
+
+      default:
+        return { allowed: false, reason: 'Unknown feature' };
+    }
+
+    return { allowed: true };
+  }
+}
+```
+
+### 3. Enhanced Payment Controller (`controllers/paymentController.js`)
+```javascript
+import { SubscriptionService } from '../services/subscriptionService.js';
+
+// Update the verifyPayment method
+static async verifyPayment(req, res) {
+  try {
+    const { reference } = req.body;
+    const userId = req.session.user.id;
+
+    // Verify payment with Paystack
+    const response = await axios.get(
+      `${PAYSTACK_BASE_URL}/transaction/verify/${reference}`,
+      {
+        headers: {
+          Authorization: `Bearer ${process.env.PAYSTACK_SECRET_KEY}`
+        }
+      }
+    );
+
+    const transaction = response.data.data;
+
+    if (transaction.status === 'success') {
+      const planId = transaction.metadata?.plan_id || this.getPlanIdFromAmount(transaction.amount);
+      
+      // Update transaction
+      await pool.execute(
+        `UPDATE transactions SET 
+         status = 'completed', 
+         paystack_id = ?,
+         plan_id = ?,
+         updated_at = NOW()
+         WHERE reference = ?`,
+        [transaction.id, planId, reference]
+      );
+
+      // Activate subscription
+      await SubscriptionService.activateSubscription(userId, planId, transaction.id);
+
+      const subscription = await SubscriptionService.getUserSubscription(userId);
+
+      res.json({
+        success: true,
+        message: 'Payment verified successfully',
+        data: {
+          transaction: transaction,
+          subscription: subscription
+        }
+      });
+    } else {
+      await pool.execute(
+        `UPDATE transactions SET status = 'failed' WHERE reference = ?`,
+        [reference]
+      );
+
+      res.status(400).json({
+        success: false,
+        message: 'Payment verification failed'
+      });
+    }
+  } catch (error) {
+    console.error('Payment verification error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Payment verification failed'
+    });
+  }
+}
+
+// Helper method to get plan ID from amount
+static getPlanIdFromAmount(amountInKobo) {
+  const amount = amountInKobo / 100; // Convert to Naira
+  
+  const plans = {
+    1000: 1, // Starter
+    2500: 2, // Professional
+    5000: 3  // Business
+  };
+  
+  return plans[amount] || 1; // Default to Starter
+}
+```
+
+### 4. Subscription Controller (`controllers/subscriptionController.js`)
+```javascript
+import { SubscriptionService } from '../services/subscriptionService.js';
+
+export class SubscriptionController {
+  // Get current subscription
+  static async getCurrentSubscription(req, res) {
+    try {
+      const userId = req.session.user.id;
+      
+      const subscription = await SubscriptionService.getUserSubscription(userId);
+      const usage = await SubscriptionService.getSubscriptionUsage(userId);
+
+      res.json({
+        success: true,
+        data: {
+          subscription,
+          usage
+        }
+      });
+    } catch (error) {
+      console.error('Get subscription error:', error);
+      res.status(500).json({
+        success: false,
+        message: 'Failed to fetch subscription'
+      });
+    }
+  }
+
+  // Cancel subscription
+  static async cancelSubscription(req, res) {
+    try {
+      const userId = req.session.user.id;
+      
+      await SubscriptionService.cancelSubscription(userId);
+
+      res.json({
+        success: true,
+        message: 'Subscription canceled successfully'
+      });
+    } catch (error) {
+      console.error('Cancel subscription error:', error);
+      res.status(500).json({
+        success: false,
+        message: 'Failed to cancel subscription'
+      });
+    }
+  }
+
+  // Check feature access
+  static async checkFeatureAccess(req, res) {
+    try {
+      const userId = req.session.user.id;
+      const { feature } = req.body;
+
+      const access = await SubscriptionService.checkFeatureAccess(userId, feature);
+
+      res.json({
+        success: true,
+        data: access
+      });
+    } catch (error) {
+      console.error('Feature access check error:', error);
+      res.status(500).json({
+        success: false,
+        message: 'Failed to check feature access'
+      });
+    }
+  }
+
+  // Get subscription plans
+  static async getPlans(req, res) {
+    try {
+      const [plans] = await pool.execute(
+        `SELECT * FROM subscription_plans WHERE active = true ORDER BY price ASC`
+      );
+
+      res.json({
+        success: true,
+        data: plans
+      });
+    } catch (error) {
+      console.error('Get plans error:', error);
+      res.status(500).json({
+        success: false,
+        message: 'Failed to fetch plans'
+      });
+    }
+  }
+}
+```
+
+### 5. Subscription Routes (`routes/subscriptionRoutes.js`)
+```javascript
+import express from 'express';
+import { SubscriptionController } from '../controllers/subscriptionController.js';
+import { requireAuth } from '../middlewares/authMiddleware.js';
+
+const router = express.Router();
+
+router.get('/current', requireAuth, SubscriptionController.getCurrentSubscription);
+router.post('/cancel', requireAuth, SubscriptionController.cancelSubscription);
+router.post('/check-access', requireAuth, SubscriptionController.checkFeatureAccess);
+router.get('/plans', SubscriptionController.getPlans);
+
+export default router;
+```
+
+### 6. Subscription Middleware (`middlewares/subscriptionMiddleware.js`)
+```javascript
+import { SubscriptionService } from '../services/subscriptionService.js';
+
+// Middleware to check subscription status
+export const requireActiveSubscription = async (req, res, next) => {
+  try {
+    const userId = req.session.user.id;
+    const subscription = await SubscriptionService.getUserSubscription(userId);
+
+    if (subscription.subscription_status !== 'active') {
+      return res.status(403).json({
+        success: false,
+        message: 'Active subscription required',
+        code: 'SUBSCRIPTION_REQUIRED'
+      });
+    }
+
+    next();
+  } catch (error) {
+    console.error('Subscription middleware error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Subscription check failed'
+    });
+  }
+};
+
+// Middleware to check specific feature access
+export const requireFeatureAccess = (feature) => {
+  return async (req, res, next) => {
+    try {
+      const userId = req.session.user.id;
+      const access = await SubscriptionService.checkFeatureAccess(userId, feature);
+
+      if (!access.allowed) {
+        return res.status(403).json({
+          success: false,
+          message: access.reason,
+          code: 'FEATURE_NOT_AVAILABLE'
+        });
+      }
+
+      next();
+    } catch (error) {
+      console.error('Feature access middleware error:', error);
+      res.status(500).json({
+        success: false,
+        message: 'Feature access check failed'
+      });
+    }
+  };
+};
+```
+
+### 7. Cron Job for Subscription Expiry (`cron/subscriptionCron.js`)
+```javascript
+import { SubscriptionService } from '../services/subscriptionService.js';
+import cron from 'node-cron';
+
+// Run every day at 2 AM to check expired subscriptions
+export const setupSubscriptionCron = () => {
+  cron.schedule('0 2 * * *', async () => {
+    try {
+      console.log('Checking for expired subscriptions...');
+      const result = await SubscriptionService.checkExpiredSubscriptions();
+      
+      if (result.expired_count > 0) {
+        console.log(`Expired ${result.expired_count} subscriptions`);
+        
+        // Send expiration emails (implement email service)
+        for (const user of result.expired_users) {
+          await sendExpirationEmail(user.id);
+        }
+      }
+    } catch (error) {
+      console.error('Subscription cron job error:', error);
+    }
+  });
+
+  console.log('Subscription expiry cron job scheduled');
+};
+
+// Send expiration email (placeholder - implement your email service)
+async function sendExpirationEmail(userId) {
+  // Implementation for sending expiration emails
+  console.log(`Sending expiration email to user ${userId}`);
+}
+```
+
+### 8. Server Integration (`server.js`)
+```javascript
+import subscriptionRoutes from './routes/subscriptionRoutes.js';
+import { setupSubscriptionCron } from './cron/subscriptionCron.js';
+
+// Add subscription routes
+app.use('/api/subscriptions', subscriptionRoutes);
+
+// Setup cron jobs
+if (process.env.NODE_ENV === 'production') {
+  setupSubscriptionCron();
+}
+```
+
+## 🎯 Usage Examples
+
+### Check Feature Access:
+```javascript
+// Before allowing AI content generation
+const access = await SubscriptionService.checkFeatureAccess(userId, 'ai_content');
+if (!access.allowed) {
+  throw new Error(access.reason);
+}
+```
+
+### Route Protection:
+```javascript
+// Protect AI content route
+router.post('/ai/generate', 
+  requireAuth, 
+  requireFeatureAccess('ai_content'), 
+  AIController.generateContent
+);
+
+// Protect analytics route
+router.get('/analytics',
+  requireAuth,
+  requireFeatureAccess('analytics'),
+  AnalyticsController.getAnalytics
+);
+```
+
+## ✅ Features Implemented:
+
+1. **Plan Management**: Multiple subscription tiers with different features
+2. **Automatic Expiry**: Daily cron job checks and expires subscriptions
+3. **Feature Gating**: Restrict features based on subscription level
+4. **Usage Tracking**: Monitor social accounts and post usage
+5. **Subscription History**: Track all subscription changes
+6. **Auto-renewal**: Support for automatic subscription renewal
+7. **Graceful Downgrade**: Handle subscription expiration gracefully
+
+This implementation provides complete subscription management with proper expiry logic and feature gating!

@@ -336,10 +336,7 @@ export const logout = async (req, res) => {
 export const saveContent = async (req, res) => {
   const { id, postDetailsDate, postDetailsPost, postDetailsPlatform } = req.body;
   try {
-      console.log(id);
-      console.log(postDetailsDate);
-      console.log(postDetailsPost);
-      console.log(postDetailsPlatform); 
+    
       if(!id){
         res.status(401).json({error: 'User is not logged in'})
       }
@@ -381,6 +378,7 @@ const { id } = req.body;
         console.log('User does not have any posts');
         return res.status(404).json({ error: 'User does not have any generated posts' });
       }
+
       const postDetails = {
         date: posts.date,
         post: posts.post,
@@ -389,7 +387,7 @@ const { id } = req.body;
 
       res.status(200).json({
         status: 'success',
-        data: postDetails
+        data: posts 
       });
     
     } catch (error) {

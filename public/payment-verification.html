@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Payment Verification</title>
+    
+  <link rel="icon" href="autopost-icon.jpg">
     <style>
         .verification-container {
             text-align: center;
@@ -51,16 +53,27 @@
 
             try {
                 // Verify payment with backend
-                const response = await fetch(`http://localhost:3000/payment/verify?reference=${reference}`);
+                  const user = JSON.parse(localStorage.getItem('currentUser'));
+                 const email = user.email;
+                 const token = localStorage.getItem('authToken');
+                 console.log(token);
+                const response = await fetch(`http://localhost:3000/paymentApi/verify`,{
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+                    body: JSON.stringify({ reference, email })
+                });
                 const result = await response.json();
 
-                if (result.status === 'success') {
+                if (result.success) {
                     showSuccess('Payment successful! Redirecting to dashboard...');
                     
                     // Store payment success in localStorage/sessionStorage
+                    localStorage.removeItem('trialData'); // Clear trial data if any
+                    localStorage.setItem('paidPlan', 'true');
                     localStorage.setItem('paymentSuccess', 'true');
                     localStorage.setItem('paymentReference', reference);
                     localStorage.setItem('paymentAmount', result.data.amount);
+                    localStorage.setItem('paymentMethod', result.data.channel);
                     localStorage.setItem('paymentDate', new Date().toISOString());
                     
                     // Start countdown redirect
@@ -107,7 +120,7 @@
 
         function redirectToDashboard() {
             // Redirect to dashboard
-            window.location.href = '/dashboard.html'; // Change to your dashboard URL
+            window.location.href = 'dashboard.html'; // Change to your dashboard URL
         }
 
         // Start verification when page loads
