@@ -780,9 +780,11 @@
                 const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sept', 'Oct', 'Nov', 'Dec'];
                 const endDateString = `${days[endDate.getDay()]} ${endDate.getDate()} ${months[endDate.getMonth()]} ${endDate.getFullYear()}`;
                 const paymentDateString = `${days[paymentDate.getDay()]} ${paymentDate.getDate()} ${months[paymentDate.getMonth()]} ${paymentDate.getFullYear()}`;
+                const paymentCardType = localStorage.getItem('cardType');
+                const paymentCardLast4 = localStorage.getItem('cardLast4');
                 const paymentNAmount = paymentAmount / 100;
                          document.getElementById('paymentMethodCard').innerHTML = `
-                            <p>VISA •••• •••• •••• 4242</p>
+                            <p>${paymentCardType.toUpperCase()} •••• •••• •••• ${paymentCardLast4}</p>
                             <p>Expires ${endDateString}</p>
                             <a href="payment.html" class="btn btn-outline" style="margin-top: 16px;" >Update Payment</a>
                       
@@ -869,7 +871,15 @@
         });
             }
             
+            if(!trialData && user && !paidPlan){
+                document.getElementById('plan').innerHTML = ` <h3>No Active Plan</h3>
+                            <p>You are currently on a free plan.</p>
+                            <a href='pricing.html' class="btn btn-outline" >Choose a Plan</a>
+                        `;
+            }
+            
             if (trialData && user) {
+               
                 const now = new Date();
                 const endDate = new Date(trialData.endDate);
                 
@@ -915,8 +925,18 @@
                             <p>Free Trial</p>
                             <p>Ending: ${endDateString}</p>
                             <a href='pricing.html' class="btn btn-outline" >Change Plan</a>
+                        `; 
+                         document.getElementById('paymentMethodCard').innerHTML = `
+                            <p>No payment method yet</p>
+                            <p>Expires ${endDateString}</p>
+                            <a href="payment.html" class="btn btn-outline" style="margin-top: 16px;" >Update Payment</a>
+                      
                         `;
-                        
+                         document.getElementById('billingHistoryCard').innerHTML = `
+                            
+                            <p>No billing history available</p>
+                         
+                        `;
                        /* const a = trialData.plan;
                                             const response = await fetch('http://localhost:3000/trialInfo', {
                         method: 'POST',

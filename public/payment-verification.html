@@ -72,8 +72,10 @@
                     localStorage.setItem('paidPlan', 'true');
                     localStorage.setItem('paymentSuccess', 'true');
                     localStorage.setItem('paymentReference', reference);
-                    localStorage.setItem('paymentAmount', result.data.amount);
-                    localStorage.setItem('paymentMethod', result.data.channel);
+                    localStorage.setItem('paymentAmount', result.data.transaction.amount);
+                    localStorage.setItem('cardLast4', result.data.transaction.authorization.last4);
+                    localStorage.setItem('cardType', result.data.transaction.authorization.card_type);
+                    localStorage.setItem('paymentMethod', result.data.transaction.channel);
                     localStorage.setItem('paymentDate', new Date().toISOString());
                     
                     // Start countdown redirect

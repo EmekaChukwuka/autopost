@@ -387,26 +387,12 @@
                 
                         localStorage.setItem('authToken', data.token);
                 localStorage.setItem('currentUser', JSON.stringify(user));
-                const trialPlan = localStorage.getItem('trialPlan');
-                console.log(trialPlan);
 
-                 // Start free trial
-                const startDate = new Date();
-                const endDate = new Date(startDate.getTime() + 14 * 24 * 60 * 60 * 1000); // 14 days from now
-                
-                const trialData = {
-                    plan: trialPlan,
-                    startDate: startDate.toISOString(),
-                    endDate: endDate.toISOString()
-                };
-                
-                            startFreeTrial(trialPlan);
-                localStorage.setItem('trialData', JSON.stringify(trialData));
-                
                 
            
                         window.location.href="dashboard.html";
                     } else {
+                      console.log(data)
                         document.getElementById('message').textContent = data.message || 'Registration failed';
                     }
                 } catch (error) {

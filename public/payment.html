@@ -348,7 +348,8 @@
                 document.getElementById('plan-price').innerHTML = ` ${data.plan.Details.price} `;
                 document.getElementById('plan-priceb').innerHTML = ` ${data.plan.Details.price} `;
             
-        
+                let selectedMethod = 'card';
+
         let planName = `${data.plan.Details.name}`;
         let planAmount = `${data.plan.Details.price}`;
         const plan = { id: planName, amount: planAmount, name: planName+'plan' };

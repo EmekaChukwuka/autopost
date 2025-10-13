@@ -136,7 +136,8 @@ export class PaymentController {
         success: true,
         message: 'Payment verified successfully',
         data: {
-          transaction: transaction
+          transaction: transaction,
+          //subscription: subscription
         }
       });
       } else {

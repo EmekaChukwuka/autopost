@@ -532,6 +532,22 @@ document.addEventListener('DOMContentLoaded', async () => {
             
             const result = await response.json();
             console.log(result.data);
+            if(result.data.length === 0){
+               const historySection = document.querySelector('.content-history');
+      
+            const newItem = document.createElement('div');
+            
+      newItem.className = 'history-item';
+      newItem.style = 'cursor: pointer;';
+      newItem.innerHTML = `
+        <div class="post-preview" id="post-preview">
+          <p>You have not generated any posts yet. <a href="create.html">Create your first post now!</a></p>
+        </div>
+        
+      `;
+      historySection.insertBefore(newItem, historySection.firstChild.nextSibling);
+      
+            }
             for(i = 0; i < result.data.length; i++){
            const adate = new Date(result.data[i].date);
            const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sept', 'Oct', 'Nov', 'Dec'];
