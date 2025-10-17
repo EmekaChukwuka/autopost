@@ -524,7 +524,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     const user = JSON.parse(localStorage.getItem('currentUser'));
     const id = user.id;
     console.log(user.id);
-    const response = await fetch('http://localhost:3000/register/getContent', {
+    const response = await fetch('https://autopost-backend-hbck.onrender.com/register/getContent', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({id})

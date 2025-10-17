@@ -10,7 +10,7 @@ import dotenv from "dotenv";
 import http from 'http';
 import cors from 'cors';
 import session from 'express-session';
-import ngrok from '@ngrok/ngrok';
+//import ngrok from '@ngrok/ngrok';
 import path from 'path';
 import { fileURLToPath } from 'url';
 
@@ -184,5 +184,5 @@ const PORT = process.env.PORT || 3000;
 server.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);
 });
-ngrok.connect({ addr: 3000, authtoken: process.env.NGROK_AUTH_TOKEN })
- .then(listener => console.log(`Ingress established at: ${listener.url()}`));
+//ngrok.connect({ addr: 3000, authtoken: process.env.NGROK_AUTH_TOKEN })
+ //.then(listener => console.log(`Ingress established at: ${listener.url()}`));

@@ -825,7 +825,7 @@ body{
 if(timeRemaining > 0){
       // API call to AI backend
   try{
-      const response = await fetch('/api/generate', {
+      const response = await fetch('https://autopost-backend-hbck.onrender.com/api/generate', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ prompt, platform, contentType}) // Updated
@@ -851,7 +851,7 @@ if(timeRemaining > 0){
       // API call to AI backend
       const now = new Date();
   try{
-      const response = await fetch('/api/generate', {
+      const response = await fetch('https://autopost-backend-hbck.onrender.com/api/generate', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ prompt, platform, contentType}) // Updated
@@ -882,7 +882,7 @@ if(timeRemaining > 0){
         const postDetailsPost = postDetails.post;
         const postDetailsPlatform = postDetails.platform;
         console.log(postDetailsDate);
-              const response = await fetch('http://localhost:3000/register/saveContent', {
+              const response = await fetch('https://autopost-backend-hbck.onrender.com/register/saveContent', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ id, postDetailsDate, postDetailsPost, postDetailsPlatform}) 

@@ -333,7 +333,7 @@
         console.log(trialData);
         console.log(trialPlan);
           const a = trialPlan;
-                                            const response = await fetch('http://localhost:3000/trialInfo', {
+                                            const response = await fetch('https://autopost-backend-hbck.onrender.com/trialInfo', {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
@@ -378,7 +378,7 @@
             console.log(localStorage.getItem('authToken'));
             try {
                 // Initialize payment with backend
-                const response = await fetch('http://localhost:3000/paymentApi/initialize', {
+                const response = await fetch('https://autopost-backend-hbck.onrender.com/paymentApi/initialize', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -459,7 +459,7 @@
       document.getElementById('message').innerText = 'Verifying payment...';
 
       try {
-        const resp = await fetch(`http://localhost:3000/paymentApi/verify`, {
+        const resp = await fetch(`https://autopost-backend-hbck.onrender.com/paymentApi/verify`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ reference })
@@ -500,7 +500,7 @@
 
         async function verifyPayment(reference) {
             try {
-                const response = await fetch('http://localhost:3000/paymentApi/verify', {
+                const response = await fetch('https://autopost-backend-hbck.onrender.com/paymentApi/verify', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
