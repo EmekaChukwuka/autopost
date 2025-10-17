@@ -483,8 +483,7 @@
         const checkInterval = setInterval(async () => {
             if (paymentWindow.closed) {
                 clearInterval(checkInterval);
-                verifyPayment(paymentReference);
-                
+                window.location.href = "dashboard.html";
             }
         }, 1000);
 
