@@ -8,4 +8,4 @@ const subscriptionPlanSchema = new mongoose.Schema({
   active: { type: Boolean, default: true }
 });
 
-export default mongoose.model("SubscriptionPlan", subscriptionPlanSchema);
+export default mongoose.model("SubscriptionPlan");

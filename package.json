@@ -3,6 +3,9 @@
   "version": "1.0.0",
   "description": "A tool which enables content creators to upload AI generated content to their social media handles",
   "main": "app.js",
+  "engines": {
+  "node": ">=18.0.0"
+},
   "type": "module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
