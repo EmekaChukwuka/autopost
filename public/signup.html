@@ -208,7 +208,22 @@
       }
     }
 
-    
+     .spinner {
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top: 2px solid white;
+            width: 16px;
+            height: 16px;
+            animation: spin 1s linear infinite;
+            margin-right: 8px;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        .hidden {
+            display: none;
+        }
   </style>
 </head>
 <body>
@@ -278,7 +293,8 @@
           </div>
 
           <div class="form-group">
-            <button type="submit" class="btn btn-primary">Create Account</button>
+            <button type="submit" class="btn btn-primary" id="submitButton"> <span id="spinner" class="spinner hidden"></span>
+                <span id="buttonText">Sign Up</span></button>
           </div>
           <div id="message"></div>
         </form>
@@ -323,7 +339,10 @@
     console.log(localStorage.getItem('trialPlan'));
     // Form Validation
     const signupForm = document.getElementById('signupForm');
-    
+     const submitButton = document.getElementById('submitButton');
+            const spinner = document.getElementById('spinner');
+            const buttonText = document.getElementById('buttonText');
+
     signupForm.addEventListener('submit', async (e) => {
       e.preventDefault();
       let isValid = true;
@@ -360,6 +379,10 @@
       } else {
         document.getElementById('termsError').style.display = 'none';
       }
+        // Show loading state
+                submitButton.disabled = true;
+                spinner.classList.remove('hidden');
+                buttonText.textContent = 'Creating Account...';
 
       if (isValid) {
          try {
@@ -378,7 +401,7 @@
                     const data = await response.json();
                     
                     if (response.ok) {
-                        document.getElementById('message').textContent = 'Registration successful!';
+                        document.getElementById('message').textContent = 'Signup successful!';
                                             const user = {
                     id: data.user.id,
                     name: data.user.name,
@@ -394,11 +417,17 @@
                     } else {
                       console.log(data)
                         document.getElementById('message').textContent = data.message || 'Registration failed';
+                          submitButton.disabled = false;
+                spinner.classList.add('hidden');
+                buttonText.textContent = 'Sign Up';
                     }
                 } catch (error) {
                     console.error('Error:', error);
                     alert(error);
                     document.getElementById('message').textContent = 'An error occurred during registration';
+                     submitButton.disabled = false;
+                spinner.classList.add('hidden');
+                buttonText.textContent = 'Sign Up';
                 } finally {
                     // Reset loading state
                 }

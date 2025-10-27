@@ -210,7 +210,22 @@
         display: flex;
       }
     }
-
+.spinner {
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top: 2px solid white;
+            width: 16px;
+            height: 16px;
+            animation: spin 1s linear infinite;
+            margin-right: 8px;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        .hidden {
+            display: none;
+        }
     
   </style>
 </head>
@@ -277,8 +292,8 @@
             </div>
           </div>
 
-          <div class="form-group">
-            <button type="submit" class="btn btn-primary">Sign In</button>
+          <div class="form-group"><button type="submit" class="btn btn-primary" id="submitButton"> <span id="spinner" class="spinner hidden"></span>
+                <span id="buttonText">Sign In</span></button>
           </div>
           <div id="message"></div>
         </form>
@@ -320,9 +335,17 @@
       togglePassword.classList.toggle('fa-eye-slash');
     });
 
+ const submitButton = document.getElementById('submitButton');
+            const spinner = document.getElementById('spinner');
+            const buttonText = document.getElementById('buttonText');
+
     // Form Submission
     document.getElementById('signinForm').addEventListener('submit', async (e) => {
       e.preventDefault();
+        // Show loading state
+                submitButton.disabled = true;
+                spinner.classList.remove('hidden');
+                buttonText.textContent = 'Signing In...';
      try {
       
       const email = document.getElementById('email').value;
@@ -339,20 +362,28 @@
                     
                     if (response.ok) {
                         document.getElementById('message').textContent = 'Login successful!';
+                       
                        const user = {
                         id: data.user.id,
                         name: data.user.name,
                         email: email
                 };
+                 console.log(user)
                         localStorage.setItem('authToken', data.token);
                 localStorage.setItem('currentUser', JSON.stringify(user));
                         window.location.href="dashboard.html";
                     } else {
                         document.getElementById('message').textContent = 'Incorrect email or password';
+                         submitButton.disabled = false;
+                spinner.classList.add('hidden');
+                buttonText.textContent = 'Sign In';
                     }
                 } catch (error) {
                     console.error('Error:', error);
                     document.getElementById('message').textContent = 'An error occurred during login';
+                     submitButton.disabled = false;
+                spinner.classList.add('hidden');
+                buttonText.textContent = 'Sign In';
                 } 
 
            

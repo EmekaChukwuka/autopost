@@ -520,6 +520,12 @@ document.querySelector('.btn-primary').addEventListener('click', () => {
 });
 
 document.addEventListener('DOMContentLoaded', async () => { 
+  
+    const historySection = document.querySelector('.content-history');
+    const newDivA = document.createElement('div');
+    newDivA.textContent = "Loading Posts..."
+    historySection.insertBefore(newDivA, historySection.firstChild.nextSibling);
+
   try{
     const user = JSON.parse(localStorage.getItem('currentUser'));
     const id = user.id;
@@ -530,21 +536,21 @@ document.addEventListener('DOMContentLoaded', async () => {
         body: JSON.stringify({id})
          });
             
+         newDivA.remove();
             const result = await response.json();
+            if(!result.ok ){
+              newDivA.textContent = result;
+            }
             console.log(result.data);
             if(result.data.length === 0){
-               const historySection = document.querySelector('.content-history');
-      
+                    
             const newItem = document.createElement('div');
             
       newItem.className = 'history-item';
       newItem.style = 'cursor: pointer;';
-      newItem.innerHTML = `
-        <div class="post-preview" id="post-preview">
+      newItem.innerHTML = ` <div class="post-preview" id="post-preview">
           <p>You have not generated any posts yet. <a href="create.html">Create your first post now!</a></p>
-        </div>
-        
-      `;
+        </div>  `;
       historySection.insertBefore(newItem, historySection.firstChild.nextSibling);
       
             }
@@ -587,6 +593,8 @@ searchInput.addEventListener('input', () => {
       post.style.display = 'grid';
     } else {
       post.style.display = 'none';
+      newDivA.textContent = `No Posts Found Matching "${searchTerm}"`
+      historySection.insertBefore(newDivA, historySection.firstChild.nextSibling);
     }
   });
 });
@@ -619,7 +627,14 @@ searchInput.addEventListener('input', () => {
     });*/
 
         }catch(error){
+           const historySection = document.querySelector('.content-history');
+    const newDiv = document.createElement('div');
         console.log('An error occured', error);
+        newDivA.remove();
+        //historySection.remove(newDivA, historySection.firstChild)
+          newDiv.textContent = '';
+        newDiv.textContent = 'An error occured, kindly reload the page';
+        historySection.insertBefore(newDiv, historySection.firstChild);
       } 
       
       

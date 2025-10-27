@@ -246,7 +246,8 @@
           </div>
 
           <div class="form-group">
-            <button type="submit" class="btn btn-primary">Logout</button>
+            <button type="submit" class="btn btn-primary" id="submitButton"> <span id="spinner" class="spinner hidden"></span>
+                <span id="buttonText">Logout</span></button>
           </div>
           <div id="message"></div>
         </form>
@@ -278,9 +279,18 @@
         localStorage.setItem('theme', 'light');
       }
     });
+    const submitButton = document.getElementById('submitButton');
+            const spinner = document.getElementById('spinner');
+            const buttonText = document.getElementById('buttonText');
+      submitButton.disabled = false;
+                spinner.classList.add('hidden');
+                buttonText.textContent = 'Logout';
     // Form Submission
     document.getElementById('signoutForm').addEventListener('submit', async (e) => {
       e.preventDefault();
+      submitButton.disabled = true;
+                spinner.classList.remove('hidden');
+                buttonText.textContent = 'Logging Out...';
      try {
                      const token = localStorage.getItem('authToken');
                     const response = await fetch('https://autopost-backend-hbck.onrender.com/register/logout', {
@@ -301,11 +311,17 @@
                         window.location.href="index.html";
                     } else {
                         document.getElementById('message').textContent = 'Logout failed';
-                    }
+                         submitButton.disabled = false;
+                spinner.classList.add('hidden');
+                buttonText.textContent = 'Logout';
+                      }
                 } catch (error) {
                     console.error('Error:', error);
                     document.getElementById('message').textContent = 'An error occurred during logout';
-                } 
+                   submitButton.disabled = false;
+                spinner.classList.add('hidden');
+                buttonText.textContent = 'Logout';
+                  } 
     });
   </script>
    <!--
