@@ -591,6 +591,7 @@ searchInput.addEventListener('input', () => {
     // Show only posts that contain the search term
     if (postText.includes(searchTerm)) {
       post.style.display = 'grid';
+      newDivA.remove();
     } else {
       post.style.display = 'none';
       newDivA.textContent = `No Posts Found Matching "${searchTerm}"`
