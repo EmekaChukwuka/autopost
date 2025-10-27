@@ -118,13 +118,21 @@ export const login = async (req, res) => {
     const isMatch = await User.comparePassword(email, password);
     if (!isMatch) return res.status(401).json({ error: "Invalid credentials" });
 
-    const token = jwt.sign({ id: user.id, email: user.email }, JWT_SECRET, { expiresIn: "14d" });
+    const token = jwt.sign({ id: user._id, email: user.email }, JWT_SECRET, { expiresIn: "14d" });
 
+     // Store user in session
+    req.user = {
+      id: user.id,
+      name: user.name,
+      email: user.email,
+      avatar: user.avatar,
+      provider: user.provider
+    };
     res.status(200).json({
       status: "success",
       token,
        user :  {
-      id: user.id,
+      id: user._id,
       name: user.name,
       email: user.email,
       avatar: user.avatar,
