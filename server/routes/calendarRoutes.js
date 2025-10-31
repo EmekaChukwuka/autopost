@@ -4,10 +4,10 @@ import { generateCalendar, getCalendar, deleteCalendar } from '../controllers/ca
 import { authenticateToken } from '../controllers/regisAuthController.js';
 import  protect  from '../middleware/regisAuthMiddleware.js';
 
-const router = express.Router();
+const calendarRouter = express.Router();
 
-router.post('/generate', protect, generateCalendar);
-router.post('/get', protect, getCalendar);
-router.post('/delete', deleteCalendar);
+calendarRouter.post('/generate', protect, generateCalendar);
+calendarRouter.post('/get', protect, getCalendar);
+calendarRouter.post('/delete', deleteCalendar);
 
 export default calendarRouter;
