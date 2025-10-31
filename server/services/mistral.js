@@ -20,7 +20,7 @@ You are a helpful assistant that outputs ONLY valid JSON.
 Produce exactly ${days} objects starting from ${startDateISO} (inclusive),
 each object must contain:
   - "date": ISO date string (YYYY-MM-DD),
-  - "platform": use these platforms ["Instagram","Twitter","Facebook","LinkedIn","TikTok"] in a round-robin fashion,
+  - "platform": use these platforms ["Instagram","Twitter","Facebook","LinkedIn","TikTok"] while generating the content in a round-robin fashion according to the platform,
   - "post": a short social post (max 280 characters recommended).
 Return a JSON array (no explanation). Each item must be a valid JSON object.
 `;
