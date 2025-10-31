@@ -6,8 +6,8 @@ import  protect  from '../middleware/regisAuthMiddleware.js';
 
 const calendarRouter = express.Router();
 
-calendarRouter.post('/generate', protect, generateCalendar);
-calendarRouter.post('/get', protect, getCalendar);
+calendarRouter.post('/generate', generateCalendar);
+calendarRouter.post('/get', getCalendar);
 calendarRouter.post('/delete', deleteCalendar);
 
 export default calendarRouter;
