@@ -113,10 +113,6 @@
         }
 
         /* ===== Main Content ===== */
-        .main {
-            padding: 4%;
-            margin-right:4%;
-        }
 
         .header {
             display: flex;
@@ -141,7 +137,7 @@
         }
 
         .btn i {
-            margin-right: 8px;
+            margin-right: 0;
         }
 
         .btn-primary {
@@ -348,7 +344,9 @@
 
         @media (max-width: 768px) {
             .dashboard {
-                grid-template-columns: 0;
+                width:100%;
+                padding: 0;
+                margin:0;
             }
             .sidebar {
                 display: none;
@@ -387,6 +385,8 @@
         /* ===== Settings Page ===== */
         #settings-page{
             margin-bottom: 10vh;
+             width:90%;
+            margin: 1% 0 1% 0;
         }
         
         .settings-tabs {
@@ -409,8 +409,8 @@
 
         .settings-section {
             margin-bottom: 32px;
-            width:90%;
-            margin: 1% 5%;
+            width:96%;
+            margin: 1% 2%;
         }
 
         .settings-section h2 {
@@ -451,7 +451,7 @@
             border: 1px solid var(--border-color);
             border-radius: 6px;
             width:90%;
-            margin: 1% 5%;
+            margin: 1% 0;
         }
 
         .account-icon {
@@ -488,10 +488,13 @@
         }
         #card{
             width: 80%;
-            margin: 5% auto;
+            margin: 5% 0;
 
           }
-        
+         .main {
+            padding: 0;
+            margin:0;
+        }
 
         }
         
@@ -539,7 +542,7 @@
                 <div class="settings-tabs">
                     <div class="settings-tab active" data-tab="account">Account</div>
                     <div class="settings-tab" data-tab="connected-accounts">Connected Accounts</div>
-                    <div class="settings-tab" data-tab="notifications">Notifications</div>
+                  <!--  <div class="settings-tab" data-tab="notifications">Notifications</div>-->
                     <div class="settings-tab" data-tab="billing">Billing</div>
                 </div>
 
@@ -681,14 +684,14 @@
     if (localStorage.getItem('theme') === 'dark') {
       root.setAttribute('data-theme', 'dark');
       darkModeToggle.checked = true;
-      dashboardImg.srcObject= "autopost-dashboard-dark,jpg";
+      dashboardImg.srcObject= "autopost-dashboard-dark.jpg";
     }
 
     darkModeToggle.addEventListener('change', (e) => {
       if (e.target.checked) {
         root.setAttribute('data-theme', 'dark');
         localStorage.setItem('theme', 'dark');
-      dashboardImg.srcObject= "autopost-dashboard-dark,jpg";
+      dashboardImg.srcObject= "autopost-dashboard-dark.jpg";
       } else {
         root.removeAttribute('data-theme');
         localStorage.setItem('theme', 'light');

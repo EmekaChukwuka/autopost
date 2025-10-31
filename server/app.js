@@ -13,6 +13,9 @@ import newAIRouter from "./routes/newAIRouter.js";
 import authRouter from "./routes/auth.js";
 import router from "./routes/regisAuthRoutes.js";
 import paymentRouter from "./routes/paymentRoutes.js";
+import calendarRouter from './routes/calendarRoutes.js';
+
+
 
 dotenv.config();
 
@@ -55,6 +58,7 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, "../public")));
+app.use('/calendar', calendarRouter);
 
 //
 // 🔗 API Routes

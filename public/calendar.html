@@ -1,0 +1,638 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Calendar | AutoPost</title>
+  
+  <link rel="icon" href="autopost-icon.jpg">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+  <style>
+    :root{
+      --bg-primary:#ffffff;
+      --bg-secondary:#f5f5f5;
+      --text-primary:#000000;
+      --text-secondary:#333333;
+      --border-color:#e0e0e0;
+      --accent-blue:#2962FF;
+      --accent-green:#00C853;
+      --error-red:#D32F2F;
+      --card-bg:#ffffff;
+    }
+    [data-theme="dark"]{
+      --bg-primary:#121212;
+      --bg-secondary:#1e1e1e;
+      --text-primary:#ffffff;
+      --text-secondary:#e0e0e0;
+      --border-color:#333333;
+      --accent-blue:#448AFF;
+      --card-bg:#1b1b1b;
+    }
+    *{
+      box-sizing:border-box;
+    }
+    body{
+      font-family:Inter, sans-serif;
+      margin:0;
+      background:var(--bg-primary);
+      color:var(--text-primary);
+    }
+    /* sidebar (desktop) */
+    .sidebar{
+       background: var(--bg-primary);
+            border-right: 1px solid var(--border-color);
+            padding: 24px;
+            position: fixed;
+            top: 0;
+            width:25%;
+            height: 100vh;
+      display:none;
+    }
+            .logo {
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 32px;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+        }
+
+        .logo span {
+            color: var(--accent-blue);
+        }
+
+        a{
+            text-decoration: none;
+        }
+        
+        .logo-icon {
+            width: 24px;
+            height: 24px;
+            background-color: var(--accent-blue);
+            color: white;
+            border-radius: 4px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 8px;
+            font-weight: bold;
+        }
+
+    @media(min-width:768px){
+     .sidebar {
+           display:block;
+        }
+         .nav-item {
+            display: flex;
+            align-items: center;
+            padding: 12px 16px;
+            margin-bottom: 8px;
+            border-radius: 6px;
+            cursor: pointer;
+            color: var(--text-secondary);
+            transition: all 0.2s;
+        }
+
+        .nav-item i {
+            margin-right: 12px;
+            width: 20px;
+            text-align: center;
+        }
+
+        .nav-item.active {
+            background-color: var(--accent-blue);
+            color: var(--text-primary);
+            font-weight: 500;
+        }
+
+        .nav-item:hover:not(.active) {
+            background-color: var(--bg-secondary);
+        }
+
+      main{
+        margin-left:25%;
+    }
+    }
+     a{
+            text-decoration: none;
+        }
+    /* top area */
+    .top{display:flex;align-items:center;justify-content:space-between;padding:16px;background:var(--bg-secondary);border-bottom:1px solid var(--border-color);position:sticky;top:0;z-index:10}
+    
+    /* prompt box when no calendar */
+    .no-calendar{padding:32px;text-align:center;background:var(--card-bg);margin:16px;border:1px solid var(--border-color);border-radius:8px}
+    .btn{background:var(--accent-blue);color:white;border:none;padding:10px 14px;border-radius:6px;cursor:pointer}
+    .btn-outline{background:transparent;border:1px solid var(--accent-blue);color:var(--accent-blue);padding:10px 14px;border-radius:6px;cursor:pointer}
+
+    /* calendar grid */
+    .calendar-wrap{padding:16px;}
+    .month-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+    .month-title{font-size:1.2rem;font-weight:600}
+    .cal-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:8px}
+    .cal-cell{background:var(--card-bg);min-height:96px;border:1px solid var(--border-color);border-radius:8px;padding:8px;position:relative;cursor:pointer;overflow:hidden}
+    .cal-cell .daynum{position:absolute;top:8px;right:8px;font-size:12px;color:var(--text-secondary)}
+    .cal-cell .post-preview{font-size:13px;line-height:1.3;color:var(--text-secondary);margin-top:24px;max-height:60px;overflow:hidden}
+    .cal-cell.empty{opacity:0.6}
+    .legend{display:flex;gap:8px;align-items:center;margin:12px 0}
+    .legend .dot{width:10px;height:10px;border-radius:50%}
+    .dot.blue{background:var(--accent-blue)}
+    .dot.green{background:var(--accent-green)}
+    /* modal */
+    .modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);align-items:center;justify-content:center;z-index:999}
+    .modal.show{display:flex}
+    .modal-card{width:92%;max-width:720px;background:var(--card-bg);padding:16px;border-radius:10px;border:1px solid var(--border-color)}
+    .modal-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+    .modal-body{margin-top:8px}
+    .meta{font-size:13px;color:var(--text-secondary)}
+    .copy-btn{background:var(--accent-green);color:white;border:none;padding:8px 12px;border-radius:6px;cursor:pointer}
+    .regenerate{background:#ff9800;color:white;border:none;padding:8px 12px;border-radius:6px;cursor:pointer}
+
+   
+    
+    .bottom-nav{
+        display:none;
+    }
+    /* responsive spacing so content doesn't hide behind nav */
+    @media(max-width:768px){ 
+     .calendar-wrap{
+      padding:2%;
+      width:96%;
+      margin-left:2%;
+      margin-bottom:50%;
+    }
+        .top{
+          display:flex;
+          align-items:center;
+          justify-content:space-between;
+          padding:10px;background:var(--bg-secondary);
+          border-bottom:1px solid var(--border-color);
+          position:sticky;
+          top:0;
+          z-index:10; 
+          width:100%;
+        }
+  
+        .spacer{
+          height:64px;
+        }
+ /* bottom nav for mobile */
+    .bottom-nav{
+      display:flex;
+      justify-content:space-around;
+      align-items:center;
+      padding:10px 0;
+      background:var(--bg-primary);
+      border-top:1px solid var(--border-color);
+      position:fixed;
+      bottom:0;
+      width:100%;
+    }
+    .bottom-nav a{
+      color:var(--text-secondary);
+      text-decoration:none;
+    }
+    
+    .cal-grid{
+      display:grid;
+      grid-template-columns:repeat(3,1fr);
+      gap:2%;
+  }
+    body{
+        padding:0;
+        margin:0;
+    }
+}
+.logo {
+  font-weight: 700;
+  font-size: 1.2rem;
+}
+
+.logo span{
+    color:var(--accent-blue);
+}
+  </style>
+</head>
+<body>
+  <!-- Sidebar -->
+        <div class="sidebar">
+            <div class="logo">Auto<span>Post</span></div>
+            <a href="dashboard.html"><div data-page="home" class="nav-item">
+                <i class="fas fa-home"></i><span>Dashboard</span>
+            </div></a>
+            <a href="create.html"><div class="nav-item" data-page="create">
+                <i class="fas fa-plus"></i><span>Create Post</span>
+            </div></a>
+           <a href="#" class="nav-item active"><div data-page="calendar">
+                <i class="fas fa-calendar-alt"></i><span>Calendar</span>
+            </div></a>
+           <a href="analytics.html"><div class="nav-item" data-page="analytics">
+                <i class="fas fa-chart-line"></i><span>Analytics</span>
+            </div></a>
+           <a href="settings.html"> <div class="nav-item" data-page="settings">
+                <i class="fas fa-cog"></i><span>Settings</span>
+            </div></a>
+        </div>
+
+  <main>
+    <header class="top">
+      <div class="logo"><span>Calendar</span></div>
+      <div class="actions">
+        <button id="regenerateBtn" class="regenerate" title="Regenerate calendar">Regenerate</button>
+        <button id="openGenerate" class="btn">Generate calendar</button>
+      </div>
+    </header>
+
+    <section id="mainArea" class="calendar-wrap">
+      <!-- content injected by JS -->
+      <div id="loading" style="padding:18px">Loading calendar…</div>
+    </section>
+
+    <div class="spacer"></div>
+  </main>
+
+  <!-- Bottom nav mobile -->
+  <nav class="bottom-nav">
+    <a href="dashboard.html"><i class="fas fa-home"></i></a>
+    <a href="calendar.html" style="color:var(--accent-blue)"><i class="fas fa-calendar-alt"></i></a>
+    <a href="create.html"><i class="fas fa-plus"></i></a>
+    <a href="analytics.html"><i class="fas fa-chart-line"></i></a>
+    <a href="settings.html"><i class="fas fa-user"></i></a>
+  </nav>
+
+  <!-- day modal -->
+  <div id="dayModal" class="modal">
+    <div class="modal-card">
+      <div class="modal-header">
+        <strong id="modalTitle">Day</strong>
+        <button id="closeModal" style="border:none;background:transparent;font-size:18px;cursor:pointer">&times;</button>
+      </div>
+      <div class="modal-body">
+        <p class="meta" id="modalMeta"></p>
+        <div id="modalContent" style="white-space:pre-wrap;margin:8px 0;"></div>
+        <div style="display:flex;gap:8px;margin-top:12px;">
+          <button id="copyBtn" class="copy-btn"><i class="fas fa-copy"></i> Copy to clipboard</button>
+          <button id="editPost" class="btn btn-outline">Edit</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+<script>
+   const root = document.documentElement;
+
+    if (localStorage.getItem('theme') === 'dark') {
+      root.setAttribute('data-theme', 'dark');
+    
+    }
+
+/*
+  calendar.html JS
+  - expects a backend endpoint POST /calendar/get { id }
+    returns: { success: true, calendar: [{ date: '2025-10-01', post:'...', platform:'X' }, ...] }
+  - openGenerate button goes to generate-calendar.html
+  - POST /calendar/regenerate or /calendar/generate used by regenerate flow
+*/
+ const token = localStorage.getItem('token');
+const mainArea = document.getElementById('mainArea');
+const loading = document.getElementById('loading');
+const openGenerate = document.getElementById('openGenerate');
+const regenerateBtn = document.getElementById('regenerateBtn');
+
+openGenerate.addEventListener('click', () => {
+  window.location.href = 'generate-calendar.html';
+});
+
+regenerateBtn.addEventListener('click', () => {
+  // redirect to generate page for regeneration flow
+  window.location.href = 'generate-calendar.html?regenerate=true';
+});
+
+const user = JSON.parse(localStorage.getItem('currentUser') || 'null');
+
+// helper: build fallback demo calendar if backend missing
+function demoCalendar() {
+  const arr = [];
+  const start = new Date();
+  for (let i = 0; i < 30; i++) {
+    const d = new Date(start.getFullYear(), start.getMonth(), start.getDate() + i);
+    arr.push({
+      date: d.toISOString().split('T')[0],
+      post: `Demo post for ${d.toDateString()}: idea about ${['tips','news','meme'][i%3]}`,
+      platform: ['Twitter','Facebook','Instagram'][i%3]
+    });
+  }
+  return arr;
+}
+
+async function fetchCalendar() {
+  if (!user) {
+    mainArea.innerHTML = `<div class="no-calendar"><p>Please sign in to see your calendar.</p></div>`;
+    return;
+  }
+
+  try {
+    mainArea.innerHTML = '<div style="padding:18px">Loading calendar…</div>';
+    const res = await fetch('https://autopost-backend-hbck.onrender.com/calendar/get', {
+      method:'POST',
+      headers:{
+        'Content-Type':'application/json',
+        'Authorization': `Bearer ${token}`
+      },
+      body: JSON.stringify({ id: user.id })
+    });
+
+    if (!res.ok) {
+      // fallback UI: show generate prompt
+      throw new Error('no-calendar');
+    }
+    const json = await res.json();
+    if (!json.success || !json.calendar || json.calendar.length === 0) {
+      throw new Error('no-calendar');
+    }
+
+    renderCalendar(json.calendar);
+  } catch (err) {
+    // if backend not available, demo fallback — helpful for local preview
+    if (err.message === 'no-calendar') {
+      mainArea.innerHTML = `
+        <div class="no-calendar">
+          <h3>No calendar found</h3>
+          <p>You don't have a generated calendar yet. Click below to create one for this month.</p>
+          <div style="margin-top:14px">
+            <button id="generateNow" class="btn">Generate calendar</button>
+          </div>
+        </div>
+      `;
+      document.getElementById('generateNow').addEventListener('click', () => window.location.href='generate-calendar.html');
+      return;
+    }
+
+    // unexpected error: show fallback demo and a message
+    console.error(err);
+    const fallback = demoCalendar();
+    mainArea.innerHTML = '<div style="padding:12px;color:var(--text-secondary)">Showing demo calendar (server unavailable)</div>';
+    renderCalendar(fallback);
+  }
+}
+
+function renderCalendar(items){
+  // items: array of 30 objects {date, post, platform}
+  mainArea.innerHTML = '';
+  const monthHeader = document.createElement('div');
+  monthHeader.className = 'month-header';
+  const now = new Date(items[0].date);
+  const monthName = now.toLocaleString('default',{month:'long',year:'numeric'});
+  monthHeader.innerHTML = `<div class="month-title">${monthName} - Content Calendar</div>
+    <div>
+      <button id="downloadCSV" class="btn btn-outline">Download CSV</button>
+    </div>`;
+  mainArea.appendChild(monthHeader);
+
+  const legend = document.createElement('div');
+  legend.className = 'legend';
+  legend.innerHTML = `<div style="display:flex;align-items:center;gap:8px"><div class="dot blue"></div> Generated</div>`;
+  mainArea.appendChild(legend);
+
+  const grid = document.createElement('div');
+  grid.className = 'cal-grid';
+
+  // create cells for each item (assume ordered)
+  items.forEach((it, idx) => {
+    const cell = document.createElement('div');
+    cell.className = 'cal-cell';
+    cell.dataset.index = idx;
+    const d = new Date(it.date);
+    cell.innerHTML = `<div class="daynum">${d.getDate()}</div>
+                      <div class="post-preview">${escapeHtml(it.post || 'No content')}</div>
+                      <div class="meta" style="position:absolute;left:8px;bottom:8px;font-size:12px;color:var(--text-secondary)">${it.platform || ''}</div>`;
+    cell.addEventListener('click', () => openDayModal(it));
+    grid.appendChild(cell);
+  });
+
+  mainArea.appendChild(grid);
+
+  // CSV download
+  document.getElementById('downloadCSV').addEventListener('click', () => {
+    const csv = items.map(i => `"${i.date}","${i.platform}","${i.post.replace(/"/g,'""')}"`).join('\n');
+    const blob = new Blob([`date,platform,post\n${csv}`], {type:'text/csv'});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url; a.download = `autopost-calendar-${items[0].date}.csv`; a.click();
+    URL.revokeObjectURL(url);
+  });
+}
+
+function escapeHtml(s){ return s?.replace?.(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;') || '' }
+
+/* modal logic */
+const dayModal = document.getElementById('dayModal');
+const modalTitle = document.getElementById('modalTitle');
+const modalContent = document.getElementById('modalContent');
+const modalMeta = document.getElementById('modalMeta');
+const closeModal = document.getElementById('closeModal');
+const copyBtn = document.getElementById('copyBtn');
+const editBtn = document.getElementById('editPost');
+
+let activeDay = null;
+function openDayModal(item){
+  activeDay = item;
+  const d = new Date(item.date);
+  modalTitle.textContent = d.toDateString();
+  modalMeta.textContent = `Platform: ${item.platform || 'Any'}`;
+  modalContent.textContent = item.post || '';
+  dayModal.classList.add('show');
+}
+closeModal.addEventListener('click', ()=> dayModal.classList.remove('show'));
+dayModal.addEventListener('click', e => { if (e.target === dayModal) dayModal.classList.remove('show') });
+
+copyBtn.addEventListener('click', async () => {
+  try{
+    await navigator.clipboard.writeText(modalContent.textContent);
+    copyBtn.textContent = 'Copied!';
+    setTimeout(()=> copyBtn.innerHTML = '<i class="fas fa-copy"></i> Copy to clipboard', 1500);
+  }catch(e){
+    alert('Copy failed: ' + e.message);
+  }
+});
+
+editBtn.addEventListener('click', () => {
+  // open create.html and prefill? we just navigate for now
+  localStorage.setItem('prefillPost', JSON.stringify({ post: modalContent.textContent, platform: activeDay.platform }));
+  window.location.href = 'create.html';
+});
+
+fetchCalendar();
+</script>
+</body>
+</html>
+<!--
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AutoPost Calendar</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      margin: 0;
+      background-color: #f8f9fb;
+      color: #333;
+    }
+    header {
+      background-color: #007bff;
+      color: #fff;
+      text-align: center;
+      padding: 1rem;
+      font-size: 1.3rem;
+      font-weight: 600;
+    }
+    main {
+      padding: 1rem;
+    }
+    .calendar-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+      gap: 0.5rem;
+    }
+    .day {
+      background-color: #fff;
+      border-radius: 8px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+      padding: 0.5rem;
+      text-align: center;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+    .day:hover {
+      background-color: #e8f1ff;
+    }
+    #noCalendar {
+      text-align: center;
+      margin-top: 4rem;
+    }
+    button {
+      background-color: #007bff;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      padding: 10px 20px;
+      cursor: pointer;
+      font-size: 1rem;
+    }
+    button:hover {
+      background-color: #0056b3;
+    }
+    /* Modal */
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: rgba(0,0,0,0.5);
+      justify-content: center;
+      align-items: center;
+    }
+    .modal-content {
+      background: white;
+      padding: 1.5rem;
+      border-radius: 8px;
+      max-width: 400px;
+      width: 90%;
+      text-align: center;
+    }
+    .bottom-nav {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      background: white;
+      display: flex;
+      justify-content: space-around;
+      padding: 10px 0;
+      box-shadow: 0 -1px 5px rgba(0,0,0,0.1);
+    }
+    @media(min-width: 768px) {
+      .bottom-nav { display: none; }
+    }
+  </style>
+</head>
+<body>
+  <header>AutoPost Content Calendar</header>
+  <main id="calendarContainer">
+    <div id="noCalendar">
+      <p>No calendar found.</p>
+      <button onclick="window.location.href='generate-calendar.html'">Generate Calendar</button>
+    </div>
+  </main>
+
+  <div class="modal" id="postModal">
+    <div class="modal-content">
+      <h3 id="modalDate"></h3>
+      <p id="modalContent"></p>
+      <button id="copyBtn">Copy to Clipboard</button>
+      <br><br>
+      <button onclick="closeModal()">Close</button>
+    </div>
+  </div>
+
+  <nav class="bottom-nav">
+    <a href="dashboard.html">🏠 Home</a>
+    <a href="calendar.html" style="color:#007bff">📅 Calendar</a>
+    <a href="settings.html">⚙️ Settings</a>
+  </nav>
+
+  <script>
+    const token = localStorage.getItem('token');
+
+    async function loadCalendar() {
+      const res = await fetch('/calendar/get', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        }
+      });
+
+      const data = await res.json();
+      if (data.success && data.calendar.length > 0) {
+        renderCalendar(data.calendar);
+      } else {
+        document.getElementById('noCalendar').style.display = 'block';
+      }
+    }
+
+    function renderCalendar(calendar) {
+      const container = document.getElementById('calendarContainer');
+      container.innerHTML = '<div class="calendar-grid"></div>';
+      const grid = container.querySelector('.calendar-grid');
+
+      calendar.forEach(day => {
+        const el = document.createElement('div');
+        el.className = 'day';
+        el.innerHTML = `<strong>${new Date(day.date).getDate()}</strong><br>${day.platform}`;
+        el.onclick = () => openModal(day);
+        grid.appendChild(el);
+      });
+    }
+
+    function openModal(day) {
+      document.getElementById('modalDate').textContent = new Date(day.date).toDateString();
+      document.getElementById('modalContent').textContent = day.post;
+      document.getElementById('postModal').style.display = 'flex';
+      document.getElementById('copyBtn').onclick = () => {
+        navigator.clipboard.writeText(day.post);
+        alert('Post copied!');
+      };
+    }
+
+    function closeModal() {
+      document.getElementById('postModal').style.display = 'none';
+    }
+
+    loadCalendar();
+  </script>
+</body>
+</html>
+
+-->

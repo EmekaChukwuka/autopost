@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Generate Calendar | AutoPost</title>
+  <link rel="icon" href="autopost-icon.jpg">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+  <style>
+    :root{
+      --bg-primary:#ffffff;
+      --bg-secondary:#f5f5f5;
+      --text-primary:#000000;
+      --text-secondary:#333333;
+      --border-color:#e0e0e0;
+      --accent-blue:#2962FF;
+      --accent-green:#00C853;
+      --error-red:#D32F2F;
+      --card-bg:#ffffff;
+    }
+    [data-theme="dark"]{
+      --bg-primary:#121212;
+      --bg-secondary:#1e1e1e;
+      --text-primary:#ffffff;
+      --text-secondary:#e0e0e0;
+      --border-color:#333333;
+      --accent-blue:#448AFF;
+      --card-bg:#1b1b1b;
+    }
+    /* sidebar (desktop) */
+    .sidebar{
+       background: var(--bg-primary);
+            border-right: 1px solid var(--border-color);
+            padding: 24px;
+            position: fixed;
+            top: 0;
+            width:20%;
+            height: 100vh;
+      display:none;
+    }
+            .logo {
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 32px;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+        }
+
+        .logo span {
+            color: var(--accent-blue);
+        }
+
+        a{
+            text-decoration: none;
+        }
+        
+        .logo-icon {
+            width: 24px;
+            height: 24px;
+            background-color: var(--accent-blue);
+            color: white;
+            border-radius: 4px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 8px;
+            font-weight: bold;
+        }
+
+    @media(min-width:768px){
+     .sidebar {
+           display:block;
+        }
+         .nav-item {
+            display: flex;
+            align-items: center;
+            padding: 12px 16px;
+            margin-bottom: 8px;
+            border-radius: 6px;
+            cursor: pointer;
+            color: var(--text-secondary);
+            transition: all 0.2s;
+        }
+
+        .nav-item i {
+            margin-right: 12px;
+            width: 20px;
+            text-align: center;
+        }
+
+        .nav-item.active {
+            background-color: var(--accent-blue);
+            color: var(--text-primary);
+            font-weight: 500;
+        }
+
+        .nav-item:hover:not(.active) {
+            background-color: var(--bg-secondary);
+        }
+
+      main{
+        margin-left:24%;
+    }
+    }
+    body{font-family:Inter, sans-serif;margin:0;background:var(--bg-primary);color:var(--text-secondary)}
+    .top{display:flex;justify-content:space-between;align-items:center;padding:16px;border-bottom:1px solid var(--border-color);background:var(--bg-secondary)}
+    .container{padding:16px}
+    .card{background:var(--bg-primary);border:1px solid var(--border-color);padding:16px;border-radius:8px;max-width:900px;margin:18px auto}
+    textarea{width:90%;min-height:140px;padding:10px;border-radius:6px;border:1px solid var(--border-color);font-size:14px;background:var(--bg-primary)}
+    .templates{display:flex;gap:8px;margin:10px 0;flex-wrap:wrap}
+    .template{padding:8px 12px;border-radius:999px;border:1px solid var(--border-color);cursor:pointer}
+    .template.active{background:var(--accent-blue);color:white;border-color:var(--accent-blue)}
+    .btn{background:var(--accent-blue);color:var(--text-primary);border:none;padding:10px 14px;border-radius:6px;cursor:pointer}
+    .note{font-size:13px;color:var(--text-secondary);margin-top:8px}
+    .progress{margin-top:12px}
+     a{
+            text-decoration: none;
+        }
+        @media(max-width:768px){ 
+     .calendar-wrap{
+      padding:2%;
+      width:96%;
+      margin-left:2%;
+      margin-bottom:50%;
+    }
+        .top{
+          display:flex;
+          align-items:center;
+          justify-content:space-between;
+          padding:10px;background:var(--bg-secondary);
+          border-bottom:1px solid var(--border-color);
+          position:sticky;
+          top:0;
+          z-index:10; 
+          width:100%;
+        }
+  
+        .spacer{
+          height:64px;
+        }
+ /* bottom nav for mobile */
+    .bottom-nav{
+      display:flex;
+      justify-content:space-around;
+      align-items:center;
+      padding:10px 0;
+      background:var(--bg-primary);
+      border-top:1px solid var(--border-color);
+      position:fixed;
+      bottom:0;
+      width:100%;
+    }
+    .bottom-nav a{
+      color:var(--text-secondary);
+      text-decoration:none;
+    }
+    
+    .cal-grid{
+      display:grid;
+      grid-template-columns:repeat(3,1fr);
+      gap:2%;
+  }
+    body{
+        padding:0;
+        margin:0;
+    }
+}
+.logo {
+  font-weight: 700;
+  font-size: 1.2rem;
+}
+
+.logo span{
+    color:var(--accent-blue);
+}
+  </style>
+</head>
+<body>
+
+  <!-- Sidebar -->
+        <div class="sidebar">
+            <div class="logo">Auto<span>Post</span></div>
+            <a href="dashboard.html"><div data-page="home" class="nav-item">
+                <i class="fas fa-home"></i><span>Dashboard</span>
+            </div></a>
+            <a href="create.html"><div class="nav-item" data-page="create">
+                <i class="fas fa-plus"></i><span>Create Post</span>
+            </div></a>
+           <a href="calendar.html"><div class="nav-item" data-page="calendar">
+                <i class="fas fa-calendar-alt"></i><span>Calendar</span>
+            </div></a>
+           <a href="analytics.html"><div class="nav-item" data-page="analytics">
+                <i class="fas fa-chart-line"></i><span>Analytics</span>
+            </div></a>
+           <a href="settings.html"> <div class="nav-item" data-page="settings">
+                <i class="fas fa-cog"></i><span>Settings</span>
+            </div></a>
+        </div>
+  <main class="container">
+    <div class="card">
+      <h3>Generate a 30-day content calendar</h3>
+      <p class="note">Type a short prompt telling the AI what content you want for the month (tone, industry, call-to-action, platform mix etc.). You can also pick a template.</p>
+      <div class="templates" id="templates">
+        <div class="template active" data-template="social_tips">Social Tips</div>
+        <div class="template" data-template="promotional">Promotional</div>
+        <div class="template" data-template="educational">Educational</div>
+        <div class="template" data-template="engagement">Engagement / Questions</div>
+      </div>
+
+      <textarea id="prompt" placeholder="e.g. 30 posts for a fintech startup targeting young adults: quick tips, industry news, 2 product promos, 4 engagement questions"></textarea>
+
+      <div style="display:flex;gap:8px;margin-top:12px">
+        <button id="generateBtn" class="btn">Generate Calendar</button>
+        <button id="sampleBtn" class="btn" style="background:#00C853">Use sample prompt</button>
+      </div>
+
+      <div id="status" class="progress" style="display:none"></div>
+    </div>
+  </main>
+   <!-- Bottom nav mobile -->
+  <nav class="bottom-nav">
+    <a href="dashboard.html"><i class="fas fa-home"></i></a>
+    <a href="calendar.html"><i class="fas fa-calendar-alt"></i></a>
+    <a href="create.html"><i class="fas fa-plus"></i></a>
+    <a href="analytics.html"><i class="fas fa-chart-line"></i></a>
+    <a href="settings.html"><i class="fas fa-user"></i></a>
+  </nav>
+
+<script>
+   const root = document.documentElement;
+
+    if (localStorage.getItem('theme') === 'dark') {
+      root.setAttribute('data-theme', 'dark');
+    
+    }
+
+/*
+  generate-calendar.html JS
+  - expects POST /calendar/generate { id, prompt, template }
+    returns { success:true, calendar: [{date,post,platform}, ...] }
+  - On success redirect to calendar.html
+*/
+
+const token = localStorage.getItem('token');
+const user = JSON.parse(localStorage.getItem('currentUser') || 'null');
+const generateBtn = document.getElementById('generateBtn');
+const sampleBtn = document.getElementById('sampleBtn');
+const promptEl = document.getElementById('prompt');
+const templates = document.getElementById('templates');
+const status = document.getElementById('status');
+
+templates.addEventListener('click', (e)=>{
+  if (!e.target.classList.contains('template')) return;
+  document.querySelectorAll('.template').forEach(t=>t.classList.remove('active'));
+  e.target.classList.add('active');
+});
+
+sampleBtn.addEventListener('click', ()=> {
+  promptEl.value = "Create a 30-day content calendar for a small bakery: product highlights (bread/pastries), baking tips, behind-the-scenes, 3 promotional posts and 4 engagement questions. Tone: friendly and warm. Platforms: Instagram, Facebook.";
+});
+
+generateBtn.addEventListener('click', async ()=>{
+  if (!user) { alert('Please sign in to generate a calendar'); return; }
+  const prompt = promptEl.value.trim();
+  if (!prompt) { alert('Please enter a prompt'); promptEl.focus(); return; }
+  const template = document.querySelector('.template.active').dataset.template;
+  status.style.display = 'block'; status.textContent = 'Initializing AI request…';
+
+                const startDate = new Date();
+  
+  try {
+    generateBtn.disabled = true;
+    // Send to backend
+    const res = await fetch('https://autopost-backend-hbck.onrender.com/calendar/generate', {
+      method:'POST',
+      headers:{
+        'Content-Type':'application/json',
+        'Authorization': `Bearer ${token}`
+        },
+      body: JSON.stringify({ id: user.id, prompt, template, startDate })
+    });
+
+    if (!res.ok) {
+      // If backend not available, show error and provide preview demo
+      const txt = await res.text().catch(()=> 'Server error');
+      status.textContent = 'Generation failed: ' + txt;
+      generateBtn.disabled = false;
+      return;
+    }
+
+    const json = await res.json();
+    if (!json.success) {
+      status.textContent = 'Generation failed: ' + (json.message || 'unknown');
+      generateBtn.disabled = false;
+      return;
+    }
+
+    status.textContent = 'Calendar generated — saving…';
+    // store success -> backend should save calendar for the user; then redirect
+
+    setTimeout(()=> {
+      window.location.href = 'calendar.html';
+    }, 700);
+
+  } catch (err) {
+    console.error(err);
+    status.textContent = 'Error generating calendar, try again later.';
+    generateBtn.disabled = false;
+  }
+});
+</script>
+</body>
+</html>
+
+<!--
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Generate Calendar | AutoPost</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: #f8f9fb;
+      margin: 0;
+      padding: 0;
+      color: #333;
+    }
+    header {
+      background: #007bff;
+      color: white;
+      padding: 1rem;
+      text-align: center;
+      font-weight: 600;
+      font-size: 1.2rem;
+    }
+    main {
+      padding: 1.5rem;
+      max-width: 600px;
+      margin: auto;
+    }
+    textarea {
+      width: 100%;
+      min-height: 120px;
+      padding: 0.8rem;
+      font-size: 1rem;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+      resize: vertical;
+    }
+    select, button {
+      width: 100%;
+      padding: 0.8rem;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+      margin-top: 1rem;
+      font-size: 1rem;
+    }
+    button {
+      background: #007bff;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+    button:hover {
+      background: #0056b3;
+    }
+    #status {
+      margin-top: 1rem;
+      text-align: center;
+      color: #007bff;
+      font-weight: 500;
+    }
+    .bottom-nav {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      background: white;
+      display: flex;
+      justify-content: space-around;
+      padding: 10px 0;
+      box-shadow: 0 -1px 5px rgba(0,0,0,0.1);
+    }
+    @media(min-width: 768px) {
+      .bottom-nav { display: none; }
+    }
+  </style>
+</head>
+<body>
+  <header>Generate Calendar</header>
+  <main>
+    <p>Enter your content theme or goal for this month:</p>
+    <textarea id="prompt" placeholder="E.g. Social media growth for small businesses"></textarea>
+
+    <label for="template">Select Template:</label>
+    <select id="template">
+      <option value="general">General</option>
+      <option value="tech">Tech & Innovation</option>
+      <option value="fitness">Fitness & Health</option>
+      <option value="fashion">Fashion & Beauty</option>
+      <option value="marketing">Marketing & Business</option>
+    </select>
+
+    <button onclick="generate()">Generate Calendar</button>
+
+    <div id="status"></div>
+  </main>
+
+  <nav class="bottom-nav">
+    <a href="dashboard.html">🏠 Home</a>
+    <a href="calendar.html" style="color:#007bff">📅 Calendar</a>
+    <a href="settings.html">⚙️ Settings</a>
+  </nav>
+
+  <script>
+    const token = localStorage.getItem('token');
+
+    async function generate() {
+      const prompt = document.getElementById('prompt').value.trim();
+      const template = document.getElementById('template').value;
+      if (!prompt) return alert('Please enter a prompt');
+      document.getElementById('status').textContent = 'Generating calendar... Please wait.';
+
+      const res = await fetch('/calendar/generate', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({ prompt, template })
+      });
+
+      const data = await res.json();
+      if (data.success) {
+        document.getElementById('status').textContent = 'Calendar generated successfully!';
+        setTimeout(() => window.location.href = 'calendar.html', 1500);
+      } else {
+        document.getElementById('status').textContent = 'Failed to generate calendar.';
+      }
+    }
+  </script>
+</body>
+</html>
+
+-->

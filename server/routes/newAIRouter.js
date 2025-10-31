@@ -15,8 +15,6 @@ cookie: {
 }
 }));
 
- const apiKey = process.env.GOOGLE_AI_API_KEY;
-const ai = new GoogleGenAI({apiKey: apiKey });
 
 
 const TEMPLATES = {
