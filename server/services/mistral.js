@@ -33,12 +33,12 @@ ${promptText}
 Use the user's tone/requirements. Return only JSON array as described above.
 `;
 
+const completePrompt = systemPrompt + '\n' + userPrompt;
+
   try {
     const res = await client.chat.complete({
       model: 'mistral-small-2506',
-      messages: [{role: 'user', content: [systemPrompt + '\n' + userPrompt]}],
-      max_tokens: 1500,
-      temperature: 0.7,
+      messages: [{role: 'user', content: completePrompt}],
     });
 
     
