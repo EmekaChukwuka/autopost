@@ -34,7 +34,7 @@ Use the user's tone/requirements. Return only JSON array as described above.
 `;
 
   try {
-    const res = await client.chat.completions.create({
+    const res = await client.chat.complete({
       model: 'mistral-small-2506',
       messages: [systemPrompt + '\n' + userPrompt,],
       max_tokens: 1500,
