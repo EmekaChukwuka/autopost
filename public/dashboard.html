@@ -269,7 +269,7 @@ body {
   justify-content: center;
 }
 
- .modal{display:none;position:fixed;inset:0;background:rgba(0, 0, 0, 0.05);align-items:center;justify-content:center;z-index:999}
+ .modal{display:none;min-height:calc(100vh-210px);overflow-y:auto;position:fixed;inset:0;background:rgba(0, 0, 0, 0.05);align-items:center;justify-content:center;z-index:999}
     .modal.show{display:flex}
     .modal-card{width:92%;max-width:720px;background:var(--bg-secondary);padding:16px;border-radius:10px;border:1px solid var(--border-color)}
     .modal-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
