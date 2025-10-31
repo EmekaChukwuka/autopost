@@ -8,7 +8,7 @@ if ( !MISTRAL_API_KEY) {
   console.warn('Mistral API not configured: set MISTRAL_API_URL and MISTRAL_API_KEY');
 }
 
-const client = new Mistral({apiKey: apiKey});
+const client = new Mistral({apiKey: MISTRAL_API_KEY});
 export async function callMistralForCalendar(promptText, options = {}) {
   // options: { startDateISO, template, days }
   const days = options.days || 30;
