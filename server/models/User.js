@@ -100,6 +100,12 @@ class User {
   static async getPosts(id) {
     return await PostModel.find({ user_id: id }).lean();
   }
+  
+  // ✅ Update any user fields using MongoDB update operators
+static async updateOne(filter, updateData) {
+  return await UserModel.updateOne(filter, updateData);
+}
+
 
   // Get user's current subscription
   static async getUserSubscription(userId) {
