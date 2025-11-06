@@ -799,10 +799,42 @@
                          const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
                 const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sept', 'Oct', 'Nov', 'Dec'];
                 const endDateString = `${days[endDate.getDay()]} ${endDate.getDate()} ${months[endDate.getMonth()]} ${endDate.getFullYear()}`;
-                            document.getElementById('plan').innerHTML = ` <h3>${result.data.subscription_plan_id} Plan</h3>
+                   const startDateString = `${days[startDate.getDay()]} ${startDate.getDate()} ${months[startDate.getMonth()]} ${startDate.getFullYear()}`;
+              
+                document.getElementById('plan').innerHTML = ` <h3>${result.data.subscription_plan_id} Plan</h3>
                                 <p>Expiring: ${endDateString}</p>
                                 <a href='pricing.html' class="btn btn-outline" >Change Plan</a>
                             `;
+                                 document.getElementById('paymentMethodCard').innerHTML = `
+                            <p>Card on file: **** **** **** 4081</p>
+                            <p>Started: ${startDateString}</p>
+                            <p> Expires: ${endDateString}</p>
+                            <a href="payment.html" class="btn btn-outline" style="margin-top: 16px;" >Update Payment</a>
+                      
+                        `;
+                        switch(result.data.subscription_plan_id){
+                            case 'Starter':
+                                planName = 'Starter';
+                                planAmount = '₦2500';
+                                break;
+                            case 'Professional':
+                                planName = 'Professional';
+                                planAmount = '₦5500';
+                                break;
+                            case 'Business':
+                                planName = 'Business';
+                                planAmount = '₦15500';
+                                break;
+                            default:
+                                planName = 'Unknown';
+                                planAmount = '';
+                         document.getElementById('billingHistoryCard').innerHTML = `
+                            
+                            <p>${startDateString} - ₦${planAmount}</p>
+                            <button class="btn btn-outline" style="margin-top: 16px;">View All</button>
+                         
+                        `;
+                        }
                     }
                 }else{
                     console.log('An error occurred');
