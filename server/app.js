@@ -33,6 +33,55 @@ import connectDB from "./config/db.js";
 
 connectDB(); // connect to MongoDB before starting server
 
+import SubscriptionPlan from "./models/SubscriptionPlan.js";
+
+async function seedSubscriptionPlans() {
+  const existingPlans = await SubscriptionPlan.countDocuments();
+
+  if (existingPlans > 0) {
+    console.log("✅ Subscription plans already exist");
+    return;
+  }
+
+  await SubscriptionPlan.insertMany([
+    {
+      name: "Starter",
+      description: "Perfect for individuals getting started",
+      price: 2500,
+      duration_days: 30,
+      social_accounts_limit: 3,
+      monthly_posts_limit: 30,
+      ai_content_access: true,
+      analytics_access: false
+    },
+    {
+      name: "Professional",
+      description: "For growing brands and small teams",
+      price: 5500,
+      duration_days: 30,
+      social_accounts_limit: 10,
+      monthly_posts_limit: 100,
+      ai_content_access: true,
+      analytics_access: true,
+      team_members_limit: 2
+    },
+    {
+      name: "Business",
+      description: "For agencies & large organizations",
+      price: 15500,
+      duration_days: 30,
+      social_accounts_limit: 25,
+      monthly_posts_limit: 300,
+      ai_content_access: true,
+      analytics_access: true,
+      team_members_limit: 5,
+      priority_support: true
+    }
+  ]);
+
+  console.log("✅ Subscription plans seeded successfully");
+}
+
 //
 // 🔐 Session configuration
 //
@@ -143,3 +192,5 @@ const PORT = process.env.PORT || 3000;
 server.listen(PORT, () => {
   console.log(`🌍 Server running on http://localhost:${PORT}`);
 });
+
+  seedSubscriptionPlans(); 
