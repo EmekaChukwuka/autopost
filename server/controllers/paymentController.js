@@ -226,4 +226,17 @@ export class PaymentController {
       res.status(500).json({ success: false, message: "Failed to fetch plans" });
     }
   }
+  
+  static async checkHistory(req, res) {
+    try {
+      const {id} = req.body; 
+      const user = await User.findById(id);
+    if (!user) return res.status(401).json({ error: "Invalid credentials" });
+
+      res.json({ success: true, data: user });
+    } catch (error) {
+      console.error("Get plans error:", error);
+      res.status(500).json({ success: false, message: "Failed to fetch plans" });
+    }
+  }
 }

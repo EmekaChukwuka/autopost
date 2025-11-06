@@ -75,7 +75,7 @@ class User {
 
   // Find user by ID
   static async findById(id) {
-    return await UserModel.findById(id, "id name email avatar provider verified").lean();
+    return await UserModel.findById(id, "id name email avatar provider verified subscription_plan_id subscription_start_date subscription_status subscription_end_date").lean();
   }
 
   // Compare password

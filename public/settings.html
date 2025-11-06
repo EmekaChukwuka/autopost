@@ -763,11 +763,41 @@
                 const result = await response.json();
                 if (response.ok){
                     console.log(result);
+                     document.getElementById('name_input').value = result.user.name;
+            document.getElementById('email_input').value = result.user.email;            
+       document.getElementById('editName').addEventListener('click', async function saveEditChanges(){
+                const user = {
+                    name: document.getElementById('name').value,
+                    email: document.getElementById('email').value
+                };
+                localStorage.setItem('currentUser', JSON.stringify(user));
+        });
                 }else{
                     console.log('An error occurred');
                 }
-            }catch{
-
+            }catch(error){
+                   console.log(error);
+            }
+             try{
+                 const token = localStorage.getItem('authToken');
+                     const user = JSON.parse(localStorage.getItem('currentUser'));
+                     const id = user.id;
+                const response = await fetch('/paymentApi/check-payment-history', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type' : 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({id})
+                });
+                const result = await response.json();
+                if (response.ok){
+                    console.log(result);
+                }else{
+                    console.log('An error occurred');
+                }
+            }catch(error){
+                console.log(error);
             }
 
              const paidPlan = JSON.parse(localStorage.getItem('paymentSuccess'));
@@ -861,7 +891,7 @@
             console.log(trialData);
             checkTrialStatus();
             
-            if (user) {
+        /*    if (user) {
             document.getElementById('name_input').value = currentUser.name;
             document.getElementById('email_input').value = currentUser.email;            
        document.getElementById('editName').addEventListener('click', async function saveEditChanges(){
@@ -873,7 +903,7 @@
                 
                 localStorage.setItem('currentUser', JSON.stringify(user));
         });
-            }
+            }*/
             
             if(!trialData && user && !paidPlan){
                 document.getElementById('plan').innerHTML = ` <h3>No Active Plan</h3>

@@ -6,6 +6,7 @@ const paymentRouter = express.Router();
 
 paymentRouter.post('/initialize', protect, PaymentController.initializePayment);
 paymentRouter.post('/verify', protect, PaymentController.verifyPayment);
+paymentRouter.post('/check-payment-history', protect, PaymentController.checkHistory);
 paymentRouter.post('/webhook', PaymentController.handleWebhook);
 paymentRouter.get('/plans', PaymentController.getSubscriptionPlans);
 
