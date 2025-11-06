@@ -899,21 +899,7 @@
             console.log(trialData);
             checkTrialStatus();
             
-        /*    if (user) {
-            document.getElementById('name_input').value = currentUser.name;
-            document.getElementById('email_input').value = currentUser.email;            
-       document.getElementById('editName').addEventListener('click', async function saveEditChanges(){
-                const user = {
-                    name: document.getElementById('name').value,
-                    email: document.getElementById('email').value
-                };
-                console.log(name, email);
-                
-                localStorage.setItem('currentUser', JSON.stringify(user));
-        });
-            }*/
-            
-            if(!trialData && user && !paidPlan){
+            if(!trialData && user){
                 document.getElementById('plan').innerHTML = ` <h3>No Active Plan</h3>
                             <p>You are currently on a free plan.</p>
                             <a href='pricing.html' class="btn btn-outline" >Choose a Plan</a>
