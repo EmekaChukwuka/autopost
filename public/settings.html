@@ -793,6 +793,17 @@
                 const result = await response.json();
                 if (response.ok){
                     console.log(result);
+                    if(result.data.subscription_status==="active"){
+                        const startDate = new Date(result.data.subscription_start_date);
+                        const endDate = new Date(result.data.subscription_end_date);
+                         const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+                const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sept', 'Oct', 'Nov', 'Dec'];
+                const endDateString = `${days[endDate.getDay()]} ${endDate.getDate()} ${months[endDate.getMonth()]} ${endDate.getFullYear()}`;
+                            document.getElementById('plan').innerHTML = ` <h3>${result.data.subscription_plan_id} Plan</h3>
+                                <p>Expiring: ${endDateString}</p>
+                                <a href='pricing.html' class="btn btn-outline" >Change Plan</a>
+                            `;
+                    }
                 }else{
                     console.log('An error occurred');
                 }
