@@ -122,12 +122,18 @@ export class PaymentController {
         const startDate = new Date();
         const endDate = new Date();
         endDate.setMonth(endDate.getMonth() + 1);
+// Fetch the plan document using the plan name from metadata
+const planDoc = await SubscriptionPlan.findOne({ name: transaction.metadata.plan });
 
+if (!planDoc) {
+  console.error("Plan not found:", transaction.metadata.plan);
+  return res.status(400).json({ success: false, message: "Invalid plan" });
+}
         await User.updateOne(
           { _id: userId },
           {
             $set: {
-              subscription_plan_id: plan,
+              subscription_plan_id: planDoc._id,
               subscription_status: "active",
               subscription_start_date: startDate,
               subscription_end_date: endDate
@@ -195,6 +201,14 @@ export class PaymentController {
         );
 
         if (transaction.metadata && transaction.metadata.user_id) {
+          
+          // Fetch the plan document using the plan name from metadata
+const planDoc = await SubscriptionPlan.findOne({ name: transaction.metadata.plan });
+
+if (!planDoc) {
+  console.error("Plan not found:", transaction.metadata.plan);
+  return res.status(400).json({ success: false, message: "Invalid plan" });
+}
           await User.updateOne(
             { _id: transaction.metadata.user_id },
             {

@@ -9,7 +9,7 @@ const userSchema = new mongoose.Schema({
   avatar: { type: String },
   provider: { type: String, default: "email" },
   verified: { type: Boolean, default: false },
-  subscription_plan_id: { type: String, ref: "SubscriptionPlan" },
+  subscription_plan_id: { type: mongoose.Schema.Types.ObjectId, ref: "SubscriptionPlan" },
   subscription_status: { type: String, default: "inactive" },
   subscription_start_date: { type: Date },
   subscription_end_date: { type: Date },
