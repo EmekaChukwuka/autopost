@@ -899,14 +899,14 @@
             console.log(trialData);
             checkTrialStatus();
             
-            if(!trialData && user && !paidPlan){
+           /* if(!trialData && user && !paidPlan){
                 document.getElementById('plan').innerHTML = ` <h3>No Active Plan</h3>
                             <p>You are currently on a free plan.</p>
                             <a href='pricing.html' class="btn btn-outline" >Choose a Plan</a>
                         `;
-            }
+            }*/
             
-            if (trialData && user && !paidPlan) {
+            if (trialData && user) {
                
                 const now = new Date();
                 const endDate = new Date(trialData.endDate);
