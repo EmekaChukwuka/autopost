@@ -17,7 +17,7 @@ export class PaymentController {
       if (!existingUser)
         return res.status(404).json({ message: "User not found" });
 
-      const userId = existingUser.id;
+      const userId = existingUser._id;
       const reference = `AUTOPOST_${Date.now()}_${userId}`;
 
       // Prepare Paystack payment data
