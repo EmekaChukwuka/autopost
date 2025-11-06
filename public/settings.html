@@ -816,14 +816,32 @@
                             case 'Starter':
                                 planName = 'Starter';
                                 planAmount = '₦2500';
+                         document.getElementById('billingHistoryCard').innerHTML = `
+                            
+                            <p>${startDateString} - ₦${planAmount}</p>
+                            <button class="btn btn-outline" style="margin-top: 16px;">View All</button>
+                         
+                        `;
                                 break;
                             case 'Professional':
                                 planName = 'Professional';
                                 planAmount = '₦5500';
+                         document.getElementById('billingHistoryCard').innerHTML = `
+                            
+                            <p>${startDateString} - ₦${planAmount}</p>
+                            <button class="btn btn-outline" style="margin-top: 16px;">View All</button>
+                         
+                        `;
                                 break;
                             case 'Business':
                                 planName = 'Business';
                                 planAmount = '₦15500';
+                         document.getElementById('billingHistoryCard').innerHTML = `
+                            
+                            <p>${startDateString} - ₦${planAmount}</p>
+                            <button class="btn btn-outline" style="margin-top: 16px;">View All</button>
+                         
+                        `;
                                 break;
                             default:
                                 planName = 'Unknown';
@@ -870,7 +888,8 @@
             }catch(error){
                 console.log(error);
             }
-
+            const user = JSON.parse(localStorage.getItem('currentUser'));
+            const paidPlan = JSON.parse(localStorage.getItem('paidPlan'));  
             let currentUser = JSON.parse(localStorage.getItem('currentUser'));
             console.log(currentUser);
 
