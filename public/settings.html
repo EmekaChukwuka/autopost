@@ -794,6 +794,7 @@
                 if (response.ok){
                     console.log(result);
                     if(result.data.subscription_status==="active"){
+                        localStorage.removeItem('trialData');
                         const startDate = new Date(result.data.subscription_start_date);
                         const endDate = new Date(result.data.subscription_end_date);
                          const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
@@ -858,29 +859,44 @@
             
                      if (now > endDate) {
                     console.log('paid plan expired');
-
-                    if(paymentAmount === '250000'){
-                           document.getElementById('plan').innerHTML = ` <h3>Starter Plan</h3>
+                      switch(result.data.subscription_plan_id){
+                            case 'Starter':
+                                planName = 'Starter';
+                                planAmount = '₦2500';
+                           document.getElementById('plan').innerHTML = ` <h3>${planName} Plan</h3>
                             <p>Expired, update payment</p>
-                            <p>₦2500</p>
+                            <p>${planAmount}</p>
                             <a href="payment.html" class="btn btn-outline" style="margin-top: 16px;">Update Payment</a>
                     `;
-                }
-                if(paymentAmount === '550000'){
-                           document.getElementById('plan').innerHTML = ` <h3>Profesional Plan</h3>
+                                break;
+                            case 'Professional':
+                                planName = 'Professional';
+                                planAmount = '₦5500';
+                           document.getElementById('plan').innerHTML = ` <h3>${planName} Plan</h3>
                             <p>Expired, update payment</p>
-                            <p>₦5500</p>
+                            <p>${planAmount}</p>
                             <a href="payment.html" class="btn btn-outline" style="margin-top: 16px;">Update Payment</a>
                     `;
-            }
-            if(paymentAmount === '1500000'){
-                            document.getElementById('plan').innerHTML = ` <h3>Business Plan</h3>
-                             <p>Expired, update payment</p>
-                             <p>₦15500</p>
-                             <a href="payment.html" class="btn btn-outline" style="margin-top: 16px;">Update Payment</a>
-                      `;
-                }
-        }   
+                                break;
+                            case 'Business':
+                                planName = 'Business';
+                                planAmount = '₦15500';
+                           document.getElementById('plan').innerHTML = ` <h3>${planName} Plan</h3>
+                            <p>Expired, update payment</p>
+                            <p>${planAmount}</p>
+                            <a href="payment.html" class="btn btn-outline" style="margin-top: 16px;">Update Payment</a>
+                    `;
+                                break;
+                            default:
+                                planName = 'Unknown';
+                                planAmount = '';
+                           document.getElementById('plan').innerHTML = ` <h3>${planName} Plan</h3>
+                            <p>Expired, update payment</p>
+                            <p>${planAmount}</p>
+                            <a href="payment.html" class="btn btn-outline" style="margin-top: 16px;">Update Payment</a>
+                    `;
+                      }
+                     }
                     }
                 }else{
                     console.log('An error occurred');
