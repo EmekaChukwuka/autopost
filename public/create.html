@@ -846,8 +846,40 @@ body{
        document.getElementById('aiText').innerHTML = 'An error occured, please try again';
     }
                     }else{
-                       document.getElementById('aiText').innerHTML = '<p>Please start your free trial or subscribe to a plan to use this feature</p>';
-               return;
+                      
+                if(trialData && !paidPlan){
+        const now = new Date();
+                const endDate = new Date(trialData.endDate);
+                const timeRemaining = endDate - now;
+                console.log(timeRemaining);
+
+      if(timeRemaining <= 0){
+        document.getElementById('aiText').innerHTML = '<p>Your free trial has expired, please start your billing to continue using this feature</p>';
+      }
+if(timeRemaining > 0){
+      // API call to AI backend
+  try{
+      const response = await fetch('https://autopost-backend-hbck.onrender.com/api/generate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ prompt, platform, contentType}) // Updated
+    });
+            
+            const result = await response.json();
+            
+            document.getElementById('aiText').innerHTML = result.data;
+              const postDetails = {
+              date: now,
+              post:result.data,
+              platform:platform
+            };
+            updatePost(postDetails);
+          
+    }catch(error){
+      console.log('error', error);
+       document.getElementById('aiText').innerHTML = 'An error occured, please try again';
+    }
+  }}
                     }
                   }
                    }catch(error){
