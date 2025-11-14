@@ -787,7 +787,7 @@
                     }
                     console.log(currentUser)
                                 
-                    if(!trialData && currentUser && !paidPlan){
+                    if(!trialData && currentUser){
                  // Start free trial
                 const startDate = new Date();
                 const endDate = new Date(startDate.getTime() + 14 * 24 * 60 * 60 * 1000); // 14 days from now
@@ -810,16 +810,15 @@
                 
                 if (now > endDate) {
                   alert('Your Free Trial Has Expired');
+                }else{
+                  alert('You are on a free plan')
                 }
                   }
 
-                   if(!trialData){
-                    alert('You are already on a paid plan');
-                    localStorage.removeItem('trialData');  
+                    if(paidPlan && currentUser){
+                      alert('You are already on a paid plan');
                   }
-                    
-                  });
-                  
+                });                  
                  
 
                 });
