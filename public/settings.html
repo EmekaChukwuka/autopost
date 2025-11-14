@@ -778,6 +778,8 @@
             }catch(error){
                            console.log(error);
             }
+
+
              try{
                  const token = localStorage.getItem('authToken');
                      const user = JSON.parse(localStorage.getItem('currentUser'));
@@ -897,55 +899,9 @@
                     `;
                       }
                      }
-                    }else{
-                        if(!trialData){
-                             document.getElementById('plan').innerHTML = ` <h3>No active plan</h3>
-                            <p>Update payment</p>
-                            <a href="pricing.html" class="btn btn-outline" style="margin-top: 16px;">Select Plan</a>
-                    `;
-                        }
-            if (trialData && user) {
-               
-                const now = new Date();
-                const endDate = new Date(trialData.endDate);
-                
-                if (now < endDate) {
-                    // Trial is still active
-                    showTrialStatus(trialData);
-                    startCountdown(endDate, trialData);
-                }else{
-                    console.log('free trial expired');
-
-                    if(trialData.plan === 'Starter'){
-                           document.getElementById('plan').innerHTML = ` <h3>${trialData.plan} Plan</h3>
-                            <p>Expired, update payment</p>
-                            <p>₦2500</p>
-                            <a href="payment.html" class="btn btn-outline" style="margin-top: 16px;">Update Payment</a>
-                    `;
-                }
-                if(trialData.plan === 'Professional'){
-                           document.getElementById('plan').innerHTML = ` <h3>${trialData.plan} Plan</h3>
-                            <p>Expired, update payment</p>
-                            <p>₦5500</p>
-                            <a href="payment.html" class="btn btn-outline" style="margin-top: 16px;">Update Payment</a>
-                    `;
-            }
-            if(trialData.plan === 'Business'){
-                            document.getElementById('plan').innerHTML = ` <h3>${trialData.plan} Plan</h3>
-                             <p>Expired, update payment</p>
-                             <p>₦15500</p>
-                             <a href="payment.html" class="btn btn-outline" style="margin-top: 16px;">Update Payment</a>
-                      `;
-                }
+                    } 
         }
-        }
-            
-             
-                    }
-                }else{
-                    console.log('An error occurred');
-                }
-            }catch(error){
+        }catch(error){
                 console.log(error);
             }
             const user = JSON.parse(localStorage.getItem('currentUser'));
@@ -966,6 +922,13 @@
                         `;
             }*/
             
+            if(!trialData && user){
+                       document.getElementById('plan').innerHTML = ` <h3>You do not have a plan</h3>
+                            <p>Kindly start a free trial</p>
+                            <a href="pricing.html" class="btn btn-outline" style="margin-top: 16px;">Start Trial</a>
+                    `;
+            }
+
             if (trialData && user) {
                
                 const now = new Date();
