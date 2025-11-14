@@ -796,7 +796,6 @@
                 if (response.ok){
                     console.log(result);
                     if(result.data.subscription_status==="active"){
-                        localStorage.removeItem('trialData');
                         const startDate = new Date(result.data.subscription_start_date);
                         const endDate = new Date(result.data.subscription_end_date);
                          const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
