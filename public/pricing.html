@@ -810,25 +810,10 @@
                 
                 if (now > endDate) {
                   alert('Your Free Trial Has Expired');
-                }else{
-                    localStorage.removeItem('trialData');
-                 // Start free trial
-                const startDate = new Date();
-                const endDate = new Date(startDate.getTime() + 14 * 24 * 60 * 60 * 1000); // 14 days from now
-                
-                      localStorage.setItem('trialPlan', plan); 
-                const trialData = {
-                    plan: plan,
-                    startDate: startDate.toISOString(),
-                    endDate: endDate.toISOString()
-                };
-                
-                localStorage.setItem('trialData', JSON.stringify(trialData));       
-                      window.location.href='dashboard.html';
-                    }
+                }
                   }
 
-                   if(!trialData && paidPlan){
+                   if(!trialData){
                     alert('You are already on a paid plan');
                     localStorage.removeItem('trialData');  
                   }
