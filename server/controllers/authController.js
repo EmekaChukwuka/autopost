@@ -11,6 +11,9 @@ const linkedinClientId = "";
 const linkedinClientSecret = "";
 const linkedinCallbackUrl = "http://localhost/3000/auth/twitter/callback";
 
+const instagramClientId = "";
+const instagramClientSecret = "";
+const instagramCallbackUrl = "http://localhost/3000/auth/twitter/callback";
 
 
 

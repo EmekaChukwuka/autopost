@@ -212,7 +212,7 @@ if (!planDoc) {
           await User.updateOne(
             { _id: transaction.metadata.user_id },
             {
-              subscription_plan_id: transaction.metadata.plan,
+              subscription_plan_id: planDoc._id,
               subscription_status: "active",
               subscription_start_date: new Date(),
               subscription_end_date: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000)
