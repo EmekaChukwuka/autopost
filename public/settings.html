@@ -898,7 +898,14 @@
                     `;
                       }
                      }
-                    } 
+                    } else{
+                     if(!trialData && user){
+                       document.getElementById('plan').innerHTML = ` <h3>You do not have a plan</h3>
+                            <p>Kindly start a free trial</p>
+                            <a href="pricing.html" class="btn btn-outline" style="margin-top: 16px;">Start Trial</a>
+                    `;
+            } 
+                    }
         }
         }catch(error){
                 console.log(error);
@@ -921,12 +928,7 @@
                         `;
             }*/
             
-            if(!trialData && user){
-                       document.getElementById('plan').innerHTML = ` <h3>You do not have a plan</h3>
-                            <p>Kindly start a free trial</p>
-                            <a href="pricing.html" class="btn btn-outline" style="margin-top: 16px;">Start Trial</a>
-                    `;
-            }
+           
 
             if (trialData && user) {
                
