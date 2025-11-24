@@ -814,7 +814,7 @@ body{
               const token = localStorage.getItem('authToken');
               const id = user.id;
               try{
-                const response = await fetch('https://autopost-backend-hbck.onrender.com/paymentApi/check-payment-history', {
+                             const response = await fetch('https://autopost-backend-hbck.onrender.com/paymentApi/check-payment-history', {
                     method: 'POST',
                     headers: {
                         'Content-Type' : 'application/json',
@@ -822,6 +822,7 @@ body{
                     },
                     body: JSON.stringify({id})
                 });
+                
                 const result = await response.json();
                 if (response.ok){
                     console.log(result);
@@ -847,7 +848,7 @@ body{
     }
                     }else{
                       
-                if(trialData && !paidPlan){
+                if(trialData && !paidPlan && user){
         const now = new Date();
                 const endDate = new Date(trialData.endDate);
                 const timeRemaining = endDate - now;
@@ -880,11 +881,17 @@ if(timeRemaining > 0){
        document.getElementById('aiText').innerHTML = 'An error occured, please try again';
     }
   }}
+    if(!trialData && !paidPlan && user){
+      
+        document.getElementById('aiText').innerHTML = '<p>You do not have an active plan, kindly start a free trial or set up billing</p>';
+    
+    }
                     }
                   }
-                   }catch(error){
+                }catch(error){
       console.log('error', error);
-       document.getElementById('aiText').innerHTML = 'An error occured, please try again';
+       document.getElementById('aiText').innerHTML = 'An error occured, kindly reload the page';
+       
     }
                   
 
