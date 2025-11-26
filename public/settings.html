@@ -796,6 +796,7 @@
                 if (response.ok){
                     console.log(result);
                     if(result.data.subscription_status==="active"){
+                        localStorage.removeItem('trialData');
                         const startDate = new Date(result.data.subscription_start_date);
                         const endDate = new Date(result.data.subscription_end_date);
                          const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
@@ -803,11 +804,7 @@
                 const endDateString = `${days[endDate.getDay()]} ${endDate.getDate()} ${months[endDate.getMonth()]} ${endDate.getFullYear()}`;
                    const startDateString = `${days[startDate.getDay()]} ${startDate.getDate()} ${months[startDate.getMonth()]} ${startDate.getFullYear()}`;
               
-                document.getElementById('plan').innerHTML = ` <h3>${result.data.subscription_plan_id} Plan</h3>
-                                <p>Expiring: ${endDateString}</p>
-                                <a href='pricing.html' class="btn btn-outline" >Change Plan</a>
-                            `;
-                                 document.getElementById('paymentMethodCard').innerHTML = `
+                           document.getElementById('paymentMethodCard').innerHTML = `
                             <p>Card on file: **** **** **** 4081</p>
                             <p>Started: ${startDateString}</p>
                             <p> Expires: ${endDateString}</p>
@@ -815,7 +812,7 @@
                       
                         `;
                         switch(result.data.subscription_plan_id){
-                            case 'Starter':
+                            case '690cd11f2c645ad1ba6ed64b3': //Starter
                                 planName = 'Starter';
                                 planAmount = '₦2500';
                          document.getElementById('billingHistoryCard').innerHTML = `
@@ -824,8 +821,13 @@
                             <button class="btn btn-outline" style="margin-top: 16px;">View All</button>
                          
                         `;
+                            document.getElementById('plan').innerHTML = ` <h3>${planName} Plan</h3>
+                                <p>Expiring: ${endDateString}</p>
+                                <a href='pricing.html' class="btn btn-outline" >Change Plan</a>
+                            `;
+                  
                                 break;
-                            case 'Professional':
+                            case '690cd11f2c645ad1ba6ed64c': //Professional
                                 planName = 'Professional';
                                 planAmount = '₦5500';
                          document.getElementById('billingHistoryCard').innerHTML = `
@@ -834,8 +836,13 @@
                             <button class="btn btn-outline" style="margin-top: 16px;">View All</button>
                          
                         `;
+                            document.getElementById('plan').innerHTML = ` <h3>${planName} Plan</h3>
+                                <p>Expiring: ${endDateString}</p>
+                                <a href='pricing.html' class="btn btn-outline" >Change Plan</a>
+                            `;
+                  
                                 break;
-                            case 'Business':
+                            case '690cd11f2c645ad1ba6ed64d': //Business
                                 planName = 'Business';
                                 planAmount = '₦15500';
                          document.getElementById('billingHistoryCard').innerHTML = `
@@ -844,6 +851,11 @@
                             <button class="btn btn-outline" style="margin-top: 16px;">View All</button>
                          
                         `;
+                            document.getElementById('plan').innerHTML = ` <h3>${planName} Plan</h3>
+                                <p>Expiring: ${endDateString}</p>
+                                <a href='pricing.html' class="btn btn-outline" >Change Plan</a>
+                            `;
+                  
                                 break;
                             default:
                                 planName = 'Unknown';
