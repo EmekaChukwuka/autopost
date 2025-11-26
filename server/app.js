@@ -6,6 +6,7 @@ import cors from "cors";
 import session from "express-session";
 import path from "path";
 import { fileURLToPath } from "url";
+import axios from "axios";
 
 // Import routers
 import clearwordsAIRouter from "./routes/aiRouter.js";
