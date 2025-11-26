@@ -8,7 +8,7 @@ import path from "path";
 import { fileURLToPath } from "url";
 
 // Import routers
-import aiRouter from "./routes/aiRouter.js";
+import clearwordsAIRouter from "./routes/aiRouter.js";
 import newAIRouter from "./routes/newAIRouter.js";
 import authRouter from "./routes/auth.js";
 import router from "./routes/regisAuthRoutes.js";
@@ -113,6 +113,7 @@ app.use('/calendar', calendarRouter);
 // 🔗 API Routes
 //
 app.use("/api", newAIRouter);
+app.use("/clearwordsapi", clearwordsAIRouter);
 app.use("/auth", authRouter);
 app.use("/register", router);
 app.use("/paymentApi", paymentRouter);
