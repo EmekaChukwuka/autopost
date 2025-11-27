@@ -18,7 +18,7 @@ cookie: {
 clearwordsAIRouter.post("/generate", async (req, res) => {
     try {
           const { prompt } = req.body;
-    console.log({ prompt });
+    //console.log({ prompt });
    const apiKey = process.env.MISTRAL_API_KEY;
 
 const client = new Mistral({apiKey: apiKey});
