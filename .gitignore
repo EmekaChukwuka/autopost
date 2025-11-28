@@ -3,7 +3,7 @@ node_modules/
 
 # Environment variables
 **/.env
-server/.env
+server**/.env
 .env.local
 .env.*.local
 
