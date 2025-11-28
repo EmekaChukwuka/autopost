@@ -5,6 +5,7 @@
     <meta charset="UTF-8">
     <title>AutoPost - AI Powered Social Scheduler</title>
   <link rel="icon" href="autopost-icon.jpg">
+   <link rel="manifest" href="/manifest.json">
     
     <style>
       :root {
@@ -537,8 +538,29 @@
       </div>
     </div>
   </footer>
+  <div id="installPwaModal" 
+     style="display:none; position:fixed; bottom:20px; left:50%; transform:translateX(-50%);
+            background:white; padding:15px 20px; border-radius:10px; 
+            box-shadow:0 4px 10px rgba(0,0,0,0.2); z-index:999;">
+    <p style="margin:0 0 10px; font-size:14px;">Install AutoPost for a faster experience!</p>
+    <button onclick="installPWA()" 
+            style="background:#4f46e5; color:white; padding:8px 15px; border:none; border-radius:6px;">
+        Install App
+    </button>
+</div>
+
+
   <script src="script.js"></script>
   <script>
+      if ("serviceWorker" in navigator) {
+    window.addEventListener("load", () => {
+      navigator.serviceWorker
+        .register("/service-worker.js")
+        .then(() => console.log("Service Worker registered"))
+        .catch((err) => console.log("Service Worker failed:", err));
+    });
+  }
+
       // Dark Mode Toggle
     const darkModeToggle = document.getElementById('toggle');
     const root = document.documentElement;
@@ -561,5 +583,6 @@
     });
 
   </script>
+
 </body>
 </html>

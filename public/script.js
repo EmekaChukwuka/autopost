@@ -18,3 +18,44 @@
         localStorage.setItem('theme', 'light');
       }
     });
+// Handles the PWA installation prompt
+let deferredPrompt;
+
+// Listen for the "beforeinstallprompt" event
+window.addEventListener("beforeinstallprompt", (event) => {
+    event.preventDefault(); 
+    deferredPrompt = event;
+
+    // Show your custom install modal or button
+    const installModal = document.getElementById("installPwaModal");
+    if (installModal) installModal.style.display = "block";
+});
+
+// When the user clicks the install button
+async function installPWA() {
+    if (!deferredPrompt) {
+        alert("Install prompt not available yet.");
+        return;
+    }
+
+    // Show the browser install prompt
+    deferredPrompt.prompt();
+
+    const choice = await deferredPrompt.userChoice;
+
+    if (choice.outcome === "accepted") {
+        console.log("PWA installed!");
+    } else {
+        console.log("PWA installation dismissed.");
+    }
+
+    // Reset the prompt
+    deferredPrompt = null;
+
+    // Hide modal
+    const installModal = document.getElementById("installPwaModal");
+    if (installModal) installModal.style.display = "none";
+}
+
+// For pages that include an install button
+window.installPWA = installPWA;

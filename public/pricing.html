@@ -4,6 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Pricing | AutoPost</title>
+   <link rel="manifest" href="/manifest.json">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <link rel="stylesheet" href="style.css">
   <link rel="icon" href="autopost-icon.jpg">
@@ -800,7 +801,7 @@
                 };
                 
                 localStorage.setItem('trialData', JSON.stringify(trialData));       
-                      window.location.href='dashboard.html';
+                      window.location.href='app/dashboard.html';
                     }
 
                    if(trialData && currentUser){
