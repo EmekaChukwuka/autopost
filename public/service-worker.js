@@ -12,7 +12,7 @@ const APP_SHELL = [
   "/app/payment-verification.html",
   "/app/generate-calendar.html",
   "/app/app.js",
-  "/assets/icons/icon-192.png",
+  "/autopost-icon.jpg",
   "/assets/icons/icon-512.png"
 ];
 
