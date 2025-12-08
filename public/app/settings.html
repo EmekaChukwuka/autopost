@@ -584,7 +584,7 @@
                         <button class="btn btn-outline">Change Password</button>
                     </div>
                                          <br>   <div class="form-group">
-                        <a href="logout.html" class="btn btn-outline" style="margin-left: 5%;">Logout</a>
+                        <a href="../logout.html" class="btn btn-outline" style="margin-left: 5%;">Logout</a>
                     </div>
                 </div>
 
@@ -874,7 +874,29 @@
             
                      if (now > endDate) {
                     console.log('paid plan expired');
-                      switch(result.data.subscription_plan_id){
+                          try{
+                 const token = localStorage.getItem('authToken');
+                const response = await fetch('https://autopost-backend-hbck.onrender.com/register/me', {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type' : 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+                const result = await response.json();
+                if (response.ok){
+                    console.log(result);
+                     document.getElementById('name_input').value = result.user.name;
+            document.getElementById('email_input').value = result.user.email;            
+       
+                }else{
+                    console.log('An error occurred');
+                }
+            }catch(error){
+                           console.log(error);
+            }
+
+    switch(result.data.subscription_plan_id){
                             case '690cd11f2c645ad1ba6ed64b':
                                 planName = 'Starter';
                                 planAmount = '₦2500';
