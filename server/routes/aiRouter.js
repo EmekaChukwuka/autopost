@@ -27,7 +27,7 @@ const chatResponse = await client.chat.complete({
   messages: [{role: 'user', content: prompt}],
 });
 
-//console.log('Chat:', chatResponse.choices[0].message.content);
+console.log('ClearWords chat:', chatResponse.choices[0].message.content);
 res.status(200).json({
       status: 'success',
       data: chatResponse.choices[0].message.content
