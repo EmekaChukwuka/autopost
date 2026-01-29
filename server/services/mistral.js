@@ -3,7 +3,6 @@ import axios from 'axios';
 import { Mistral } from '@mistralai/mistralai';
 
 const MISTRAL_API_KEY = process.env.MISTRAL_API_KEY;
-
 if ( !MISTRAL_API_KEY) {
   console.warn('Mistral API not configured: set MISTRAL_API_URL and MISTRAL_API_KEY');
 }

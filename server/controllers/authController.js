@@ -3,17 +3,17 @@ import axios from 'axios';
 //my twitter client id and client secret and callback url
 const twitterClientId = "M1hLT1Jyb00ta0dyMXk4aFM4Q1I6MTpjaQ";
 const twitterClientSecret = "aDsx5WrcloAeQrBU3rxEHnKbnOWejKecDLXjd2tk7NT86OSWFi";
-const twitterCallbackUrl = "http://localhost/3000/auth/twitter/callback";
+const twitterCallbackUrl = "https://autopost-backend-hbck/auth/twitter/callback";
 const facebookClientId = "";
 const facebookClientSecret = "";
-const facebookCallbackUrl = "http://localhost/3000/auth/twitter/callback";
-const linkedinClientId = "";
-const linkedinClientSecret = "";
-const linkedinCallbackUrl = "http://localhost/3000/auth/twitter/callback";
+const facebookCallbackUrl = "https://autopost-backend-hbck/auth/facebook/callback";
+const linkedinClientId = process.env.linkedinClientId;
+const linkedinClientSecret = process.env.linkedinClientSecret;
+const linkedinCallbackUrl = "https://autopost-backend-hbck/auth/linkedin/callback";
 
 const instagramClientId = "";
 const instagramClientSecret = process.env.instagramClientSecret;
-const instagramCallbackUrl = "http://localhost/3000/auth/twitter/callback";
+const instagramCallbackUrl = "https://autopost-backend-hbck/auth/instagram/callback";
 
 
 

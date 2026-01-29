@@ -5,6 +5,7 @@ import http from "http";
 import cors from "cors";
 import session from "express-session";
 import path from "path";
+import ngrok from '@ngrok/ngrok';
 import { fileURLToPath } from "url";
 import axios from "axios";
 
@@ -211,5 +212,7 @@ const PORT = process.env.PORT || 3000;
 server.listen(PORT, () => {
   console.log(`🌍 Server running on http://localhost:${PORT}`);
 });
-
+ngrok.connect({ addr: 3000, authtoken: process.env.NGROK_AUTH_TOKEN })
+	.then(listener => console.log(`Ingress established at: ${listener.url()}`));
+  
   seedSubscriptionPlans(); 
