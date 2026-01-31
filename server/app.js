@@ -17,6 +17,14 @@ import router from "./routes/regisAuthRoutes.js";
 import paymentRouter from "./routes/paymentRoutes.js";
 import calendarRouter from './routes/calendarRoutes.js';
 
+import cron from "node-cron";
+import { processLinkedInPosts } from "./workers/linkedinScheduler.js";
+
+cron.schedule("*/1 * * * *", async () => {
+  console.log("⏱ Running LinkedIn scheduler...");
+  await processLinkedInPosts();
+});
+
 
 
 dotenv.config();

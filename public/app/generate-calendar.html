@@ -175,6 +175,43 @@
 .logo span{
     color:var(--accent-blue);
 }
+    dialog.modal {
+      border: none;
+      border-radius: 12px;
+      padding: 2rem;
+      max-width: 500px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+      background: var(--card-bg);
+      color: var(--text-primary);
+    }
+    dialog.modal::backdrop {
+      background: rgba(0,0,0,0.5);
+    }
+    .modal-content {
+      font-family: system-ui, sans-serif;
+    }
+    .modal-content label {
+      display: block;
+      margin: 0.8rem 0;
+    }
+    .modal-content button {
+      padding: 0.8rem 1.5rem;
+      margin-left: 0.8rem;
+      cursor: pointer;
+      border-radius: 6px;
+    }
+    .modal-content button:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+    .modal-content .btn {
+      background: var(--accent-blue);
+      color: white;
+      border: none;
+    }
+    .platform-checkbox {
+      margin-right: 0.5rem;
+    }
 
   </style>
 </head>
@@ -211,6 +248,24 @@
       </div>
 
       <textarea id="prompt" placeholder="e.g. 30 posts for a fintech startup targeting young adults: quick tips, industry news, 2 product promos, 4 engagement questions"></textarea>
+<div class="calendar-options">
+  <label>
+    <input type="checkbox" id="autoSchedule">
+    Automatically schedule posts
+  </label>
+
+  <div id="platformSelect" class="hidden">
+    <label>
+      <input type="checkbox" value="linkedin" checked disabled>
+      LinkedIn (connected)
+    </label>
+  </div>
+
+  <label>
+    <input type="checkbox" id="includeImages">
+    Add images to posts automatically
+  </label>
+</div>
 
       <div style="display:flex;gap:8px;margin-top:12px">
         <button id="generateBtn" class="btn">Generate Calendar</button>
@@ -228,6 +283,35 @@
     <a href="analytics.html"><i class="fas fa-chart-line"></i></a>
     <a href="settings.html"><i class="fas fa-user"></i></a>
   </nav>
+  <!-- NEW: Auto-schedule confirmation modal -->
+  <dialog id="autoScheduleModal" class="modal">
+    <div class="modal-content">
+      <h2>Auto-Schedule This Month?</h2>
+      <p>AutoPost can publish all posts in this calendar automatically to your connected accounts at optimal times.</p>
+
+      <label>
+        <input type="checkbox" id="autoScheduleYes" checked> Yes, auto-schedule
+      </label>
+
+      <div id="platformsSection" style="display:none; margin-top:1rem;">
+        <h3>Select Platforms</h3>
+        <div id="platformList"></div>
+      </div>
+
+      <div id="imagesSection" style="display:none; margin-top:1rem;">
+        <h3>Add Images Automatically?</h3>
+        <p>AutoPost will search free stock photos (Unsplash/Pexels) and attach one relevant image per post.</p>
+        <label>
+          <input type="checkbox" id="addImagesYes"> Yes, attach images
+        </label>
+      </div>
+
+      <div style="margin-top:1.5rem; text-align:right;">
+        <button id="cancelAutoBtn">Cancel</button>
+        <button id="confirmAutoBtn" class="btn" disabled>Confirm & Schedule</button>
+      </div>
+    </div>
+  </dialog>
 
   <script src="app.js"></script>
 <script>
@@ -301,10 +385,10 @@ generateBtn.addEventListener('click', async ()=>{
 
     status.textContent = 'Calendar generated — saving…';
     // store success -> backend should save calendar for the user; then redirect
-
-    setTimeout(()=> {
+        showAutoScheduleModal(json.user_id);
+    /*setTimeout(()=> {
       window.location.href = 'calendar.html';
-    }, 700);
+    }, 700);*/
 
   } catch (err) {
     console.error(err);
@@ -312,6 +396,89 @@ generateBtn.addEventListener('click', async ()=>{
     generateBtn.disabled = false;
   }
 });
+
+
+    // NEW: Modal logic
+    function showAutoScheduleModal(calendarId, connectedAccounts) {
+      const modal = document.getElementById('autoScheduleModal');
+      const yesCheckbox = document.getElementById('autoScheduleYes');
+      const platformsDiv = document.getElementById('platformsSection');
+      const platformList = document.getElementById('platformList');
+      const imagesSection = document.getElementById('imagesSection');
+      const confirmBtn = document.getElementById('confirmAutoBtn');
+      const cancelBtn = document.getElementById('cancelAutoBtn');
+
+      // Populate platforms
+      platformList.innerHTML = '';
+      connectedAccounts.forEach(acc => {
+        const div = document.createElement('div');
+        div.innerHTML = `
+          <label>
+            <input type="checkbox" name="platform" value="\( {acc.platform}: \){acc.id}" class="platform-checkbox" checked>
+            \( {acc.name} ( \){acc.platform})
+          </label>
+        `;
+        platformList.appendChild(div);
+      });
+
+      function updateUI() {
+        const enabled = yesCheckbox.checked;
+        platformsDiv.style.display = enabled ? 'block' : 'none';
+        imagesSection.style.display = enabled ? 'block' : 'none';
+        confirmBtn.disabled = !enabled || !document.querySelector('input[name="platform"]:checked');
+      }
+
+      yesCheckbox.addEventListener('change', updateUI);
+      platformList.addEventListener('change', updateUI);
+      updateUI();
+
+      modal.showModal();
+
+      confirmBtn.onclick = async () => {
+        if (!yesCheckbox.checked) {
+          modal.close();
+          window.location.href = 'calendar.html';
+          return;
+        }
+
+        const selected = Array.from(document.querySelectorAll('input[name="platform"]:checked'))
+          .map(cb => cb.value);
+
+        const addImages = document.getElementById('addImagesYes').checked;
+
+        status.textContent = 'Queuing auto-scheduling...';
+
+        try {
+          const res = await fetch(`https://autopost-backend-hbck.onrender.com/calendar/auto-schedule`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify({ platforms: selected, addImages })
+          });
+
+          if (res.ok) {
+            status.textContent = 'Auto-scheduling enabled! Redirecting to calendar...';
+            setTimeout(() => {
+              modal.close();
+              window.location.href = 'calendar.html';
+            }, 1200);
+          } else {
+            const err = await res.text();
+            status.textContent = 'Scheduling failed: ' + err;
+          }
+        } catch (err) {
+          status.textContent = 'Network error: ' + err.message;
+        }
+      };
+
+      cancelBtn.onclick = () => {
+        modal.close();
+        window.location.href = 'calendar.html';
+      };
+    }
+
 </script>
 </body>
 </html>
