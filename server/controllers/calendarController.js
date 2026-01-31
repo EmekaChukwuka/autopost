@@ -3,7 +3,6 @@ import Calendar from '../models/Calendar.js';
 import User from '../models/User.js';
 import { callMistralForCalendar } from '../services/mistral.js';
 import ScheduledPost from "../models/ScheduledPost.js";
-import User from "../models/User.js";
 import { authenticateToken } from "../controllers/regisAuthController.js";
 
 /**
