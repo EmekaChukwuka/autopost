@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Sign In | AutoPost</title>
+  <title>Sign Out | AutoPost</title>
    <link rel="manifest" href="/manifest.json">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   
@@ -211,23 +211,8 @@
         display: flex;
       }
     }
-.spinner {
-            border: 2px solid rgba(255, 255, 255, 0.3);
-            border-radius: 50%;
-            border-top: 2px solid white;
-            width: 16px;
-            height: 16px;
-            animation: spin 1s linear infinite;
-            margin-right: 8px;
-        }
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-        .hidden {
-            display: none;
-        }
-    
+
+   
   </style>
 </head>
 <body>
@@ -236,15 +221,13 @@
     <div class="auth-left">
       <div>
         <img src="autopost-dashboard.jpg" alt="AutoPost Illustration" style="max-width: 100%;">
-        <h2 style="text-align: center; margin-top: 20px;">Welcome Back</h2>
-        <p style="text-align: center; color: var(--text-secondary);">Automate your social media like a pro</p>
-      </div>
+   </div>
     </div>
 
     <!-- Right Side (Form) -->
     <div class="auth-right">
       <div class="auth-form">
-                                 
+                                
   <!-- Theme Toggle -->
   <div class="theme-toggle">
     <i class="fas fa-sun"></i>
@@ -256,52 +239,24 @@
         
 
         <div class="auth-logo">Auto<span>Post</span></div>
-        <h1 class="auth-title">Welcome Back</h1>
-        <p class="auth-subtitle">Sign in to manage your automated posts</p>
 
-        <form id="signinForm">
-          <div class="form-group">
-            <button type="button" class="btn btn-google">
-              <i class="fab fa-google"></i>  Sign in with Google
-            </button>
-          </div>
-
-          <div class="divider">or</div>
-
-          <div class="form-group">
-            <label for="email" class="form-label">Email Address</label>
-            <input type="email" id="email" class="form-input" placeholder="you@example.com" required>
-            <div class="error-message" id="emailError">Please enter a valid email</div>
+        <form id="signoutForm">
+          <div class="form-group" style="text-align:center;">
+        <h1 class="auth-title">Sign Out</h1>
+        <p class="auth-subtitle">Do you want to sign out of your account?</p>
           </div>
 
           <div class="form-group">
-            <label for="password" class="form-label">Password</label>
-            <div class="password-wrapper">
-              <input type="password" id="password" class="form-input" placeholder="Enter your password" required>
-              <i class="fas fa-eye password-toggle" id="togglePassword"></i>
-            </div>
-            <div class="error-message" id="passwordError">Incorrect password</div>
-          </div>
-
-          <div class="form-group" style="display: flex; justify-content: space-between; align-items: center;">
-            <div>
-              <input type="checkbox" id="remember">
-              <label for="remember">Remember me</label>
-            </div>
-            <div>
-              <a href="#" style="color: var(--accent-blue); text-decoration: none;">Forgot password?</a>
-            </div>
-          </div>
-
-          <div class="form-group"><button type="submit" class="btn btn-primary" id="submitButton"> <span id="spinner" class="spinner hidden"></span>
-                <span id="buttonText">Sign In</span></button>
+            <button type="submit" class="btn btn-primary" id="submitButton"> <span id="spinner" class="spinner hidden"></span>
+                <span id="buttonText">Logout</span></button>
           </div>
           <div id="message"></div>
         </form>
 
         <div class="auth-footer">
-          Don't have an account? <a href="signup.html">Sign up</a>
+          <a href="app/dashboard.html">Cancel</a>
         </div>
+    </form>
       </div>
     </div>
   </div>
@@ -325,75 +280,54 @@
         localStorage.setItem('theme', 'light');
       }
     });
-
-    // Password Toggle (Same as signup.html)
-    const togglePassword = document.getElementById('togglePassword');
-    const password = document.getElementById('password');
-
-    togglePassword.addEventListener('click', () => {
-      const type = password.getAttribute('type') === 'password' ? 'text' : 'password';
-      password.setAttribute('type', type);
-      togglePassword.classList.toggle('fa-eye-slash');
-    });
-
- const submitButton = document.getElementById('submitButton');
+    const submitButton = document.getElementById('submitButton');
             const spinner = document.getElementById('spinner');
             const buttonText = document.getElementById('buttonText');
-
+      submitButton.disabled = false;
+                spinner.classList.add('hidden');
+                buttonText.textContent = 'Logout';
     // Form Submission
-    document.getElementById('signinForm').addEventListener('submit', async (e) => {
+    document.getElementById('signoutForm').addEventListener('submit', async (e) => {
       e.preventDefault();
-        // Show loading state
-                submitButton.disabled = true;
+      submitButton.disabled = true;
                 spinner.classList.remove('hidden');
-                buttonText.textContent = 'Signing In...';
+                buttonText.textContent = 'Logging Out...';
      try {
-      
-      const email = document.getElementById('email').value;
-      const password = document.getElementById('password').value;
-                    const response = await fetch('https://autopost-backend-hbck.onrender.com/register/login', {
+                     const token = localStorage.getItem('authToken');
+                    const response = await fetch('https://autopost-backend-hbck.onrender.com/register/logout', {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
-                        },
-                        body: JSON.stringify({ email, password })
+                            'Authorization': `Bearer ${token}`
+                        }
                     });
                     
                     const data = await response.json();
                     
                     if (response.ok) {
-                        document.getElementById('message').textContent = 'Login successful!';
+                        document.getElementById('message').textContent = 'Logout successful!';
                        
-                       const user = {
-                        id: data.user.id,
-                        name: data.user.name,
-                        email: email
-                };
-                 console.log(user)
-                        localStorage.setItem('authToken', data.token);
-                localStorage.setItem('currentUser', JSON.stringify(user));
-                        window.location.href="app/dashboard.html";
+                
+                localStorage.removeItem('currentUser');
+                        window.location.href="index.html";
                     } else {
-                        document.getElementById('message').textContent = 'Incorrect email or password';
+                        document.getElementById('message').textContent = 'Logout failed';
                          submitButton.disabled = false;
                 spinner.classList.add('hidden');
-                buttonText.textContent = 'Sign In';
-                    }
+                buttonText.textContent = 'Logout';
+                      }
                 } catch (error) {
                     console.error('Error:', error);
-                    document.getElementById('message').textContent = 'An error occurred during login';
-                     submitButton.disabled = false;
+                    document.getElementById('message').textContent = 'An error occurred during logout';
+                   submitButton.disabled = false;
                 spinner.classList.add('hidden');
-                buttonText.textContent = 'Sign In';
-                } 
-
-           
-            
+                buttonText.textContent = 'Logout';
+                  } 
     });
   </script>
    <!--
   <script src="https://accounts.google.com/gsi/client" async defer></script>
   <script src="auth.js"></script>-->
-  <script src="script.js"></script>
+  <script src="../script.js"></script>
 </body>
 </html>
