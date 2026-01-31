@@ -823,7 +823,7 @@
                             <button class="btn btn-outline" style="margin-top: 16px;">View All</button>
                          
                         `;
-                            document.getElementById('plan').innerHTML = ` <h3>${planName} Plan</h3>
+                            document.getElementById('plan').innerHTML = `<h3>${planName} Plan</h3>
                                 <p>Expiring: ${endDateString}</p>
                                 <a href='pricing.html' class="btn btn-outline" >Change Plan</a>
                             `;
@@ -904,7 +904,14 @@
                             <p>Expired, update payment</p>
                             <p>${planAmount}</p>
                             <a href="payment.html" class="btn btn-outline" style="margin-top: 16px;">Update Payment</a>
-                    `;
+                    `;  
+                    document.getElementById('billingHistoryCard').innerHTML = `
+                            
+                            <p>${startDateString} - ${planAmount}</p>
+                            <button class="btn btn-outline" style="margin-top: 16px;">View All</button>
+                         
+                        `;
+                  
                                 break;
                             case '690cd11f2c645ad1ba6ed64c':
                                 planName = 'Professional';
@@ -914,6 +921,12 @@
                             <p>${planAmount}</p>
                             <a href="payment.html" class="btn btn-outline" style="margin-top: 16px;">Update Payment</a>
                     `;
+                     document.getElementById('billingHistoryCard').innerHTML = `
+                            
+                            <p>${startDateString} - ${planAmount}</p>
+                            <button class="btn btn-outline" style="margin-top: 16px;">View All</button>
+                         
+                        `;
                                 break;
                             case '690cd11f2c645ad1ba6ed64d':
                                 planName = 'Business';
@@ -923,6 +936,12 @@
                             <p>${planAmount}</p>
                             <a href="payment.html" class="btn btn-outline" style="margin-top: 16px;">Update Payment</a>
                     `;
+                     document.getElementById('billingHistoryCard').innerHTML = `
+                            
+                            <p>${startDateString} - ${planAmount}</p>
+                            <button class="btn btn-outline" style="margin-top: 16px;">View All</button>
+                         
+                        `;
                                 break;
                             default:
                                 planName = 'Unknown';
@@ -984,6 +1003,12 @@
                             <p>₦2500</p>
                             <a href="payment.html" class="btn btn-outline" style="margin-top: 16px;">Update Payment</a>
                     `;
+                     document.getElementById('billingHistoryCard').innerHTML = `]
+                            <p>No billing history yet</p>
+                        `;
+                     document.getElementById('paymentMethodCard').innerHTML = `
+                            <p>No payment method yet</p>
+                        `;
                 }
                 if(trialData.plan === 'Professional'){
                            document.getElementById('plan').innerHTML = ` <h3>${trialData.plan} Plan</h3>
@@ -991,6 +1016,12 @@
                             <p>₦5500</p>
                             <a href="payment.html" class="btn btn-outline" style="margin-top: 16px;">Update Payment</a>
                     `;
+                     document.getElementById('billingHistoryCard').innerHTML = `
+                            <p>No billing history yet</p>
+                        `;
+                     document.getElementById('paymentMethodCard').innerHTML = `
+                            <p>No payment method yet</p>
+                        `;
             }
             if(trialData.plan === 'Business'){
                             document.getElementById('plan').innerHTML = ` <h3>${trialData.plan} Plan</h3>
@@ -998,6 +1029,12 @@
                              <p>₦15500</p>
                              <a href="payment.html" class="btn btn-outline" style="margin-top: 16px;">Update Payment</a>
                       `;
+                     document.getElementById('billingHistoryCard').innerHTML = `
+                            <p>No billing history yet</p>
+                        `;
+                     document.getElementById('paymentMethodCard').innerHTML = `
+                            <p>No payment method yet</p>
+                        `;
                 }
         }
         }
