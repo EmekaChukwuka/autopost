@@ -1126,7 +1126,7 @@
                 updateCountdown();
                 const countdownInterval = setInterval(updateCountdown, 1000);
             }
-            async function checkTrialStatus() {
+          /*  async function checkTrialStatus() {
                 try {
                     const token = localStorage.getItem('authToken');
                     const response = await fetch(`https://autopost-backend-hbck.onrender.com/register/trials/status`, {
@@ -1174,9 +1174,8 @@
                 } catch (error) {
                     console.error('Error checking trial status:', error);
                 }
-            }
+            }*/
             
-checkTrialStatus();
         });
     </script>
 </body>
