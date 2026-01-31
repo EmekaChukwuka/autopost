@@ -781,6 +781,83 @@
                            console.log(error);
             }
 
+            try{
+            const user = JSON.parse(localStorage.getItem('currentUser'));
+            const paidPlan = JSON.parse(localStorage.getItem('paidPlan'));  
+            let currentUser = JSON.parse(localStorage.getItem('currentUser'));
+            console.log(currentUser);
+
+            
+            // Check if user has an active trial (simulated with localStorage)
+            
+            console.log(trialData);
+            //checkTrialStatus();
+            
+            if(!trialData && user && !paidPlan){
+                document.getElementById('plan').innerHTML = ` <h3>No Active Plan</h3>
+                            <p>You are currently on a free plan.</p>
+                            <a href='pricing.html' class="btn btn-outline" >Choose a Plan</a>
+                        `;
+            }
+            
+           
+
+            if (trialData && user) {
+               
+                const now = new Date();
+                const endDate = new Date(trialData.endDate);
+                
+                if (now < endDate) {
+                    // Trial is still active
+                    showTrialStatus(trialData);
+                    startCountdown(endDate, trialData);
+                }else{
+                    console.log('free trial expired');
+
+                    if(trialData.plan === 'Starter'){
+                           document.getElementById('plan').innerHTML = ` <h3>${trialData.plan} Plan</h3>
+                            <p>Expired, update payment</p>
+                            <p>₦2500</p>
+                            <a href="payment.html" class="btn btn-outline" style="margin-top: 16px;">Update Payment</a>
+                    `;
+                     document.getElementById('billingHistoryCard').innerHTML = `]
+                            <p>No billing history yet</p>
+                        `;
+                     document.getElementById('paymentMethodCard').innerHTML = `
+                            <p>No payment method yet</p>
+                        `;
+                }
+                if(trialData.plan === 'Professional'){
+                           document.getElementById('plan').innerHTML = ` <h3>${trialData.plan} Plan</h3>
+                            <p>Expired, update payment</p>
+                            <p>₦5500</p>
+                            <a href="payment.html" class="btn btn-outline" style="margin-top: 16px;">Update Payment</a>
+                    `;
+                     document.getElementById('billingHistoryCard').innerHTML = `
+                            <p>No billing history yet</p>
+                        `;
+                     document.getElementById('paymentMethodCard').innerHTML = `
+                            <p>No payment method yet</p>
+                        `;
+            }
+            if(trialData.plan === 'Business'){
+                            document.getElementById('plan').innerHTML = ` <h3>${trialData.plan} Plan</h3>
+                             <p>Expired, update payment</p>
+                             <p>₦15500</p>
+                             <a href="payment.html" class="btn btn-outline" style="margin-top: 16px;">Update Payment</a>
+                      `;
+                     document.getElementById('billingHistoryCard').innerHTML = `
+                            <p>No billing history yet</p>
+                        `;
+                     document.getElementById('paymentMethodCard').innerHTML = `
+                            <p>No payment method yet</p>
+                        `;
+                }
+        }
+        }
+    }catch(error){
+                           console.log(error);
+            }
 
              try{
                  const token = localStorage.getItem('authToken');
@@ -965,79 +1042,6 @@
         }catch(error){
                 console.log(error);
             }
-            const user = JSON.parse(localStorage.getItem('currentUser'));
-            const paidPlan = JSON.parse(localStorage.getItem('paidPlan'));  
-            let currentUser = JSON.parse(localStorage.getItem('currentUser'));
-            console.log(currentUser);
-
-            
-            // Check if user has an active trial (simulated with localStorage)
-            
-            console.log(trialData);
-            //checkTrialStatus();
-            
-            if(!trialData && user && !paidPlan){
-                document.getElementById('plan').innerHTML = ` <h3>No Active Plan</h3>
-                            <p>You are currently on a free plan.</p>
-                            <a href='pricing.html' class="btn btn-outline" >Choose a Plan</a>
-                        `;
-            }
-            
-           
-
-            if (trialData && user) {
-               
-                const now = new Date();
-                const endDate = new Date(trialData.endDate);
-                
-                if (now < endDate) {
-                    // Trial is still active
-                    showTrialStatus(trialData);
-                    startCountdown(endDate, trialData);
-                }else{
-                    console.log('free trial expired');
-
-                    if(trialData.plan === 'Starter'){
-                           document.getElementById('plan').innerHTML = ` <h3>${trialData.plan} Plan</h3>
-                            <p>Expired, update payment</p>
-                            <p>₦2500</p>
-                            <a href="payment.html" class="btn btn-outline" style="margin-top: 16px;">Update Payment</a>
-                    `;
-                     document.getElementById('billingHistoryCard').innerHTML = `]
-                            <p>No billing history yet</p>
-                        `;
-                     document.getElementById('paymentMethodCard').innerHTML = `
-                            <p>No payment method yet</p>
-                        `;
-                }
-                if(trialData.plan === 'Professional'){
-                           document.getElementById('plan').innerHTML = ` <h3>${trialData.plan} Plan</h3>
-                            <p>Expired, update payment</p>
-                            <p>₦5500</p>
-                            <a href="payment.html" class="btn btn-outline" style="margin-top: 16px;">Update Payment</a>
-                    `;
-                     document.getElementById('billingHistoryCard').innerHTML = `
-                            <p>No billing history yet</p>
-                        `;
-                     document.getElementById('paymentMethodCard').innerHTML = `
-                            <p>No payment method yet</p>
-                        `;
-            }
-            if(trialData.plan === 'Business'){
-                            document.getElementById('plan').innerHTML = ` <h3>${trialData.plan} Plan</h3>
-                             <p>Expired, update payment</p>
-                             <p>₦15500</p>
-                             <a href="payment.html" class="btn btn-outline" style="margin-top: 16px;">Update Payment</a>
-                      `;
-                     document.getElementById('billingHistoryCard').innerHTML = `
-                            <p>No billing history yet</p>
-                        `;
-                     document.getElementById('paymentMethodCard').innerHTML = `
-                            <p>No payment method yet</p>
-                        `;
-                }
-        }
-        }
             
              
             async function showTrialStatus(trialData) {
