@@ -14,15 +14,15 @@ export const processLinkedInPosts = async () => {
   for (const post of posts) {
     try {
       const user = await User.findById(post.user_id);
-      if (!user?.linkedin_access_token) throw new Error("No LinkedIn token");
+      if (!user.socialAccounts?.linkedin?.accessToken) throw new Error("No LinkedIn token");
 
       let assetUrn = null;
 
       if (post.image_required && post.image_url) {
         const imageRes = await axios.get(post.image_url, { responseType: "arraybuffer" });
         assetUrn = await uploadImageToLinkedIn(
-          user.linkedin_access_token,
-          user.linkedin_user_id,
+          user.socialAccounts.linkedin.accessToken,
+          user.socialAccounts.linkedin.userid,
           imageRes.data
         );
 
@@ -30,8 +30,8 @@ export const processLinkedInPosts = async () => {
       }
 
       await postToLinkedInWithImage(
-        user.linkedin_access_token,
-        user.linkedin_user_id,
+        user.socialAccounts.linkedin.accessToken,
+        user.socialAccounts.linkedin.user_id,
         post.content,
         assetUrn
       );
@@ -46,3 +46,8 @@ export const processLinkedInPosts = async () => {
     }
   }
 };
+
+
+
+
+  
