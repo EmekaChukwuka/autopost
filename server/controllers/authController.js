@@ -75,18 +75,78 @@ export const facebookCallback = async (req, res) => {
     res.redirect("/dashboard?success=facebook");
 };
 
+import User from "../models/User.js";
+import axios from "axios";
+
 export const linkedinCallback = async (req, res) => {
-    const {data} = await axios.post(`http://www.linkedin.com/oauth/v2/accessToken`,
-        new URLSearchParams({
-            grant_type: 'authorizaton_code',
-            code,
-            clientId: linkedinClientId,
-            clientSecret: linkedinClientSecret,
-            redirect_uri: linkedinCallbackUrl,
-        }),
-        {headers: {'Content-Type': 'application/x-www-form-urlencoded'}}
+  try {
+    const { code } = req.query;
+
+    if (!code) {
+      return res.status(400).send("Missing authorization code");
+    }
+
+    // 1. Exchange code for access token
+    const tokenRes = await axios.post(
+      "https://www.linkedin.com/oauth/v2/accessToken",
+      new URLSearchParams({
+        grant_type: "authorization_code",
+        code,
+        client_id: linkedinClientId,
+        client_secret: linkedinClientSecret,
+        redirect_uri: linkedinCallbackUrl
+      }),
+      {
+        headers: { "Content-Type": "application/x-www-form-urlencoded" }
+      }
     );
-    const accessToken = data.access_token;
-    console.log("LinkedIn Access Token:", accessToken);
-    res.redirect("/dashboard?success=linkedin");
+
+    const accessToken = tokenRes.data.access_token;
+    const expiresIn = tokenRes.data.expires_in;
+
+    // 2. Fetch LinkedIn profile
+    const profileRes = await axios.get(
+      "https://api.linkedin.com/v2/me",
+      {
+        headers: {
+          Authorization: `Bearer ${accessToken}`
+        }
+      }
+    );
+
+    const profileId = profileRes.data.id;
+    const profileName =
+      `${profileRes.data.localizedFirstName} ${profileRes.data.localizedLastName}`;
+
+    // 3. Get logged-in user (from session or auth middleware)
+    const userId = req.session.user?.id; // adjust if using JWT
+
+    if (!userId) {
+      return res.status(401).send("User not authenticated");
+    }
+
+    // 4. Store LinkedIn data in MongoDB
+    await User.updateOne(
+      { _id: userId },
+      {
+        $set: {
+          "socialAccounts.linkedin": {
+            connected: true,
+            accessToken,
+            expiresAt: new Date(Date.now() + expiresIn * 1000),
+            profileId,
+            profileName
+          }
+        }
+      }
+    );
+
+    console.log("LinkedIn connected for user:", userId);
+
+    res.redirect("/dashboard?linkedin=connected");
+
+  } catch (error) {
+    console.error("LinkedIn OAuth error:", error.response?.data || error.message);
+    res.redirect("/dashboard?linkedin=failed");
+  }
 };
