@@ -442,6 +442,9 @@ const jsonB = await resB.json();
         status.textContent = 'Queuing auto-scheduling...';
 
         try {
+const post_time = new Date();
+time.setHours(8, 0, 0, 0);
+
           const res = await fetch(`https://autopost-backend-hbck.onrender.com/calendar/auto-schedule`, {
             method: 'POST',
             headers: {
