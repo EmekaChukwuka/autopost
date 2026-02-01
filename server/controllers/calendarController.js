@@ -134,9 +134,6 @@ export async function generateCalendar(req, res) {
       {
         user_id: id,
         start_date: new Date(startISO),
-autoSchedule: autoSchedule,
-  includeImages: includeImages,
-  platforms: platforms,
         days: items,
         generated_at: new Date(),
         meta: { prompt, template, source: aiResponse.ok ? 'mistral' : 'fallback' }
@@ -185,7 +182,7 @@ export async function deleteCalendar(req, res) {
 
 export async function autoScheduleCalendar(req, res) {
   try {
-    const { calendarId, post_time, includeImages, userId } = req.body;
+    const { calendarId,post_time, includeImages, userId } = req.body;
     
 
     const user = await User.findById(userId);
