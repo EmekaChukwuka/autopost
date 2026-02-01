@@ -1,6 +1,6 @@
 // server/routes/calendarRoutes.js
 import express from 'express';
-import { generateCalendar, getCalendar, deleteCalendar, autoScheduleCalendar, getConntectedAccounts} from '../controllers/calendarController.js';
+import { generateCalendar, getCalendar, deleteCalendar, autoScheduleCalendar, getConnectedAccounts} from '../controllers/calendarController.js';
 import { authenticateToken } from '../controllers/regisAuthController.js';
 import  protect  from '../middleware/regisAuthMiddleware.js';
 
