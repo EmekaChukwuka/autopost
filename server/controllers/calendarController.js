@@ -87,7 +87,7 @@ function normalizeItems(rawItems, startDateISO, days = 30) {
  */
 export async function generateCalendar(req, res) {
   try {
-    const { id, prompt, template, startDate } = req.body;
+    const { id, prompt, template, startDate, autoSchedule, includeImages, platforms} = req.body;
     if (!id || !prompt) return res.status(400).json({ success: false, message: 'id and prompt required' });
 
     // verify user exists
@@ -134,6 +134,9 @@ export async function generateCalendar(req, res) {
       {
         user_id: id,
         start_date: new Date(startISO),
+autoSchedule: autoSchedule,
+  includeImages: includeImages,
+  platforms: platforms,
         days: items,
         generated_at: new Date(),
         meta: { prompt, template, source: aiResponse.ok ? 'mistral' : 'fallback' }
