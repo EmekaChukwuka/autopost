@@ -76,7 +76,6 @@ export const facebookCallback = async (req, res) => {
 };
 
 import User from "../models/User.js";
-import axios from "axios";
 
 export const linkedinCallback = async (req, res) => {
   try {
