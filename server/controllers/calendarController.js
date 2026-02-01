@@ -185,8 +185,8 @@ export async function deleteCalendar(req, res) {
 
 export async function autoScheduleCalendar(req, res) {
   try {
-    const { calendarId, post_time } = req.body;
-    const userId = req.user.id;
+    const { calendarId, post_time, includeImages, userId } = req.body;
+    
 
     const user = await User.findById(userId);
     if (user.subscription_status !== "active") {
@@ -216,7 +216,7 @@ export async function autoScheduleCalendar(req, res) {
 
     calendar.auto_schedule = true;
     calendar.platform = "linkedin";
-    calendar.post_time = post_time;
+    calendar.includeImages = includeImages;
     await calendar.save();
 
     res.json({
