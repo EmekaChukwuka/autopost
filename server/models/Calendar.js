@@ -10,6 +10,9 @@ const CalendarItemSchema = new mongoose.Schema({
 const CalendarSchema = new mongoose.Schema({
   user_id: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true, index: true },
   start_date: { type: Date, required: true }, // start of the calendar
+autoSchedule: Boolean,
+  includeImages: Boolean,
+  platforms: [String],
   days: { type: [CalendarItemSchema], default: [] }, // should contain 30 items typically
   generated_at: { type: Date, default: Date.now },
   meta: {
