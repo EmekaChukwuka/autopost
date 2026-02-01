@@ -22,7 +22,7 @@ export const processLinkedInPosts = async () => {
         const imageRes = await axios.get(post.image_url, { responseType: "arraybuffer" });
         assetUrn = await uploadImageToLinkedIn(
           user.socialAccounts.linkedin.accessToken,
-          user.socialAccounts.linkedin.userid,
+          user.socialAccounts.linkedin.profileId,
           imageRes.data
         );
 
@@ -31,7 +31,7 @@ export const processLinkedInPosts = async () => {
 
       await postToLinkedInWithImage(
         user.socialAccounts.linkedin.accessToken,
-        user.socialAccounts.linkedin.user_id,
+        user.socialAccounts.linkedin.profileId,
         post.content,
         assetUrn
       );
