@@ -372,7 +372,7 @@
                  console.log(user)
                         localStorage.setItem('authToken', data.token);
                 localStorage.setItem('currentUser', JSON.stringify(user));
-                        window.location.href="app/dashboard.html";
+                        window.location.href="dashboard.html";
                     } else {
                         document.getElementById('message').textContent = 'Incorrect email or password';
                          submitButton.disabled = false;
