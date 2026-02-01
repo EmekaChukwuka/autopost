@@ -378,7 +378,7 @@ generateBtn.addEventListener('click', async ()=>{
       body: JSON.stringify({ id: user.id })
     });
 const jsonB = await resB.json();
- showAutoScheduleModal(jsonB);
+ showAutoScheduleModal(user_id, jsonB);
     /*setTimeout(()=> {
       window.location.href = 'calendar.html';
     }, 700);*/
@@ -392,7 +392,7 @@ const jsonB = await resB.json();
 
 
     // NEW: Modal logic
-    function showAutoScheduleModal(connectedAccounts) {
+    function showAutoScheduleModal(calendar is, connectedAccounts) {
       const modal = document.getElementById('autoScheduleModal');
       const yesCheckbox = document.getElementById('autoScheduleYes');
       const platformsDiv = document.getElementById('platformsSection');
@@ -448,7 +448,7 @@ const jsonB = await resB.json();
               'Content-Type': 'application/json',
               'Authorization': `Bearer ${token}`
             },
-            body: JSON.stringify({ platforms: selected, addImages })
+            body: JSON.stringify({ calendarId, platforms: selected, includeImages: true, post_time })
           });
 
           if (res.ok) {
