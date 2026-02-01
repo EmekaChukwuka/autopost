@@ -270,3 +270,52 @@ function calculateOptimalTime(date) {
   date.setHours(9, 0, 0, 0);
   return date;
 }
+export const getConnectedAccounts = async (req, res) => {
+  try {
+    const userId = req.body;
+
+    const user = await User.findById(userId).select("socialAccounts");
+
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: "User not found"
+      });
+    }
+
+    const accounts = user.socialAccounts || {};
+
+    const response = {
+      linkedin: formatAccount(accounts.linkedin),
+      twitter: formatAccount(accounts.twitter),
+      facebook: formatAccount(accounts.facebook),
+      instagram: formatAccount(accounts.instagram)
+    };
+
+    res.json({
+      success: true,
+      data: response
+    });
+
+  } catch (err) {
+    console.error("Get connected accounts error:", err);
+    res.status(500).json({
+      success: false,
+      message: "Failed to fetch connected accounts"
+    });
+  }
+};
+
+function formatAccount(acc) {
+  if (!acc) {
+    return { connected: false };
+  }
+
+  return {
+    connected: acc.connected || false,
+    profileId: acc.profileId || null,
+    username: acc.username || null,
+    expiresAt: acc.expiresAt || null,
+    hasToken: !!acc.accessToken   // boolean only — not the token itself
+  };
+}
