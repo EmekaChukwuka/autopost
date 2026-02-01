@@ -9,6 +9,16 @@ const userSchema = new mongoose.Schema({
   avatar: { type: String },
   provider: { type: String, default: "email" },
   verified: { type: Boolean, default: false },
+socialAccounts: {
+    linkedin: {
+      connected: { type: Boolean, default: false },
+      accessToken: String,
+      refreshToken: String,
+      expiresAt: Date,
+      profileId: String,     // LinkedIn URN (e.g. urn:li:person:xxxx)
+      profileName: String
+    }
+  },
   subscription_plan_id: { type: mongoose.Schema.Types.ObjectId, ref: "SubscriptionPlan" },
   subscription_status: { type: String, default: "inactive" },
   subscription_start_date: { type: Date },
