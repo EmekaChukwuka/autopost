@@ -248,24 +248,7 @@
       </div>
 
       <textarea id="prompt" placeholder="e.g. 30 posts for a fintech startup targeting young adults: quick tips, industry news, 2 product promos, 4 engagement questions"></textarea>
-<div class="calendar-options">
-  <label>
-    <input type="checkbox" id="autoSchedule">
-    Automatically schedule posts
-  </label>
 
-  <div id="platformSelect" class="hidden">
-    <label>
-      <input type="checkbox" value="linkedin" checked disabled>
-      LinkedIn (connected)
-    </label>
-  </div>
-
-  <label>
-    <input type="checkbox" id="includeImages">
-    Add images to posts automatically
-  </label>
-</div>
 
       <div style="display:flex;gap:8px;margin-top:12px">
         <button id="generateBtn" class="btn">Generate Calendar</button>
@@ -385,7 +368,17 @@ generateBtn.addEventListener('click', async ()=>{
 
     status.textContent = 'Calendar generated — saving…';
     // store success -> backend should save calendar for the user; then redirect
-        showAutoScheduleModal(json.user_id);
+    
+   const resB = await fetch('https://autopost-backend-hbck.onrender.com/calendar/social/accounts', {
+      method:'POST',
+      headers:{
+        'Content-Type':'application/json',
+        'Authorization': `Bearer ${token}`
+        },
+      body: JSON.stringify({ id: user.id })
+    });
+const jsonB = await resB.json();
+ showAutoScheduleModal(jsonB);
     /*setTimeout(()=> {
       window.location.href = 'calendar.html';
     }, 700);*/
@@ -399,7 +392,7 @@ generateBtn.addEventListener('click', async ()=>{
 
 
     // NEW: Modal logic
-    function showAutoScheduleModal(calendarId, connectedAccounts) {
+    function showAutoScheduleModal(connectedAccounts) {
       const modal = document.getElementById('autoScheduleModal');
       const yesCheckbox = document.getElementById('autoScheduleYes');
       const platformsDiv = document.getElementById('platformsSection');
