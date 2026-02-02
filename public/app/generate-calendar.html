@@ -248,7 +248,7 @@
       </div>
 
       <textarea id="prompt" placeholder="e.g. 30 posts for a fintech startup targeting young adults: quick tips, industry news, 2 product promos, 4 engagement questions"></textarea>
-<!--
+
  <label>
         <input type="checkbox" id="autoSchedule"> Auto-schedule to LinkedIn
       </label>
@@ -256,7 +256,7 @@
  <label>
           <input type="checkbox" id="includeImages"> Include images
         </label>
-      -->
+      
 
       <div style="display:flex;gap:8px;margin-top:12px">
         <button id="generateBtn" class="btn">Generate Calendar</button>
@@ -299,10 +299,8 @@ const sampleBtn = document.getElementById('sampleBtn');
 const promptEl = document.getElementById('prompt');
 const templates = document.getElementById('templates');
 const status = document.getElementById('status');
-//const autoSchedule = document.getElementById('autoSchedule').checked;
-//const includeImages = document.getElementById('includeImages'). checked;
-const autoSchedule = false;
-const includeImages = false;
+const autoSchedule = document.getElementById('autoSchedule').checked;
+const includeImages = document.getElementById('includeImages'). checked;
 
 templates.addEventListener('click', (e)=>{
   if (!e.target.classList.contains('template')) return;
