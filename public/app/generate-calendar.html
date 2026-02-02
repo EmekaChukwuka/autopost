@@ -340,8 +340,6 @@ try{
                 status.textContent= "Kindly activate billing for your account on the settings page";
 
 }
-}       
- 
 
                 const startDate = new Date();
   
@@ -388,6 +386,7 @@ post_time.setHours(8, 0, 0, 0);
     status.textContent = `Error generating calendar, try again later.${err}`;
     generateBtn.disabled = false;
   }
+}
 }catch(err){
      console.log(err)
  }
