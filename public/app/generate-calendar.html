@@ -342,7 +342,12 @@ return;
 
 }else{
 
-                const startDate = new Date();
+const now= new Date();
+const endDate = new Date(result.data.subscription_end_date);
+   
+      if(now < endDate){
+// subscription is still active
+               const startDate = new Date();
   
   try {
 
@@ -386,8 +391,12 @@ post_time.setHours(8, 0, 0, 0);
     console.error(err);
     status.textContent = `Error generating calendar, try again later.${err}`;
     generateBtn.disabled = false;
-  }}
-}
+  }
+}else{
+   status.textContent = "Kindly update payment in the dashboard to use this feature";
+
+}}
+
 }catch(err){
      console.log(err)
  }
