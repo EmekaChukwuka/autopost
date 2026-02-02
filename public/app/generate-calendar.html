@@ -307,7 +307,7 @@ templates.addEventListener('click', (e)=>{
   document.querySelectorAll('.template').forEach(t=>t.classList.remove('active'));
   e.target.classList.add('active');
 });
-
+                       
 sampleBtn.addEventListener('click', ()=> {
   promptEl.value = "Create a 30-day content calendar for a small bakery: product highlights (bread/pastries), baking tips, behind-the-scenes, 3 promotional posts and 4 engagement questions. Tone: friendly and warm. Platforms: Instagram, Facebook.";
 });
@@ -318,6 +318,29 @@ generateBtn.addEventListener('click', async ()=>{
   if (!prompt) { alert('Please enter a prompt'); promptEl.focus(); return; }
   const template = document.querySelector('.template.active').dataset.template;
   status.style.display = 'block'; status.textContent = 'Initializing AI request…';
+
+try{
+                 const token = localStorage.getItem('authToken');
+                     const user = JSON.parse(localStorage.getItem('currentUser'));
+                     const id = user.id;
+                const response = await fetch('https://autopost-backend-hbck.onrender.com/paymentApi/check-payment-history', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type' : 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({id})
+                });
+                const result = await response.json();
+                if (response.ok){
+                    console.log(result);
+                    if(result.data.subscription_status!==="active"){
+                status.textContent= "Kindly activate billing for your account on the settings page";
+}
+}       
+ }catch(err){
+     console.log(err)
+ }
 
                 const startDate = new Date();
   
