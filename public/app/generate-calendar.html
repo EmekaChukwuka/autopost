@@ -340,6 +340,9 @@ generateBtn.addEventListener('click', async ()=>{
                 const startDate = new Date();
   
   try {
+    const post_time = new Date();
+time.setHours(8, 0, 0, 0);
+
     generateBtn.disabled = true;
     // Send to backend
     const res = await fetch('https://autopost-backend-hbck.onrender.com/calendar/generate', {
@@ -348,7 +351,7 @@ generateBtn.addEventListener('click', async ()=>{
         'Content-Type':'application/json',
         'Authorization': `Bearer ${token}`
         },
-      body: JSON.stringify({ id: user.id, prompt, template, startDate })
+      body: JSON.stringify({ id: user.id, prompt, template, startDate, includeImages: , autoSchedule: })
     });
 
     if (!res.ok) {
@@ -368,18 +371,8 @@ generateBtn.addEventListener('click', async ()=>{
 
     status.textContent = 'Calendar generated — saving…';
     // store success -> backend should save calendar for the user; then redirect
-    
-   const resB = await fetch('https://autopost-backend-hbck.onrender.com/calendar/social/accounts', {
-      method:'POST',
-      headers:{
-        'Content-Type':'application/json',
-        'Authorization': `Bearer ${token}`
-        },
-      body: JSON.stringify({ id: user.id })
-    });
-const jsonB = await resB.json();
- showAutoScheduleModal(user_id, jsonB);
-    /*setTimeout(()=> {
+
+     /*setTimeout(()=> {
       window.location.href = 'calendar.html';
     }, 700);*/
 
@@ -389,91 +382,7 @@ const jsonB = await resB.json();
     generateBtn.disabled = false;
   }
 });
-
-
-    // NEW: Modal logic
-    function showAutoScheduleModal(calendar is, connectedAccounts) {
-      const modal = document.getElementById('autoScheduleModal');
-      const yesCheckbox = document.getElementById('autoScheduleYes');
-      const platformsDiv = document.getElementById('platformsSection');
-      const platformList = document.getElementById('platformList');
-      const imagesSection = document.getElementById('imagesSection');
-      const confirmBtn = document.getElementById('confirmAutoBtn');
-      const cancelBtn = document.getElementById('cancelAutoBtn');
-
-      // Populate platforms
-      platformList.innerHTML = '';
-      connectedAccounts.forEach(acc => {
-        const div = document.createElement('div');
-        div.innerHTML = `
-          <label>
-            <input type="checkbox" name="platform" value="\( {acc.platform}: \){acc.id}" class="platform-checkbox" checked>
-            \( {acc.name} ( \){acc.platform})
-          </label>
-        `;
-        platformList.appendChild(div);
-      });
-
-      function updateUI() {
-        const enabled = yesCheckbox.checked;
-        platformsDiv.style.display = enabled ? 'block' : 'none';
-        imagesSection.style.display = enabled ? 'block' : 'none';
-        confirmBtn.disabled = !enabled || !document.querySelector('input[name="platform"]:checked');
-      }
-
-      yesCheckbox.addEventListener('change', updateUI);
-      platformList.addEventListener('change', updateUI);
-      updateUI();
-
-      modal.showModal();
-
-      confirmBtn.onclick = async () => {
-        if (!yesCheckbox.checked) {
-          modal.close();
-          window.location.href = 'calendar.html';
-          return;
-        }
-
-        const selected = Array.from(document.querySelectorAll('input[name="platform"]:checked'))
-          .map(cb => cb.value);
-
-        const addImages = document.getElementById('addImagesYes').checked;
-
-        status.textContent = 'Queuing auto-scheduling...';
-
-        try {
-const post_time = new Date();
-time.setHours(8, 0, 0, 0);
-
-          const res = await fetch(`https://autopost-backend-hbck.onrender.com/calendar/auto-schedule`, {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-              'Authorization': `Bearer ${token}`
-            },
-            body: JSON.stringify({ calendarId, platforms: selected, includeImages: true, post_time })
-          });
-
-          if (res.ok) {
-            status.textContent = 'Auto-scheduling enabled! Redirecting to calendar...';
-            setTimeout(() => {
-              modal.close();
-              window.location.href = 'calendar.html';
-            }, 1200);
-          } else {
-            const err = await res.text();
-            status.textContent = 'Scheduling failed: ' + err;
-          }
-        } catch (err) {
-          status.textContent = 'Network error: ' + err.message;
-        }
-      };
-
-      cancelBtn.onclick = () => {
-        modal.close();
-        window.location.href = 'calendar.html';
-      };
-    }
+    
 
 </script>
 </body>
