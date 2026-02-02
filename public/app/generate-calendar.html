@@ -338,8 +338,9 @@ try{
                     if(result.data.subscription_status==="active"){
   
                 status.textContent= "Kindly activate billing for your account on the settings page";
+return;
 
-}
+}else{
 
                 const startDate = new Date();
   
@@ -385,7 +386,7 @@ post_time.setHours(8, 0, 0, 0);
     console.error(err);
     status.textContent = `Error generating calendar, try again later.${err}`;
     generateBtn.disabled = false;
-  }
+  }}
 }
 }catch(err){
      console.log(err)
