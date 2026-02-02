@@ -248,7 +248,7 @@
       </div>
 
       <textarea id="prompt" placeholder="e.g. 30 posts for a fintech startup targeting young adults: quick tips, industry news, 2 product promos, 4 engagement questions"></textarea>
-
+<!--
  <label>
         <input type="checkbox" id="autoSchedule"> Auto-schedule to LinkedIn
       </label>
@@ -256,7 +256,7 @@
  <label>
           <input type="checkbox" id="includeImages"> Include images
         </label>
-      
+      -->
 
       <div style="display:flex;gap:8px;margin-top:12px">
         <button id="generateBtn" class="btn">Generate Calendar</button>
@@ -334,9 +334,8 @@ try{
                 const result = await response.json();
                 if (response.ok){
                     console.log(result);
-alert(JSON.parse(result))
                     if(result.data.subscription_status==="active"){
-
+   alert(result.data)
                 status.textContent= "Kindly activate billing for your account on the settings page";
 }
 }       
