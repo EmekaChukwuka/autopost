@@ -249,6 +249,13 @@
 
       <textarea id="prompt" placeholder="e.g. 30 posts for a fintech startup targeting young adults: quick tips, industry news, 2 product promos, 4 engagement questions"></textarea>
 
+ <label>
+        <input type="checkbox" id="autoSchedule"> Auto-schedule to LinkedIn
+      </label>
+ <label>
+          <input type="checkbox" id="includeImages"> Include images
+        </label>
+      
 
       <div style="display:flex;gap:8px;margin-top:12px">
         <button id="generateBtn" class="btn">Generate Calendar</button>
@@ -266,35 +273,7 @@
     <a href="analytics.html"><i class="fas fa-chart-line"></i></a>
     <a href="settings.html"><i class="fas fa-user"></i></a>
   </nav>
-  <!-- NEW: Auto-schedule confirmation modal -->
-  <dialog id="autoScheduleModal" class="modal">
-    <div class="modal-content">
-      <h2>Auto-Schedule This Month?</h2>
-      <p>AutoPost can publish all posts in this calendar automatically to your connected accounts at optimal times.</p>
-
-      <label>
-        <input type="checkbox" id="autoScheduleYes" checked> Yes, auto-schedule
-      </label>
-
-      <div id="platformsSection" style="display:none; margin-top:1rem;">
-        <h3>Select Platforms</h3>
-        <div id="platformList"></div>
-      </div>
-
-      <div id="imagesSection" style="display:none; margin-top:1rem;">
-        <h3>Add Images Automatically?</h3>
-        <p>AutoPost will search free stock photos (Unsplash/Pexels) and attach one relevant image per post.</p>
-        <label>
-          <input type="checkbox" id="addImagesYes"> Yes, attach images
-        </label>
-      </div>
-
-      <div style="margin-top:1.5rem; text-align:right;">
-        <button id="cancelAutoBtn">Cancel</button>
-        <button id="confirmAutoBtn" class="btn" disabled>Confirm & Schedule</button>
-      </div>
-    </div>
-  </dialog>
+  
 
   <script src="app.js"></script>
 <script>
