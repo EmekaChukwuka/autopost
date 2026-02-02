@@ -252,6 +252,7 @@
  <label>
         <input type="checkbox" id="autoSchedule"> Auto-schedule to LinkedIn
       </label>
+<br>
  <label>
           <input type="checkbox" id="includeImages"> Include images
         </label>
@@ -298,6 +299,8 @@ const sampleBtn = document.getElementById('sampleBtn');
 const promptEl = document.getElementById('prompt');
 const templates = document.getElementById('templates');
 const status = document.getElementById('status');
+const autoSchedule = document.getElementById('autoSchedule').checked;
+const includeImages = document.getElementById('includeImages'). checked;
 
 templates.addEventListener('click', (e)=>{
   if (!e.target.classList.contains('template')) return;
@@ -319,6 +322,7 @@ generateBtn.addEventListener('click', async ()=>{
                 const startDate = new Date();
   
   try {
+
     const post_time = new Date();
 time.setHours(8, 0, 0, 0);
 
@@ -330,7 +334,7 @@ time.setHours(8, 0, 0, 0);
         'Content-Type':'application/json',
         'Authorization': `Bearer ${token}`
         },
-      body: JSON.stringify({ id: user.id, prompt, template, startDate, includeImages: , autoSchedule: })
+      body: JSON.stringify({ id: user.id, prompt, template, startDate, includeImages: includeImages, autoSchedule: autoSchedule})
     });
 
     if (!res.ok) {
