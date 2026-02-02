@@ -335,15 +335,13 @@ try{
                 const result = await response.json();
                 if (response.ok){
                     console.log(result);
-                    if(result.data.subscription_status!=="active"){
+                    if(result.data.subscription_status==="active"){
   
                 status.textContent= "Kindly activate billing for your account on the settings page";
-return;
+
 }
 }       
- }catch(err){
-     console.log(err)
- }
+ 
 
                 const startDate = new Date();
   
@@ -390,6 +388,9 @@ post_time.setHours(8, 0, 0, 0);
     status.textContent = `Error generating calendar, try again later.${err}`;
     generateBtn.disabled = false;
   }
+}catch(err){
+     console.log(err)
+ }
 });
     
 
