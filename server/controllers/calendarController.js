@@ -87,7 +87,7 @@ function normalizeItems(rawItems, startDateISO, days = 30) {
  */
 export async function generateCalendar(req, res) {
   try {
-    const { id, prompt, template, startDate, autoSchedule, includeImages, platforms} = req.body;
+    const { id, prompt, template, startDate, autoSchedule, includeImages, post_time} = req.body;
     if (!id || !prompt) return res.status(400).json({ success: false, message: 'id and prompt required' });
 
     // verify user exists
@@ -141,7 +141,31 @@ export async function generateCalendar(req, res) {
       { upsert: true, new: true, setDefaultsOnInsert: true }
     );
 
+ if(autoSchedule == true){
+    const calendar = await       Calendar.findById(calendarId);
+    const [hours, minutes] = post_time.split(":");
+
+    const scheduledPosts = calendar.days.map(day => {
+      const date = new Date(calendar.year, calendar.month - 1, day.day);
+      date.setHours(hours, minutes, 0);
+      return {
+        user_id: id,
+        calendar_id: calendar._id,
+        content: day.content,
+        scheduled_for: date
+      };
+    });
+
+    await ScheduledPost.insertMany(scheduledPosts);
+
+    calendar.auto_schedule = true;
+    calendar.platform = "linkedin";
+    calendar.includeImages = includeImages;
+    await calendar.save();
+
+ }
     return res.json({ success: true, calendar: saved.days, meta: saved.meta, user_id: saved.user_id });
+
   } catch (err) {
     console.error('generateCalendar error', err);
     return res.status(500).json({ success: false, message: 'Server error generating calendar' });
@@ -180,11 +204,9 @@ export async function deleteCalendar(req, res) {
   }
 }
 
-export async function autoScheduleCalendar(req, res) {
+async function autoScheduleCalendar(calendarId, post_time, includeImages, userId) {
   try {
-    const { calendarId,post_time, includeImages, userId } = req.body;
     
-
     const user = await User.findById(userId);
     if (user.subscription_status !== "active") {
       return res.status(403).json({ message: "Paid plan required" });
@@ -216,7 +238,7 @@ export async function autoScheduleCalendar(req, res) {
     calendar.includeImages = includeImages;
     await calendar.save();
 
-    res.json({
+    return ({
       success: true,
       message: "Calendar scheduled successfully",
       total_posts: scheduledPosts.length
@@ -224,7 +246,7 @@ export async function autoScheduleCalendar(req, res) {
 
   } catch (err) {
     console.error(err);
-    res.status(500).json({ message: "Scheduling failed" });
+    return ({ message: "Scheduling failed" });
   }
 }
 
