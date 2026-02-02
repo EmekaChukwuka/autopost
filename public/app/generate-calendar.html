@@ -299,8 +299,10 @@ const sampleBtn = document.getElementById('sampleBtn');
 const promptEl = document.getElementById('prompt');
 const templates = document.getElementById('templates');
 const status = document.getElementById('status');
-const autoSchedule = document.getElementById('autoSchedule').checked;
-const includeImages = document.getElementById('includeImages'). checked;
+//const autoSchedule = document.getElementById('autoSchedule').checked;
+//const includeImages = document.getElementById('includeImages'). checked;
+const autoSchedule = false;
+const includeImages = false;
 
 templates.addEventListener('click', (e)=>{
   if (!e.target.classList.contains('template')) return;
