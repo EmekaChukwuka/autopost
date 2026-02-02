@@ -361,7 +361,7 @@ time.setHours(8, 0, 0, 0);
 
   } catch (err) {
     console.error(err);
-    status.textContent = 'Error generating calendar, try again later.';
+    status.textContent = `Error generating calendar, try again later.${err}`;
     generateBtn.disabled = false;
   }
 });
