@@ -20,7 +20,7 @@ Produce exactly ${days} objects starting from ${startDateISO} (inclusive),
 each object must contain:
   - "date": ISO date string (YYYY-MM-DD),
   - "platform": use these platforms ["WhatsApp","Instagram","Twitter","Facebook","LinkedIn","TikTok", "All"] while generating the content in a round-robin fashion according to the platform,
-  - "post": a short social post (max 280 characters recommended for X/Twitter posts), and normal post lengths for other platforms.
+  - "post": a short social post (max 280 characters recommended for X/Twitter posts), and maximum 1000 characters for other platforms.
 Return a JSON array (no explanation). Each item must be a valid JSON object.
 `;
 
