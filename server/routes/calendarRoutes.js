@@ -9,6 +9,5 @@ const calendarRouter = express.Router();
 calendarRouter.post('/generate', generateCalendar);
 calendarRouter.post('/get', getCalendar);
 calendarRouter.post('/delete', deleteCalendar);
-calendarRouter.post('/auto-schedule', autoScheduleCalendar)
 calendarRouter.post('/social/accounts', getConnectedAccounts);
 export default calendarRouter;
