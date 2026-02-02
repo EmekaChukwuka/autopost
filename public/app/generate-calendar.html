@@ -335,9 +335,10 @@ try{
                 const result = await response.json();
                 if (response.ok){
                     console.log(result);
-                    if(result.data.subscription_status==="active"){
-   alert(result.data)
+                    if(result.data.subscription_status!=="active"){
+  
                 status.textContent= "Kindly activate billing for your account on the settings page";
+return;
 }
 }       
  }catch(err){
