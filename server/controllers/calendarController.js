@@ -142,7 +142,7 @@ export async function generateCalendar(req, res) {
     );
 
  if(autoSchedule == true){
-    const calendar = await       Calendar.findById(calendarId);
+    const calendar = await       Calendar.findById(saved.user_id);
     const [hours, minutes] = post_time.split(":");
 
     const scheduledPosts = calendar.days.map(day => {
