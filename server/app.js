@@ -131,7 +131,7 @@ app.use("/paymentApi", paymentRouter);
 //
 // 🌐 Static Page Redirects
 //
-const staticPages = [
+const staticPages1 = [
   "home",
   "pricing",
   "signup",
@@ -152,6 +152,24 @@ const staticPages = [
 staticPages.forEach((page) => {
   app.get(`/${page}`, (req, res) => {
     res.redirect(`${req.protocol}://${req.get("host")}/${page}.html`);
+  });
+});
+
+const staticPages2 = [
+  "pricing",
+  "signup",
+  "signin",
+  "logout",
+  "create",
+  "dashboard",
+  "settings",
+  "payment",
+  "analytics"
+];
+
+staticPages2.forEach((page) => {
+  app.get(`/app/${page}`, (req, res) => {
+    res.redirect(`${req.protocol}://${req.get("host")}/app/${page}.html`);
   });
 });
 

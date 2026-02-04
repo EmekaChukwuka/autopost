@@ -142,10 +142,10 @@ export const linkedinCallback = async (req, res) => {
 
     console.log("LinkedIn connected for user:", userId);
 
-    res.redirect("/dashboard?linkedin=connected");
+    res.redirect("/app/dashboard?linkedin=connected");
 
   } catch (error) {
     console.error("LinkedIn OAuth error:", error.response?.data || error.message);
-    res.redirect("/dashboard?linkedin=failed");
+    res.redirect("/app/dashboard?linkedin=failed");
   }
 };
