@@ -220,7 +220,8 @@ const PORT = process.env.PORT || 3000;
 server.listen(PORT, () => {
   console.log(`🌍 Server running on http://localhost:${PORT}`);
 });
+/*
 ngrok.connect({ addr: 3000, authtoken: process.env.NGROK_AUTH_TOKEN })
-	.then(listener => console.log(`Ingress established at: ${listener.url()}`));
+	.then(listener => console.log(`Ingress established at: ${listener.url()}`));*/
   
   seedSubscriptionPlans(); 
