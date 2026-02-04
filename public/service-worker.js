@@ -5,6 +5,10 @@ const CACHE_NAME = "autopost-cache-v1";
 const APP_SHELL = [
   "/app/dashboard.html",
   "/app/calendar.html",
+  "/app/pricing.html",
+  "/app/signup.html",
+  "/app/signin.html",
+  "/app/logout.html",
   "/app/create.html",
   "/app/analytics.html",
   "/app/settings.html",
