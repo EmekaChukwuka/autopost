@@ -13,7 +13,7 @@ const linkedinCallbackUrl = "https://autopost-backend-hbck.onrender.com/auth/lin
 
 const instagramClientId = "";
 const instagramClientSecret = process.env.instagramClientSecret;
-const instagramCallbackUrl = "https://autopost-backend-hbck/auth/instagram/callback";
+const instagramCallbackUrl = "https://autopost-backend-hbck.onrender.com/auth/instagram/callback";
 
 
 
