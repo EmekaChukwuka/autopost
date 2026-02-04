@@ -609,7 +609,7 @@
                                     <div class="account-status">Not Connected</div>
                                 </div>
                                 <div class="account-actions">
-                                    <button class="btn btn-primary" ><a href='https://autopost-backend-hbck.onrender.com/auth/linkedin'>Connect</a></button>
+                                    <button class="btn btn-primary" onclick="connectPlatform('linkedin')">Connect</button>
                                 </div>
                             </div>
                             <div class="account-card">
@@ -720,7 +720,11 @@
             });
         });
 
-
+function connectPlatform(platform){
+    
+            let currentUser = JSON.parse(localStorage.getItem('currentUser'));
+            window.location.href = `https://autopost-backend-hbck.onrender.com/auth/${platform}?id=${currentUser.id}`;
+}
         document.addEventListener('DOMContentLoaded', async () => {
             const trialData = JSON.parse(localStorage.getItem('trialData'));
             console.log(trialData);
