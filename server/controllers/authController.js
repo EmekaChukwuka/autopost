@@ -40,7 +40,9 @@ export const facebookLogin = async (req, res) => {
 };
 
 export const linkedinLogin = async (req, res) => {
-    var { id } = req.query;
+
+req.session.userId = req.user.id;
+
      const scope = encodeURIComponent(
     "openid profile email w_member_social"
   );
@@ -129,7 +131,7 @@ export const linkedinCallback = async (req, res) => {
     const profileName = profileRes.data.name;
 
     // 3. Get logged-in user (from session or auth middleware)
-    const userId = req.user.id; 
+    const userId = req.session.userId; 
 
     if (!userId) {
       return res.status(401).send("User not authenticated");

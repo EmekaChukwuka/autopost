@@ -720,11 +720,16 @@
             });
         });
 
-function connectPlatform(platform){
-    
-            let currentUser = JSON.parse(localStorage.getItem('currentUser'));
-            window.location.href = `https://autopost-backend-hbck.onrender.com/auth/${platform}?id=${currentUser.id}`;
-}
+async function connectPlatform(platform){
+         const token = localStorage.getItem('authToken');
+                  const response = await fetch('https://autopost-backend-hbck.onrender.com/auth/linkedin', {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type' : 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+            }
         document.addEventListener('DOMContentLoaded', async () => {
             const trialData = JSON.parse(localStorage.getItem('trialData'));
             console.log(trialData);
