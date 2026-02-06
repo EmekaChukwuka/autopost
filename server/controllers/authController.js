@@ -40,7 +40,7 @@ export const facebookLogin = async (req, res) => {
 
 export const linkedinLogin = async (req, res) => {
 const {id} = req.query;
-req.user.id = id; // Store user ID in session for later use in callback
+req.session.userId = id; // Store user ID in session for later use in callback
 
      const scope = encodeURIComponent(
     "openid profile email w_member_social"
@@ -130,7 +130,7 @@ export const linkedinCallback = async (req, res) => {
     const profileName = profileRes.data.name;
 
     // 3. Get logged-in user (from session or auth middleware)
-    const userId = req.user.id; 
+    const userId = req.session.userId; 
 
     if (!userId) {
       return res.status(401).send("User not authenticated");
