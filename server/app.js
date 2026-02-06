@@ -149,7 +149,7 @@ const staticPages1 = [
   "analytics"
 ];
 
-staticPages.forEach((page) => {
+staticPages1.forEach((page) => {
   app.get(`/${page}`, (req, res) => {
     res.redirect(`${req.protocol}://${req.get("host")}/${page}.html`);
   });
