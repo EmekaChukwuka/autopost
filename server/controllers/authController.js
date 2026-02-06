@@ -15,23 +15,6 @@ const instagramClientId = "";
 const instagramClientSecret = process.env.instagramClientSecret;
 const instagramCallbackUrl = "https://autopost-backend-hbck.onrender.com/auth/instagram/callback";
 
-export const linkedinStart = async (req, res) => {
-  const state = req.user.id;
- const scope = encodeURIComponent(
-    "openid profile email w_member_social"
-  );
-
-  const authUrl =
-    `https://www.linkedin.com/oauth/v2/authorization` +
-    `?response_type=code` +
-    `&client_id=${linkedinClientId}` +
-    `&redirect_uri=https://autopost-backend-hbck.onrender.com/auth/linkedin/callback` +
-    `&scope=${scope}`+
-    `&state=${state}`;
-  
-  res.redirect(authUrl);
-};
-
 
  export const twitterLogin = async (req, res) => {
     const client = new TwitterApi({
@@ -56,8 +39,8 @@ export const facebookLogin = async (req, res) => {
 };
 
 export const linkedinLogin = async (req, res) => {
-
-req.session.userId = req.user.id;
+const {id} = req.query;
+req.user.id = id; // Store user ID in session for later use in callback
 
      const scope = encodeURIComponent(
     "openid profile email w_member_social"
@@ -147,7 +130,7 @@ export const linkedinCallback = async (req, res) => {
     const profileName = profileRes.data.name;
 
     // 3. Get logged-in user (from session or auth middleware)
-    const userId = req.session.userId; 
+    const userId = req.user.id; 
 
     if (!userId) {
       return res.status(401).send("User not authenticated");

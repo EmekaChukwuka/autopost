@@ -5,8 +5,7 @@ import {
     facebookLogin,
     facebookCallback, 
     linkedinLogin, 
-    linkedinCallback,
-    linkedinStart
+    linkedinCallback
 } from "../controllers/authController.js";
 
 import {
@@ -15,9 +14,9 @@ import {
 
 const authRouter = express.Router();
 
-authRouter.get('/twitter', authenticateToken, twitterLogin);
-authRouter.get('/facebook', authenticateToken, facebookLogin);
-authRouter.get('/linkedin/start', authenticateToken, linkedinStart);
+authRouter.get('/twitter', twitterLogin);
+authRouter.get('/facebook', facebookLogin);
+authRouter.get('/linkedin', linkedinLogin);
 
 authRouter.get('/twitter/callback', twitterCallback);
 authRouter.get('/facebook/callback', facebookCallback);

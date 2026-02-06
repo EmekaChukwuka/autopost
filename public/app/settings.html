@@ -731,16 +731,9 @@ if (params.get("linkedin") === "failed") {
 
 async function connectPlatform(platform){
          const token = localStorage.getItem('authToken');
-                  const response = await fetch('https://autopost-backend-hbck.onrender.com/auth/linkedin/start', {
-                    method: 'GET',
-                    headers: {
-                        'Content-Type' : 'application/json',
-                        'Authorization': `Bearer ${token}`
-                    }
-                });
-                
-  const { url } = await res.json();
-  window.location.href = url;
+    
+            let currentUser = JSON.parse(localStorage.getItem('currentUser'));
+              window.location.href=`https://autopost-backend-hbck.onrender.com/auth/linkedin?id=${currentUser.id}`;
             }
 
 
