@@ -41,6 +41,17 @@ export const facebookLogin = async (req, res) => {
 
 export const linkedinLogin = async (req, res) => {
     var { id } = req.query;
+    /* const scope = encodeURIComponent(
+    "openid profile email w_member_social"
+  );
+
+  const authUrl =
+    `https://www.linkedin.com/oauth/v2/authorization` +
+    `?response_type=code` +
+    `&client_id=${linkedinClientId}` +
+    `&redirect_uri=${linkedinCallbackUrl}` +
+    `&scope=${scope}`;*/
+    
     const authUrl = `https://www.linkedin.com/oauth/v2/authorization?response_type=code&client_id=${linkedinClientId}&redirect_uri=https://autopost-backend-hbck.onrender.com/auth/linkedin/callback&scope=w_member_social`;
     res.redirect(authUrl);
 };
@@ -113,7 +124,7 @@ export const linkedinCallback = async (req, res) => {
         }
       }
     );
-
+    console.log(profileRes)
     const profileId = profileRes.data.id;
     const profileName =
       `${profileRes.data.localizedFirstName} ${profileRes.data.localizedLastName}`;
