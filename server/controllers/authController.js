@@ -117,7 +117,7 @@ export const linkedinCallback = async (req, res) => {
 
     // 2. Fetch LinkedIn profile
     const profileRes = await axios.get(
-      "https://api.linkedin.com/v2/me",
+      "https://api.linkedin.com/v2/userinfo",
       {
         headers: {
           Authorization: `Bearer ${accessToken}`
@@ -125,12 +125,11 @@ export const linkedinCallback = async (req, res) => {
       }
     );
     console.log(profileRes)
-    const profileId = profileRes.data.id;
-    const profileName =
-      `${profileRes.data.localizedFirstName} ${profileRes.data.localizedLastName}`;
+    const profileId = profileRes.data.sub;
+    const profileName = profileRes.data.name;
 
     // 3. Get logged-in user (from session or auth middleware)
-    const userId = id; // adjust if using JWT
+    const userId = req.user.id; 
 
     if (!userId) {
       return res.status(401).send("User not authenticated");
