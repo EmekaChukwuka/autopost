@@ -720,16 +720,30 @@
             });
         });
 
+const params = new URLSearchParams(window.location.search);
+if (params.get("linkedin") === "connected") {
+  alert("LinkedIn connected successfully");
+}
+if (params.get("linkedin") === "failed") {
+  alert("LinkedIn connection failed");
+}
+
+
 async function connectPlatform(platform){
          const token = localStorage.getItem('authToken');
-                  const response = await fetch('https://autopost-backend-hbck.onrender.com/auth/linkedin', {
+                  const response = await fetch('https://autopost-backend-hbck.onrender.com/auth/linkedin/start', {
                     method: 'GET',
                     headers: {
                         'Content-Type' : 'application/json',
                         'Authorization': `Bearer ${token}`
                     }
                 });
+                
+  const { url } = await res.json();
+  window.location.href = url;
             }
+
+
         document.addEventListener('DOMContentLoaded', async () => {
             const trialData = JSON.parse(localStorage.getItem('trialData'));
             console.log(trialData);

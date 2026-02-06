@@ -15,6 +15,22 @@ const instagramClientId = "";
 const instagramClientSecret = process.env.instagramClientSecret;
 const instagramCallbackUrl = "https://autopost-backend-hbck.onrender.com/auth/instagram/callback";
 
+export const linkedinStart = async (req, res) => {
+  const state = req.user.id;
+ const scope = encodeURIComponent(
+    "openid profile email w_member_social"
+  );
+
+  const authUrl =
+    `https://www.linkedin.com/oauth/v2/authorization` +
+    `?response_type=code` +
+    `&client_id=${linkedinClientId}` +
+    `&redirect_uri=https://autopost-backend-hbck.onrender.com/auth/linkedin/callback` +
+    `&scope=${scope}`+
+    `&state=${state}`;
+  
+  res.redirect(authUrl);
+};
 
 
  export const twitterLogin = async (req, res) => {
@@ -155,10 +171,10 @@ export const linkedinCallback = async (req, res) => {
 
     console.log("LinkedIn connected for user:", userId);
 
-    res.redirect("/app/dashboard?linkedin=connected");
+    res.redirect("https://autopost-7uhd.onrender.com/app/settings.html?linkedin=connected");
 
   } catch (error) {
     console.error("LinkedIn OAuth error:", error.response?.data || error.message);
-    res.redirect("/app/dashboard?linkedin=failed");
+    res.redirect("https://autopost-7uhd.onrender.com/app/settings.html?linkedin=failed");
   }
 };
