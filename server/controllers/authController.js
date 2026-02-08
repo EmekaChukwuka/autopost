@@ -40,6 +40,7 @@ export const facebookLogin = async (req, res) => {
 
 export const linkedinLogin = async (req, res) => {
 const {id} = req.query;
+
 req.session.userId = id; // Store user ID in session for later use in callback
 
      const scope = encodeURIComponent(
@@ -51,7 +52,8 @@ req.session.userId = id; // Store user ID in session for later use in callback
     `?response_type=code` +
     `&client_id=${linkedinClientId}` +
     `&redirect_uri=https://autopost-backend-hbck.onrender.com/auth/linkedin/callback` +
-    `&scope=${scope}`;
+    `&scope=${scope}+
+    &state=${encodeURIComponent(state)}`;
 
    // const authUrl = `https://www.linkedin.com/oauth/v2/authorization?response_type=code&client_id=${linkedinClientId}&redirect_uri=https://autopost-backend-hbck.onrender.com/auth/linkedin/callback&scope=w_member_social`;
     res.redirect(authUrl);
@@ -130,7 +132,18 @@ export const linkedinCallback = async (req, res) => {
     const profileName = profileRes.data.name;
 
     // 3. Get logged-in user (from session or auth middleware)
-    const userId = req.session.userId; 
+    const userId = null;
+
+if (state) {
+      try {
+        const decodedState = Buffer.from(state, 'base64').toString('ascii');
+        const params = new URLSearchParams(decodedState);
+        userId = params.get('user_id');
+      } catch (error) {
+        console.error("Error decoding state:", error);
+      }
+    }
+ 
 
     if (!userId) {
       return res.status(401).send("User not authenticated");
