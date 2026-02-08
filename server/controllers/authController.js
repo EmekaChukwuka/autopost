@@ -132,7 +132,7 @@ export const linkedinCallback = async (req, res) => {
     const profileName = profileRes.data.name;
 
     // 3. Get logged-in user (from session or auth middleware)
-    const userId = null;
+    let userId = null;
 
 if (state) {
       try {
