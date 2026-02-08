@@ -40,7 +40,12 @@ export const facebookLogin = async (req, res) => {
 
 export const linkedinLogin = async (req, res) => {
 const {id} = req.query;
+<<<<<<< HEAD
 req.session.userId = id; // Store user ID in session for later use in callback
+=======
+
+const state = Buffer.from(`user_id=${id}`).toString('base64');
+>>>>>>> c8cb71a44da22d305509c4f4ec18064202992577
 
      const scope = encodeURIComponent(
     "openid profile email w_member_social"
@@ -51,7 +56,8 @@ req.session.userId = id; // Store user ID in session for later use in callback
     `?response_type=code` +
     `&client_id=${linkedinClientId}` +
     `&redirect_uri=https://autopost-backend-hbck.onrender.com/auth/linkedin/callback` +
-    `&scope=${scope}`;
+    `&scope=${scope}` +
+    `&state=${encodeURIComponent(state)}`;
 
    // const authUrl = `https://www.linkedin.com/oauth/v2/authorization?response_type=code&client_id=${linkedinClientId}&redirect_uri=https://autopost-backend-hbck.onrender.com/auth/linkedin/callback&scope=w_member_social`;
     res.redirect(authUrl);
@@ -92,7 +98,7 @@ import User from "../models/User.js";
 
 export const linkedinCallback = async (req, res) => {
   try {
-    const { code } = req.query;
+    const { code, state } = req.query;
 
     if (!code) {
       return res.status(400).send("Missing authorization code");
@@ -125,12 +131,34 @@ export const linkedinCallback = async (req, res) => {
         }
       }
     );
-    console.log(profileRes)
+   
     const profileId = profileRes.data.sub;
     const profileName = profileRes.data.name;
 
     // 3. Get logged-in user (from session or auth middleware)
-    const userId = req.session.userId; 
+
+    let userId = null;
+
+if (state) {
+      try {
+            const decodedState = Buffer.from(state, 'base64').toString('ascii');
+    console.log("Decoded state string:", decodedState);
+    
+    // Parse the "user_id=xxx" format
+    const match = decodedState.match(/user_id=(.+)/);
+    if (match) {
+      userId = match[1];
+      console.log("Extracted userId:", userId);
+    } else {
+      // Try to parse as JSON as fallback (for backward compatibility)
+      const stateObj = JSON.parse(decodedState);
+      userId = stateObj.userId || stateObj.user_id;
+    }
+      } catch (error) {
+        console.error("Error decoding state:", error);
+      }
+    }
+ 
 
     if (!userId) {
       return res.status(401).send("User not authenticated");

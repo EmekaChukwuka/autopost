@@ -33,3 +33,32 @@ export const postToLinkedInWithImage = async (
     }
   );
 };
+
+
+export const postToLinkedInWithoutImage = async (
+  accessToken,
+  linkedinUserId,
+  text
+) => {
+  await axios.post(
+    "https://api.linkedin.com/v2/ugcPosts",
+    {
+      author: `urn:li:person:${linkedinUserId}`,
+      lifecycleState: "PUBLISHED",
+      specificContent: {
+        "com.linkedin.ugc.ShareContent": {
+          shareCommentary: { text }
+        }
+      },
+      visibility: {
+        "com.linkedin.ugc.MemberNetworkVisibility": "PUBLIC"
+      }
+    },
+    {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+        "Content-Type": "application/json"
+      }
+    }
+  );
+};

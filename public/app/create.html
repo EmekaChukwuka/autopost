@@ -248,7 +248,6 @@ label{
       background-color: var(--bg-secondary);
       border-radius: 8px;
       padding: 20px;
-      opacity:0.3;
     }
 
 .scheduleOptions label{
@@ -298,7 +297,13 @@ label{
       margin-bottom:3%;
     }
     
-    
+      .label {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 15px;
+      cursor: pointer;
+    }
 
 /* Mobile Bottom Nav */
 .bottom-nav {
@@ -589,9 +594,6 @@ body{
   }
 
   .theme-toggle {
-    position:fixed;
-      top: 20px;
-      right: 20px;
     }
    .ai-generator{
     width:70%;
@@ -715,6 +717,17 @@ body{
         </select>
       </div>
       
+<div class="label">
+        <label>
+          Include Images
+  <div class="theme-toggle">
+    <label class="toggle-switch">
+      <input type="checkbox" id="include-images">
+      <span class="toggle-slider"></span>
+  </div>
+        </label>
+      </div>
+      
       <div><form>
         <label>Platform</label>
         <div class="platform-selector">
@@ -739,7 +752,7 @@ body{
         </div>
         </form>
       </div>
-      
+
       <button id="generateBtn">Generate Content</button>
     </div>
     
@@ -755,19 +768,23 @@ body{
       
       <div class="post-settings">
         <h3>Auto-Post Settings</h3>
-        <h3 style="opacity:1;">Coming Soon</h3>
         <label>
-          <input type="checkbox" id="autoPost" disabled> Post automatically
+           Post automatically to LinkedIn
+  <div class="theme-toggle">
+    <label class="toggle-switch">
+      <input type="checkbox" id="autopost">
+      <span class="toggle-slider"></span>
+  </div>
         </label>
         <div id="scheduleOptions">
           <label>Schedule Time</label>
-          <input type="time" id="postTime" disabled>
+          <input type="time" id="postTime">
           <label>Time Zone</label>
-          <select id="timeZone" disabled>
+          <select id="timeZone">
             <option value="WAT">West Africa Time (WAT)</option>
           </select>
         </div>
-        <button id="confirmPost" disabled>Confirm & Schedule</button>
+        <button id="confirmPost">Confirm & Schedule</button>
       </div>
     </div>
   </section>
@@ -931,11 +948,11 @@ body{
       const content = document.getElementById('aiText').innerText;
       const platform = document.querySelector('.platform-badge.active').dataset.platform;
       const autoPost = document.getElementById('autoPost').checked;
+      const includeImages = document.getElementById('include-images').checked;
       const postTime = document.getElementById('postTime').value;
       
       if (autoPost) {
-        // Connect to social media APIs
-        postToSocialMedia(platform, content, postTime);
+        postToSocialMedia(platform, content, postTime, includeImages);
       }
     });
     
@@ -945,12 +962,26 @@ body{
             alert("Copied! Paste it into your social media.");
         }
          
-    async function postToSocialMedia(platform, content, scheduleTime) {
-      // In a real implementation, this would connect to:
-      // - Twitter API v2
-      // - Instagram Graph API
-      // - TikTok Business API
-      
+    async function postToSocialMedia(platform, content, scheduleTime, includeImages) {
+      try{
+        const response = await fetch('https://autopost-backend-hbck.onrender.com/postToLinkedin',
+          method: 'POST', 
+           headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${token}`
+                        },
+          body: JSON.stringify({platform, content, scheduleTime, includeImages})
+        );
+        const data = await response.json();
+        if(response.ok){
+          alert('Post auto-posted successfully');
+        }else{
+          alert('Auto-posting failed')
+        }
+      }catch(err){
+        console.log('An error occured', err);
+        alert('An error occured while auto-posting, please try again')
+      }
       alert(`Content scheduled for ${platform} at ${scheduleTime} WAT!`);
       
     }  

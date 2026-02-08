@@ -2,7 +2,7 @@ import ScheduledPost from "../models/ScheduledPost.js";
 import User from "../models/User.js";
 import axios from "axios";
 import { uploadImageToLinkedIn } from "../services/linkedinImageUpload.js";
-import { postToLinkedInWithImage } from "../services/linkedinPoster.js";
+import { postToLinkedInWithImage, postToLinkedInWithoutImage } from "../services/linkedinPoster.js";
 
 export const processLinkedInPosts = async () => {
   const posts = await ScheduledPost.find({
@@ -27,6 +27,12 @@ export const processLinkedInPosts = async () => {
         );
 
         post.linkedin_asset_urn = assetUrn;
+      }else{
+        await postToLinkedInWithoutImage(
+        user.socialAccounts.linkedin.accessToken,
+        user.socialAccounts.linkedin.profileId,
+        post.content
+      );
       }
 
       await postToLinkedInWithImage(
