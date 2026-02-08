@@ -52,8 +52,8 @@ const state = Buffer.from(`user_id=${id}`).toString('base64');
     `?response_type=code` +
     `&client_id=${linkedinClientId}` +
     `&redirect_uri=https://autopost-backend-hbck.onrender.com/auth/linkedin/callback` +
-    `&scope=${scope}+
-    &state=${encodeURIComponent(state)`;
+    `&scope=${scope}` +
+    `&state=${encodeURIComponent(state)`;
 
    // const authUrl = `https://www.linkedin.com/oauth/v2/authorization?response_type=code&client_id=${linkedinClientId}&redirect_uri=https://autopost-backend-hbck.onrender.com/auth/linkedin/callback&scope=w_member_social`;
     res.redirect(authUrl);
