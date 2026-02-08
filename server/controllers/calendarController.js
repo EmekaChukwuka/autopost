@@ -289,6 +289,7 @@ function calculateOptimalTime(date) {
   date.setHours(9, 0, 0, 0);
   return date;
 }
+
 export const getConnectedAccounts = async (req, res) => {
   try {
     const userId = req.body;
@@ -313,7 +314,7 @@ export const getConnectedAccounts = async (req, res) => {
 
     res.json({
       success: true,
-      data: response
+      data: accounts
     });
 
   } catch (err) {
@@ -324,6 +325,31 @@ export const getConnectedAccounts = async (req, res) => {
     });
   }
 };
+export const disconnectAccount = async (req, res) => {
+   try {
+    const { userId } = req.body;
+    await User.updateOne(
+      { _id: userId },
+      {
+        $set: {
+          "socialAccounts.linkedin": {
+            connected: false,
+            accessToken: null,
+            refreshToken: null,
+            expiresAt: null,
+            profileId: null,
+            profileName: null
+          }
+        }
+      }
+    );
+
+    res.json({ success: true });
+  } catch (err) {
+    console.error("Disconnect account error:", err);
+    res.status(500).json({ success: false, message: "Failed to disconnect account" });
+  }
+}
 
 function formatAccount(acc) {
   if (!acc) {

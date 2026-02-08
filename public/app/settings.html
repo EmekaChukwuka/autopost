@@ -591,37 +591,27 @@
                 <div id="connected-accounts-tab" class="hidden">
                     <div class="settings-section">
                         <h2>Social Accounts</h2>
-                        <div class="connected-accounts">
-                            <div class="account-card">
-                                <div class="account-icon"><i class="fas fa-twitter"></i></div>
-                                <div class="account-info">
-                                    <h3>Twitter</h3>
-                                    <div class="account-status connected">Connected as @autopost_user</div>
-                                </div>
-                                <div class="account-actions">
-                                    <button class="btn btn-outline">Disconnect</button>
-                                </div>
-                            </div>
-                            <div class="account-card">
-                                <div class="account-icon"><i class="fas fa-linkedin"></i></div>
-                                <div class="account-info">
-                                    <h3>LinkedIn</h3>
-                                    <div class="account-status">Not Connected</div>
-                                </div>
-                                <div class="account-actions">
-                                    <button class="btn btn-primary" onclick="connectPlatform('linkedin')">Connect</button>
-                                </div>
-                            </div>
-                            <div class="account-card">
-                                <div class="account-icon"><i class="fas fa-facebook"></i></div>
-                                <div class="account-info">
-                                    <h3>Facebook</h3>
-                                    <div class="account-status">Not connected</div>
-                                </div>
-                                <div class="account-actions">
-                                    <button class="btn btn-primary">Connect</button>
-                                </div>
-                            </div>
+                        <div class="connected-accounts"><div class="connected-accounts">
+
+  <div class="account-card" id="linkedinCard">
+    <div class="account-icon">
+      <i class="fab fa-linkedin"></i>
+    </div>
+
+    <div class="account-info">
+      <h3>LinkedIn</h3>
+      <div class="account-status" id="linkedinStatus">
+        Checking…
+      </div>
+    </div>
+
+    <div class="account-actions" id="linkedinActions">
+      <!-- buttons inserted by JS -->
+    </div>
+  </div>
+
+</div>
+
                         </div>
                     </div>
                 </div>
@@ -677,6 +667,32 @@
     <a href="analytics.html"><i class="fas fa-chart-line"></i></a>
     <a href="#"  class="active"><i class="fas fa-user"></i></a>
   </nav>
+<div id="linkedinModal" class="hidden" style="
+position: fixed;
+inset: 0;
+background: rgba(0,0,0,0.6);
+display:flex;
+align-items:center;
+justify-content:center;
+z-index:9999;
+">
+
+  <div style="
+    background: var(--bg-primary);
+    padding: 24px;
+    border-radius: 10px;
+    width: 90%;
+    max-width: 420px;
+  ">
+    <h3>LinkedIn Account</h3>
+
+    <p><strong>Name:</strong> <span id="liName"></span></p>
+    <p><strong>Profile ID:</strong> <span id="liId"></span></p>
+
+    <button class="btn btn-outline" onclick="closeLinkedInModal()">Close</button>
+  </div>
+
+</div>
 
   <script src="app.js"></script>
     <script>
@@ -727,6 +743,67 @@ if (params.get("linkedin") === "connected") {
 if (params.get("linkedin") === "failed") {
   alert("LinkedIn connection failed");
 }
+async function loadLinkedInStatus() {
+  const token = localStorage.getItem("authToken");
+
+  const res = await fetch(
+    "https://autopost-backend-hbck.onrender.com/social/accounts",
+    {
+      headers: { Authorization: `Bearer ${token}` }
+    }
+  );
+
+  const data = await res.json();
+
+  const li = data.accounts.linkedin;
+
+  const statusEl = document.getElementById("linkedinStatus");
+  const actionsEl = document.getElementById("linkedinActions");
+
+  if (li && li.connected) {
+    statusEl.textContent = `Connected as ${li.profileName}`;
+    statusEl.classList.add("connected");
+
+    actionsEl.innerHTML = `
+      <button class="btn btn-outline" onclick="openLinkedInModal('${li.profileName}','${li.profileId}')">
+        View
+      </button>
+      <button class="btn btn-danger" onclick="disconnectLinkedIn()">
+        Disconnect
+      </button>
+    `;
+  } else {
+    statusEl.textContent = "Not Connected";
+
+    actionsEl.innerHTML = `
+      <button class="btn btn-primary" onclick="connectLinkedIn()">
+        Connect
+      </button>
+    `;
+  }
+}
+async function disconnectLinkedIn() {
+  const token = localStorage.getItem("authToken");
+
+  await fetch(
+    "https://autopost-backend-hbck.onrender.com/social/linkedin/disconnect",
+    {
+      method: "POST",
+      headers: { Authorization: `Bearer ${token}` }
+    }
+  );
+
+  loadLinkedInStatus();
+}
+function openLinkedInModal(name, id) {
+  document.getElementById("liName").textContent = name;
+  document.getElementById("liId").textContent = id;
+  document.getElementById("linkedinModal").classList.remove("hidden");
+}
+
+function closeLinkedInModal() {
+  document.getElementById("linkedinModal").classList.add("hidden");
+}
 
 
 async function connectPlatform(platform){
@@ -738,6 +815,7 @@ async function connectPlatform(platform){
 
 
         document.addEventListener('DOMContentLoaded', async () => {
+            loadLinkedInStatus();
             const trialData = JSON.parse(localStorage.getItem('trialData'));
             console.log(trialData);
            /* plan = trialData.plan;
