@@ -967,14 +967,14 @@ const userId = user.id;
          
     async function postToSocialMedia(userId, platform, content, postTime, includeImages) {
       try{
-        const response = await fetch('https://autopost-backend-hbck.onrender.com/calendar/post-content',
+        const response = await fetch('https://autopost-backend-hbck.onrender.com/calendar/post-content',{
           method: 'POST', 
            headers: {
                             'Content-Type': 'application/json'
               
                         },
           body: JSON.stringify({userId, platform, content, postTime, includeImages})
-        );
+        });
         const data = await response.json();
         if(response.ok){
           alert('Post auto-posted successfully');
