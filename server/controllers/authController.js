@@ -136,9 +136,19 @@ export const linkedinCallback = async (req, res) => {
 
 if (state) {
       try {
-        const decodedState = Buffer.from(state, 'base64').toString('ascii');
-        const params = new URLSearchParams(decodedState);
-        userId = params.get('user_id');
+            const decodedState = Buffer.from(state, 'base64').toString('ascii');
+    console.log("Decoded state string:", decodedState);
+    
+    // Parse the "user_id=xxx" format
+    const match = decodedState.match(/user_id=(.+)/);
+    if (match) {
+      userId = match[1];
+      console.log("Extracted userId:", userId);
+    } else {
+      // Try to parse as JSON as fallback (for backward compatibility)
+      const stateObj = JSON.parse(decodedState);
+      userId = stateObj.userId || stateObj.user_id;
+    }
       } catch (error) {
         console.error("Error decoding state:", error);
       }
