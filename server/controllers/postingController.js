@@ -5,7 +5,7 @@ import { authenticateToken } from "../controllers/regisAuthController.js";
 
 export async function postContent(req, res) {
   try {
-    const { userId, platform, scheduledTime, includeImage, post} = req.body;
+    const { userId, platform, scheduledTime, includeImages, post} = req.body;
     if (!userId || !post) return res.status(400).json({ success: false, message: 'id and post required' });
 
     // verify user exists
@@ -19,7 +19,7 @@ export async function postContent(req, res) {
         user_id: userId,
         content: post,
         scheduled_for: scheduledTime,
-        image_required: includeImage
+        image_required: includeImages
       };
 
     await ScheduledPost.insert(scheduledPost);
