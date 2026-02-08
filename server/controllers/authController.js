@@ -40,12 +40,8 @@ export const facebookLogin = async (req, res) => {
 
 export const linkedinLogin = async (req, res) => {
 const {id} = req.query;
-<<<<<<< HEAD
-req.session.userId = id; // Store user ID in session for later use in callback
-=======
 
 const state = Buffer.from(`user_id=${id}`).toString('base64');
->>>>>>> c8cb71a44da22d305509c4f4ec18064202992577
 
      const scope = encodeURIComponent(
     "openid profile email w_member_social"
