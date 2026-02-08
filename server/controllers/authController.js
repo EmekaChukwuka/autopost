@@ -41,7 +41,7 @@ export const facebookLogin = async (req, res) => {
 export const linkedinLogin = async (req, res) => {
 const {id} = req.query;
 
-req.session.userId = id; // Store user ID in session for later use in callback
+const state = Buffer.from(`user_id=${id}`).toString('base64');
 
      const scope = encodeURIComponent(
     "openid profile email w_member_social"
@@ -94,7 +94,7 @@ import User from "../models/User.js";
 
 export const linkedinCallback = async (req, res) => {
   try {
-    const { code } = req.query;
+    const { code, state } = req.query;
 
     if (!code) {
       return res.status(400).send("Missing authorization code");
