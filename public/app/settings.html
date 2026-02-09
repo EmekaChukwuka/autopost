@@ -745,7 +745,7 @@ if (params.get("linkedin") === "failed") {
 }
 async function loadLinkedInStatus() {
   const token = localStorage.getItem("authToken");
-const user = JSON.parse(local storage.getItem('currentUser'));
+const user = JSON.parse(localStorage.getItem('currentUser'));
 const userId=user.id;
   const res = await fetch(
     "https://autopost-backend-hbck.onrender.com/calendar/social/accounts",
