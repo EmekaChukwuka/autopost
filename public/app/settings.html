@@ -747,6 +747,7 @@ async function loadLinkedInStatus() {
   const token = localStorage.getItem("authToken");
 const user = JSON.parse(localStorage.getItem('currentUser'));
 const userId=user.id;
+try{
   const res = await fetch(
     "https://autopost-backend-hbck.onrender.com/calendar/social/accounts",{
     method:'POST',
@@ -782,6 +783,9 @@ body: JSON.stringify({userId})
       </button>
     `;
   }
+}catch(err){
+console.log(err)
+alert("An error occured while fetching LinkedIn data", err)
 }
 async function disconnectLinkedIn() {
   const token = localStorage.getItem("authToken");
