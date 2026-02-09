@@ -749,9 +749,8 @@ const user = JSON.parse(localStorage.getItem('currentUser'));
 const userId=user.id;
   const res = await fetch(
     "https://autopost-backend-hbck.onrender.com/calendar/social/accounts",{
-    {
-      headers: { Authorization: `Bearer ${token}` }
-    },
+    method:'POST',
+      headers: { Authorization: `Bearer ${token}` },
 body: JSON.stringify({userId})
   });
 
