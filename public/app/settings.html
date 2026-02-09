@@ -751,7 +751,6 @@ try{
   const res = await fetch(
     "https://autopost-backend-hbck.onrender.com/calendar/social/accounts",{
     method:'POST',
-      headers: { Authorization: `Bearer ${token}` },
 body: JSON.stringify({userId})
   });
 
