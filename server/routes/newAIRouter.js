@@ -87,7 +87,7 @@ const data = chatResponse.choices[0].message.content;
             let cleaned = data
                 .replace(/\*\*(.*?)\*\*/g, '$1') // Remove bold
                 .replace(/\*(.*?)\*/g, '$1')     // Remove italics
-                .replace(/#+\s?/g, '')           // Remove headers
+                .replace(/+\s?/g, '')           // Remove headers
                 .replace(/```[\s\S]*?```/g, '')  // Remove code blocks
                 .replace(/`(.*?)`/g, '$1')       // Remove inline code
                 .replace(/```json|```/g, '');
