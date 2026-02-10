@@ -947,6 +947,8 @@ body{
     
     // Auto-Post Functionality
     document.getElementById('confirmPost').addEventListener('click', () => {
+                document.getElementById('confirmPost').disabled = true;
+                document.getElementById('confirmPost').textContent = 'Auto-posting...';
       const content = document.getElementById('aiText').innerText;
      // const platform = document.querySelector('.platform-badge.active').dataset.platform;
 const platform = 'linkedin';
@@ -980,6 +982,9 @@ const userId = user.id;
         const data = await response.json();
         if(response.ok){
           alert('Post auto-posted successfully');
+          
+                document.getElementById('confirmPost').disabled = false;
+                document.getElementById('confirmPost').textContent = 'Auto-posted';
         }else{
           alert('Auto-posting failed')
         }
