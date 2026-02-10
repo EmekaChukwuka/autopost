@@ -759,7 +759,7 @@ try{
 
   const data = await res.json();
   console.log(data)
-  const li = data.linkedin;
+  const li = data.data.linkedin;
 
   const statusEl = document.getElementById("linkedinStatus");
   const actionsEl = document.getElementById("linkedinActions");
