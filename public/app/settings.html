@@ -755,7 +755,7 @@ body: JSON.stringify({userId})
   });
 
   const data = await res.json();
-
+console.log(data)
   const li = data.accounts.linkedin;
 
   const statusEl = document.getElementById("linkedinStatus");

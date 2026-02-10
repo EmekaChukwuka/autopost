@@ -292,7 +292,7 @@ function calculateOptimalTime(date) {
 
 export const getConnectedAccounts = async (req, res) => {
   try {
-    const userId = req.body;
+    const {userId} = req.body;
 
     const user = await User.findById(userId);
 
