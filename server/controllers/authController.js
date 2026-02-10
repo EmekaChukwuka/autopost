@@ -226,6 +226,7 @@ export const getConnectedAccounts = async (req, res) => {
 export const disconnectAccount = async (req, res) => {
    try {
     const { userId } = req.body;
+    
     await User.updateOne(
       { _id: userId },
       {

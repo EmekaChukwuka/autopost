@@ -6,7 +6,7 @@ import { authenticateToken } from "../controllers/regisAuthController.js";
 export async function postContent(req, res) {
   try {
     const { userId, platform, postTime, includeImages, content} = req.body;
-    if (!userId || !post) return res.status(400).json({ success: false, message: 'id and post required' });
+    if (!userId || !content) return res.status(400).json({ success: false, message: 'id and post required' });
 
     // verify user exists
     const user = await User.findById(id);
