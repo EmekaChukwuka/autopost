@@ -7,9 +7,9 @@ export async function postContent(req, res) {
   try {
     const { userId, platform, postTime, includeImages, content} = req.body;
     if (!userId || !content) return res.status(400).json({ success: false, message: 'id and post required' });
-
+console.log(userId, platform, postTime, includeImages, content)
     // verify user exists
-    const user = await User.findById(id);
+    const user = await User.findById(userId);
     if (!user) return res.status(404).json({ success: false, message: 'User not found' });
 
     const [hours, minutes] = postTime.split(":");
