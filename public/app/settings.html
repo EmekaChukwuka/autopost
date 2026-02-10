@@ -749,7 +749,7 @@ const user = JSON.parse(localStorage.getItem('currentUser'));
 const userId=user.id;
 try{
   const res = await fetch(
-    "https://autopost-backend-hbck.onrender.com/calendar/social/accounts",{
+    "https://autopost-backend-hbck.onrender.com/auth/social/accounts",{
                  method:'POST',
                  headers: {
                             'Content-Type': 'application/json',
@@ -758,7 +758,7 @@ try{
   });
 
   const data = await res.json();
-  console.log(data)
+  
   const li = data.data.linkedin;
 
   const statusEl = document.getElementById("linkedinStatus");
@@ -794,15 +794,26 @@ alert("An error occured while fetching LinkedIn data", err)
 async function disconnectLinkedIn() {
   const token = localStorage.getItem("authToken");
 
+const user = JSON.parse(localStorage.getItem('currentUser'));
+const userId=user.id;
+try{
   await fetch(
-    "https://autopost-backend-hbck.onrender.com/social/linkedin/disconnect",
+    "https://autopost-backend-hbck.onrender.com/auth/linkedin/disconnect",
     {
-      method: "POST",
-      headers: { Authorization: `Bearer ${token}` }
+         method:'POST',
+                 headers: {
+                            'Content-Type': 'application/json',
+                        },
+                 body: JSON.stringify({userId})
     }
   );
 
   loadLinkedInStatus();
+  
+}catch(err){
+console.log(err)
+alert("An error occured while disconnecting LinkedIn account", err)
+}
 }
 function openLinkedInModal(name, id) {
   document.getElementById("liName").textContent = name;

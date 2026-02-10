@@ -5,7 +5,9 @@ import {
     facebookLogin,
     facebookCallback, 
     linkedinLogin, 
-    linkedinCallback
+    linkedinCallback,
+    getConnectedAccounts,
+     disconnectAccount 
 } from "../controllers/authController.js";
 
 import {
@@ -22,6 +24,8 @@ authRouter.get('/twitter/callback', twitterCallback);
 authRouter.get('/facebook/callback', facebookCallback);
 authRouter.get('/linkedin/callback', linkedinCallback);
 
+authRouter.post('/social/accounts', getConnectedAccounts);
+authRouter.post('/linkedin/disconnect', disconnectAccount);
 
 
 export default authRouter;

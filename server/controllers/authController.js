@@ -185,3 +185,66 @@ if (state) {
     res.redirect("https://autopost-7uhd.onrender.com/app/settings.html?linkedin=failed");
   }
 };
+
+
+export const getConnectedAccounts = async (req, res) => {
+  try {
+    const {userId} = req.body;
+
+    const user = await User.findById(userId);
+    
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: "User not found"
+      });
+    }
+
+    const accounts = user.socialAccounts;
+    console.log(accounts)
+   /* const response = {
+      linkedin: formatAccount(accounts.linkedin),
+      twitter: formatAccount(accounts.twitter),
+      facebook: formatAccount(accounts.facebook),
+      instagram: formatAccount(accounts.instagram)
+    };*/
+
+    res.json({
+      success: true,
+      data: accounts
+    });
+
+  } catch (err) {
+    console.error("Get connected accounts error:", err);
+    res.status(500).json({
+      success: false,
+      message: "Failed to fetch connected accounts"
+    });
+  }
+};
+
+export const disconnectAccount = async (req, res) => {
+   try {
+    const { userId } = req.body;
+    await User.updateOne(
+      { _id: userId },
+      {
+        $set: {
+          "socialAccounts.linkedin": {
+            connected: false,
+            accessToken: null,
+            refreshToken: null,
+            expiresAt: null,
+            profileId: null,
+            profileName: null
+          }
+        }
+      }
+    );
+
+    res.json({ success: true });
+  } catch (err) {
+    console.error("Disconnect account error:", err);
+    res.status(500).json({ success: false, message: "Failed to disconnect account" });
+  }
+}
