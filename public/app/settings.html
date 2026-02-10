@@ -777,7 +777,7 @@ body: JSON.stringify({userId})
     statusEl.textContent = "Not Connected";
 
     actionsEl.innerHTML = `
-      <button class="btn btn-primary" onclick="connectLinkedIn()">
+      <button class="btn btn-primary" onclick="connectLinkedin()">
         Connect
       </button>
     `;
@@ -787,6 +787,7 @@ console.log(err)
 alert("An error occured while fetching LinkedIn data", err)
 }
 }
+
 async function disconnectLinkedIn() {
   const token = localStorage.getItem("authToken");
 
@@ -811,7 +812,7 @@ function closeLinkedInModal() {
 }
 
 
-async function connectPlatform(platform){
+async function connectLinkedin(){
          const token = localStorage.getItem('authToken');
     
             let currentUser = JSON.parse(localStorage.getItem('currentUser'));
