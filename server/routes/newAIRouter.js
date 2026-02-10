@@ -81,10 +81,22 @@ const chatResponse = await client.chat.complete({
   messages: [{role: 'user', content: TEMPLATES[nplatform][contentType].replace('{{prompt}}', prompt)}],
 });
 
+const data = chatResponse.choices[0].message.content;
+
+            // Remove markdown formatting, asterisks, etc.
+            let cleaned = data
+                .replace(/\*\*(.*?)\*\*/g, '$1') // Remove bold
+                .replace(/\*(.*?)\*/g, '$1')     // Remove italics
+                .replace(/#+\s?/g, '')           // Remove headers
+                .replace(/```[\s\S]*?```/g, '')  // Remove code blocks
+                .replace(/`(.*?)`/g, '$1')       // Remove inline code
+                .replace(/```json|```/g, '');
+        
+            
 //console.log('Chat:', chatResponse.choices[0].message.content);
 res.status(200).json({
       status: 'success',
-      data: chatResponse.choices[0].message.content
+      data: cleaned
     });
 
      
