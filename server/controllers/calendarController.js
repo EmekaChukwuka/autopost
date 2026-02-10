@@ -303,14 +303,14 @@ export const getConnectedAccounts = async (req, res) => {
       });
     }
 
-    const accounts = user.socialAccounts ;
+    const accounts = user.socialAccounts;
     console.log(accounts)
-    const response = {
+   /* const response = {
       linkedin: formatAccount(accounts.linkedin),
       twitter: formatAccount(accounts.twitter),
       facebook: formatAccount(accounts.facebook),
       instagram: formatAccount(accounts.instagram)
-    };
+    };*/
 
     res.json({
       success: true,
