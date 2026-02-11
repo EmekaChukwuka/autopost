@@ -12,28 +12,26 @@ export const processLinkedInPosts = async () => {
   });
 
   for (const post of posts) {
-    try {
-      const user = await User.findById(post.user_id);
-      if (!user.socialAccounts?.linkedin?.accessToken) throw new Error("No LinkedIn token");
+  try {
 
-      let assetUrn = null;
+    console.log("Processing post:", post._id);
 
-      if (post.image_required && post.image_url) {
-        const imageRes = await axios.get(post.image_url, { responseType: "arraybuffer" });
-        assetUrn = await uploadImageToLinkedIn(
-          user.socialAccounts.linkedin.accessToken,
-          user.socialAccounts.linkedin.profileId,
-          imageRes.data
-        );
+    const user = await User.findById(post.user_id);
 
-        post.linkedin_asset_urn = assetUrn;
-      }else{
-        await postToLinkedInWithoutImage(
+    if (!user.socialAccounts?.linkedin?.accessToken) {
+      console.log("No LinkedIn token");
+      continue;
+    }
+
+    if (post.image_required && post.image_url) {
+
+      const imageRes = await axios.get(post.image_url, { responseType: "arraybuffer" });
+
+      const assetUrn = await uploadImageToLinkedIn(
         user.socialAccounts.linkedin.accessToken,
         user.socialAccounts.linkedin.profileId,
-        post.content
+        imageRes.data
       );
-      }
 
       await postToLinkedInWithImage(
         user.socialAccounts.linkedin.accessToken,
@@ -42,15 +40,30 @@ export const processLinkedInPosts = async () => {
         assetUrn
       );
 
-      post.status = "posted";
-      await post.save();
+    } else {
 
-    } catch (err) {
-      console.error("LinkedIn post failed:", err.message);
-      post.status = "failed";
-      await post.save();
+      await postToLinkedInWithoutImage(
+        user.socialAccounts.linkedin.accessToken,
+        user.socialAccounts.linkedin.profileId,
+        post.content
+      );
+
     }
+
+    post.status = "posted";
+    await post.save();
+
+    console.log("Post success:", post._id);
+
+  } catch (err) {
+    console.error("LinkedIn post failed:",
+      err.response?.data || err.message
+    );
+
+    post.status = "failed";
+    await post.save();
   }
+}
 };
 
 
