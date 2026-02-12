@@ -6,7 +6,10 @@ export const postToLinkedInWithImage = async (
   text,
   assetUrn
 ) => {
-  await axios.post(
+try {
+  
+
+  const res = await axios.post(
     "https://api.linkedin.com/v2/ugcPosts",
     {
       author: `urn:li:person:${linkedinUserId}`,
@@ -32,6 +35,14 @@ export const postToLinkedInWithImage = async (
       }
     }
   );
+console.log("LinkedIn post success:", res.data);
+
+} catch (err) {
+  console.error("LinkedIn API error:",
+    err.response?.data || err.message
+  );
+  throw err;
+}
 };
 
 
@@ -40,14 +51,18 @@ export const postToLinkedInWithoutImage = async (
   linkedinUserId,
   text
 ) => {
-  await axios.post(
+  try {
+  
+
+  const res = await axios.post(
     "https://api.linkedin.com/v2/ugcPosts",
     {
       author: `urn:li:person:${linkedinUserId}`,
       lifecycleState: "PUBLISHED",
       specificContent: {
         "com.linkedin.ugc.ShareContent": {
-          shareCommentary: { text }
+          shareCommentary: { text },
+          
         }
       },
       visibility: {
@@ -61,4 +76,12 @@ export const postToLinkedInWithoutImage = async (
       }
     }
   );
+console.log("LinkedIn post success:", res.data);
+
+} catch (err) {
+  console.error("LinkedIn API error:",
+    err.response?.data || err.message
+  );
+  throw err;
+}
 };
