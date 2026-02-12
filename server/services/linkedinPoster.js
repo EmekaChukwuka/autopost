@@ -62,6 +62,7 @@ export const postToLinkedInWithoutImage = async (
       specificContent: {
         "com.linkedin.ugc.ShareContent": {
           shareCommentary: { text },
+          shareMediaCategory: "NONE" 
           
         }
       },

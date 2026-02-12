@@ -152,7 +152,8 @@ export async function generateCalendar(req, res) {
         user_id: id,
         calendar_id: calendar._id,
         content: day.content,
-        scheduled_for: date
+        scheduled_for: date,
+        image_required: includeImages
       };
     });
 

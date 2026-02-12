@@ -1,6 +1,7 @@
 import axios from "axios";
 
 export const uploadImageToLinkedIn = async (accessToken, linkedinUserId, imageBuffer) => {
+  try{
   // STEP 1: Register upload
   const registerRes = await axios.post(
     "https://api.linkedin.com/v2/assets?action=registerUpload",
@@ -38,4 +39,11 @@ export const uploadImageToLinkedIn = async (accessToken, linkedinUserId, imageBu
   });
 
   return assetUrn;
+  
+  } catch (err) {
+    console.error("LinkedIn Image Upload error:",
+      err.response?.data || err.message
+    );
+    throw err;
+  }
 };

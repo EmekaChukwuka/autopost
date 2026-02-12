@@ -19,10 +19,12 @@ import calendarRouter from './routes/calendarRoutes.js';
 
 import cron from "node-cron";
 import { processLinkedInPosts } from "./workers/linkedinScheduler.js";
+import { fetchImagesForPosts } from "./workers/imageFetcher.js";
 
 cron.schedule("*/1 * * * *", async () => {
   console.log("⏱ Running LinkedIn scheduler...");
   await processLinkedInPosts();
+  await fetchImagesForPosts();
 });
 
 
