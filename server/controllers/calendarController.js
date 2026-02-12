@@ -142,7 +142,7 @@ export async function generateCalendar(req, res) {
     );
 
  if(autoSchedule == true){
-    const calendar = await Calendar.findById(saved.user_id);
+    const calendar = await Calendar.findById(saved._id);
     const [hours, minutes] = post_time.split(":");
 
     const scheduledPosts = calendar.days.map(day => {
@@ -159,8 +159,8 @@ export async function generateCalendar(req, res) {
 
     await ScheduledPost.insertMany(scheduledPosts);
 
-    calendar.auto_schedule = true;
-    calendar.platform = "linkedin";
+    calendar.autoSchedule = true;
+    calendar.platforms = "linkedin";
     calendar.includeImages = includeImages;
     await calendar.save();
 
