@@ -10,6 +10,8 @@ export const processLinkedInPosts = async () => {
     status: "pending",
     scheduled_for: { $lte: new Date() }
   });
+console.log("Scheduler tick:", new Date());
+console.log("Posts found:", posts.length);
 
   for (const post of posts) {
   try {
