@@ -959,7 +959,7 @@ const trialData=JSON.parse(localStorage.getItem('trialData'));
 
       // API call to AI backend
   try{
-  try{
+  
         const response = await fetch('https://autopost-backend-hbck.onrender.com/calendar/post-content',{
           method: 'POST', 
            headers: {
@@ -980,10 +980,7 @@ const trialData=JSON.parse(localStorage.getItem('trialData'));
         alert('An error occured while auto-posting, please try again')
       }
       alert(`Content scheduled for ${platform} at ${scheduleTime} WAT!`);
-    }catch(error){
-      console.log('error', error);
-       document.getElementById('aiText').innerHTML = 'An error occured, please try again';
-    }
+    
   }
     if(!trialData && !paidPlan && user){
       
