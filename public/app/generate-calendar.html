@@ -517,7 +517,7 @@ const endDate = new Date(result.data.subscription_end_date);
         'Content-Type':'application/json',
         'Authorization': `Bearer ${token}`
         },
-      body: JSON.stringify({ id: user.id, prompt, template, startDate, includeImages: includeImages, autoSchedule: autoSchedule})
+      body: JSON.stringify({ id: user.id, prompt, template, startDate, includeImages, autoSchedule, post_time})
     });
 
     if (!res.ok) {
