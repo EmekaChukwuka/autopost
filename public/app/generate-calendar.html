@@ -274,6 +274,68 @@
     input:checked + .toggle-slider:before {
       transform: translateX(30px);
     }
+    /* Post Settings */
+    .post-settings {
+      background-color: var(--bg-secondary);
+      border-radius: 8px;
+      padding: 20px;
+      display: none;
+    }
+
+.scheduleOptions label{
+    text-align: center;
+}
+    .post-settings h3 {
+      margin-top: 0;
+      color: var(--accent-blue);
+    }
+
+    .post-settings label {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 15px;
+      cursor: pointer;
+    }
+
+    .post-settings input[type="checkbox"] {
+      width: auto;
+    }
+
+    #scheduleOptions {
+      margin-top: 20px;
+      padding-top: 20px;
+      border-top: 1px solid var(--border-color);
+      
+    }
+ .post-settings select{
+      width: 80%;
+      padding: 12px 15px;
+      border: 1px solid var(--border-color);
+      border-radius: 6px;
+      background-color: var(--bg-primary);
+      color: var(--text-primary);
+      margin-left:10%;
+      margin-bottom:3%;
+    }
+    .post-settings input{
+      width: 80%;
+      padding: 12px 15px;
+      border: 1px solid var(--border-color);
+      border-radius: 6px;
+      background-color: var(--bg-primary);
+      color: var(--text-primary);
+      margin-left:5%;
+      margin-bottom:3%;
+    }
+    
+      .label {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 15px;
+      cursor: pointer;
+    }
     
   </style>
 </head>
@@ -329,6 +391,16 @@
   </div>
         </label>
       </div>
+      <div class="post-settings" id="postsettings">
+        <div id="scheduleOptions">
+          <label>Schedule Time</label>
+          <input type="time" id="postTime">
+          <label>Time Zone</label>
+          <select id="timeZone">
+            <option value="GMT">GMT</option>
+          </select>
+        </div>
+        </div>
 
       <div style="display:flex;gap:8px;margin-top:12px">
         <button id="generateBtn" class="btn">Generate Calendar</button>
@@ -372,19 +444,33 @@ const promptEl = document.getElementById('prompt');
 const templates = document.getElementById('templates');
 const status = document.getElementById('status');
 const autoSchedule = document.getElementById('autoSchedule').checked;
+const autoSchedule2 = document.getElementById('autoSchedule');
 const includeImages = document.getElementById('includeImages'). checked;
+const post_time = document.getElementById('postTime').value;
 
 templates.addEventListener('click', (e)=>{
   if (!e.target.classList.contains('template')) return;
   document.querySelectorAll('.template').forEach(t=>t.classList.remove('active'));
   e.target.classList.add('active');
 });
-                       
+
+autoSchedule2.addEventListener("change", function () {
+  if (this.checked) {
+    console.log("Checkbox is ON");
+    document.getElementById("postsettings").style.display = "block"; 
+  } else {
+    console.log("Checkbox is OFF");
+    document.getElementById("postsettings").style.display = "none"; 
+  }
+});
+                 
 sampleBtn.addEventListener('click', ()=> {
   promptEl.value = "Create a 30-day content calendar for a small bakery: product highlights (bread/pastries), baking tips, behind-the-scenes, 3 promotional posts and 4 engagement questions. Tone: friendly and warm. Platforms: Instagram, Facebook.";
 });
 
 generateBtn.addEventListener('click', async ()=>{
+
+
   if (!user) { alert('Please sign in to generate a calendar'); return; }
   const prompt = promptEl.value.trim();
   if (!prompt) { alert('Please enter a prompt'); promptEl.focus(); return; }
@@ -422,8 +508,6 @@ const endDate = new Date(result.data.subscription_end_date);
   
   try {
 
-    const post_time = new Date();
-post_time.setHours(8, 0, 0, 0);
 
     generateBtn.disabled = true;
     // Send to backend
@@ -450,8 +534,13 @@ post_time.setHours(8, 0, 0, 0);
       generateBtn.disabled = false;
       return;
     }
-
+    
+    if(json.autoScheduled == true){
+      status.textContent = 'Calendar generated and auto-scheduled — saving…';   
+    }
+    
     status.textContent = 'Calendar generated — saving…';
+    
     // store success -> backend should save calendar for the user; then redirect
 
      setTimeout(()=> {
