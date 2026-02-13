@@ -141,8 +141,9 @@ export async function generateCalendar(req, res) {
       { upsert: true, new: true, setDefaultsOnInsert: true }
     );
 
- // ---------- AUTO SCHEDULE ---------
-if (autoSchedule === true || autoSchedule === "true" || autoSchedule === "on") {
+// ---------- AUTO SCHEDULE ---------
+//autoSchedule === true || autoSchedule === "true" || autoSchedule === "on"
+if (autoSchedule) {
 try{
   if (!post_time) {
     return res.status(400).json({
