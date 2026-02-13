@@ -951,7 +951,7 @@ const trialData=JSON.parse(localStorage.getItem('trialData'));
       alert(`Content scheduled for ${platform} at ${scheduleTime} GMT!`);
       }else{
                       
-                if(trialData && !paidPlan && user){
+                if(trialData && user){
         const now = new Date();
                 const endDate = new Date(trialData.endDate);
                 const timeRemaining = endDate - now;
