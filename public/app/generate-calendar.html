@@ -446,7 +446,8 @@ const status = document.getElementById('status');
 const autoSchedule = document.getElementById('autoSchedule').checked;
 const autoSchedule2 = document.getElementById('autoSchedule');
 const includeImages = document.getElementById('includeImages'). checked;
-const post_time = document.getElementById('postTime').value;
+
+document.addEventListener("DOMContentLoaded", () => {
 
 templates.addEventListener('click', (e)=>{
   if (!e.target.classList.contains('template')) return;
@@ -470,7 +471,7 @@ sampleBtn.addEventListener('click', ()=> {
 
 generateBtn.addEventListener('click', async ()=>{
 
-
+const post_time = document.getElementById('postTime').value;
   if (!user) { alert('Please sign in to generate a calendar'); return; }
   const prompt = promptEl.value.trim();
   if (!prompt) { alert('Please enter a prompt'); promptEl.focus(); return; }
@@ -562,6 +563,7 @@ const endDate = new Date(result.data.subscription_end_date);
  }
 });
     
+    });
 
 </script>
 </body>
