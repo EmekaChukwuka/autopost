@@ -143,7 +143,7 @@ export async function generateCalendar(req, res) {
 
  // ---------- AUTO SCHEDULE ---------
 if (autoSchedule === true || autoSchedule === "true" || autoSchedule === "on") {
-
+try{
   if (!post_time) {
     return res.status(400).json({
       success: false,
@@ -174,6 +174,10 @@ if (autoSchedule === true || autoSchedule === "true" || autoSchedule === "on") {
   saved.platforms = ["linkedin"];
   saved.includeImages = !!includeImages;
   await saved.save();
+console.log("Calendar auto-scheduled successfully");
+}catch(err){
+console.error("Auto-scheduling calendar error":, err)
+}
 }
     return res.json({ success: true, calendar: saved.days, meta: saved.meta, user_id: saved.user_id, autoSchedule : saved.autoSchedule });
 
