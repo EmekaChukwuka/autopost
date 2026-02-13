@@ -141,30 +141,40 @@ export async function generateCalendar(req, res) {
       { upsert: true, new: true, setDefaultsOnInsert: true }
     );
 
- if(autoSchedule == true){
-    const calendar = await Calendar.findById(saved._id);
-    const [hours, minutes] = post_time.split(":");
+ // ---------- AUTO SCHEDULE ---------
+if (autoSchedule === true || autoSchedule === "true" || autoSchedule === "on") {
 
-    const scheduledPosts = calendar.days.map(day => {
-      const date = new Date(calendar.year, calendar.month - 1, day.day);
-      date.setHours(hours, minutes, 0);
-      return {
-        user_id: id,
-        calendar_id: calendar._id,
-        content: day.content,
-        scheduled_for: date,
-        image_required: includeImages
-      };
+  if (!post_time) {
+    return res.status(400).json({
+      success: false,
+      message: "post_time required when autoSchedule is enabled"
     });
+  }
 
-    await ScheduledPost.insertMany(scheduledPosts);
+  const [hours, minutes] = post_time.split(":").map(Number);
 
-    calendar.autoSchedule = true;
-    calendar.platforms = "linkedin";
-    calendar.includeImages = includeImages;
-    await calendar.save();
+  const scheduledPosts = saved.days.map(day => {
 
- }
+    const scheduledDate = new Date(day.date); // already real date
+    scheduledDate.setHours(hours, minutes, 0, 0);
+
+    return {
+      user_id: id,
+      platform: "linkedin",               // REQUIRED
+      content: day.post,                  // correct field
+      scheduled_for: scheduledDate,
+      image_required: !!includeImages,
+      status: "pending"
+    };
+  });
+
+  await ScheduledPost.insertMany(scheduledPosts);
+
+  saved.autoSchedule = true;
+  saved.platforms = ["linkedin"];
+  saved.includeImages = !!includeImages;
+  await saved.save();
+}
     return res.json({ success: true, calendar: saved.days, meta: saved.meta, user_id: saved.user_id });
 
   } catch (err) {
