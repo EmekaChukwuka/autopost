@@ -175,7 +175,7 @@ if (autoSchedule === true || autoSchedule === "true" || autoSchedule === "on") {
   saved.includeImages = !!includeImages;
   await saved.save();
 }
-    return res.json({ success: true, calendar: saved.days, meta: saved.meta, user_id: saved.user_id });
+    return res.json({ success: true, calendar: saved.days, meta: saved.meta, user_id: saved.user_id, autoSchedule : saved.autoSchedule });
 
   } catch (err) {
     console.error('generateCalendar error', err);
