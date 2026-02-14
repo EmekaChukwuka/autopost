@@ -4,7 +4,7 @@ import axios from "axios";
 
 import { uploadImageToLinkedIn } from "../services/linkedinImageUpload.js";
 import { postToLinkedInWithImage, postToLinkedInWithoutImage } from "../services/linkedinPoster.js";
-import {  } from "../services/imageHelper.js"; // ✅ your helper
+import { getImageForText } from "../services/imageHelper.js"; // ✅ your helper
 
 export const processLinkedInPosts = async () => {
 
