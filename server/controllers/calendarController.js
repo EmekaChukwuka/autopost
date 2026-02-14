@@ -89,6 +89,7 @@ export async function generateCalendar(req, res) {
   try {
     const { id, prompt, template, startDate, autoSchedule, includeImages, post_time} = req.body;
 console.log(req.body)
+const includeImage = includeImages === true || includeImages === "true" || includeImages === "on";
     if (!id || !prompt) return res.status(400).json({ success: false, message: 'id and prompt required' });
 
     // verify user exists
@@ -165,7 +166,7 @@ try{
       platform: "linkedin",               // REQUIRED
       content: day.post,                  // correct field
       scheduled_for: scheduledDate,
-      image_required: !!includeImages,
+      image_required: includeImage,
       status: "pending"
     };
   });
@@ -174,7 +175,7 @@ try{
 
   saved.autoSchedule = true;
   saved.platforms = ["linkedin"];
-  saved.includeImages = !!includeImages;
+  saved.includeImages = includeImage;
   await saved.save();
 console.log("Calendar auto-scheduled successfully");
 } catch (err) {
