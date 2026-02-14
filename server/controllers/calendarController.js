@@ -202,7 +202,7 @@ export async function getCalendar(req, res) {
     const cal = await Calendar.findOne({ user_id: id }).sort({ generated_at: -1 }).lean();
     if (!cal) return res.status(404).json({ success: false, message: 'No calendar found' });
 
-    return res.json({ success: true, calendar: cal.days, meta: cal.meta, start_date: cal.start_date, auto-scheduled: cal.autoSchedule});
+    return res.json({ success: true, calendar: cal.days, meta: cal.meta, start_date: cal.start_date });
   } catch (err) {
     console.error('getCalendar error', err);
     return res.status(500).json({ success: false, message: 'Server error fetching calendar' });
