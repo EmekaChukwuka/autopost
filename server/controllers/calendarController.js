@@ -144,7 +144,7 @@ console.log(req.body)
 
 // ---------- AUTO SCHEDULE ---------
 //autoSchedule === true || autoSchedule === "true" || autoSchedule === "on"
-if (autoSchedule) {
+if (autoSchedule === true || autoSchedule === "true" || autoSchedule === "on") {
 try{
   if (!post_time) {
     return res.status(400).json({
