@@ -21,7 +21,7 @@ Generate exactly ${days} objects starting from ${startDateISO} (inclusive).
 
 Each object MUST contain:
 - "date": ISO date string (YYYY-MM-DD)
-- "platform": choose from ["WhatsApp","Instagram","Twitter","Facebook","LinkedIn","TikTok","All"] using round-robin rotation
+- "platform": choose from ["Twitter", "Facebook","LinkedIn"] using round-robin rotation
 - "post": the final ready-to-publish post text
 
 Platform writing rules:
