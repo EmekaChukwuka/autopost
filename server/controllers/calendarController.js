@@ -89,7 +89,7 @@ export async function generateCalendar(req, res) {
   try {
     const { id, prompt, template, startDate, autoSchedule, includeImages, post_time} = req.body;
 console.log(req.body)
-const includeImage = includeImages === true || includeImages === "true" || includeImages === "on";
+const includeImage = !! includeImages;
     if (!id || !prompt) return res.status(400).json({ success: false, message: 'id and prompt required' });
 
     // verify user exists
