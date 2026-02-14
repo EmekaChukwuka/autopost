@@ -3,17 +3,20 @@ import ScheduledPost from "../models/ScheduledPost.js";
 
 const PIXABAY_API_KEY = process.env.PIXABAY_API_KEY;
 const UNSPLASH_API_KEY = process.env.UNSPLASH_SECRET_KEY;
-//const PEXELS_API_KEY = process.env.PEXELS_API_KEY;
+
+const MAX_RETRIES = 2; // retry twice after first failure
+const RETRY_DELAY_MS = 2000; // 2 seconds
+
+const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 
 async function fetchFromPixabay(query) {
   const { data } = await axios.get(
     `https://pixabay.com/api/?key=${PIXABAY_API_KEY}&q=${encodeURIComponent(query)}&image_type=photo&per_page=3`
   );
 
-  if (data.hits && data.hits.length > 0) {
+  if (data.hits?.length) {
     return data.hits[0].largeImageURL;
   }
-
   throw new Error("Pixabay no results");
 }
 
@@ -27,29 +30,21 @@ async function fetchFromUnsplash(query) {
     }
   );
 
-  if (data.results && data.results.length > 0) {
+  if (data.results?.length) {
     return data.results[0].urls.regular;
   }
-
   throw new Error("Unsplash no results");
 }
-/*
-async function fetchFromPexels(query) {
-  const { data } = await axios.get(
-    `https://api.pexels.com/v1/search?query=${encodeURIComponent(query)}&per_page=1`,
-    {
-      headers: {
-        Authorization: PEXELS_API_KEY
-      }
-    }
-  );
 
-  if (data.photos && data.photos.length > 0) {
-    return data.photos[0].src.large;
+async function fetchImageWithFallbacks(query) {
+  try {
+    console.log("Trying Pixabay...");
+    return await fetchFromPixabay(query);
+  } catch {
+    console.log("Pixabay failed → trying Unsplash");
+    return await fetchFromUnsplash(query);
   }
-
-  throw new Error("Pexels no results");
-}*/
+}
 
 export const fetchImagesForPosts = async () => {
   const posts = await ScheduledPost.find({
@@ -58,41 +53,41 @@ export const fetchImagesForPosts = async () => {
   }).limit(5);
 
   for (const post of posts) {
-    try {
-      const query = post.content.split(" ").slice(0, 6).join(" ");
+    let attempt = 0;
+    let success = false;
 
-      let imageUrl = null;
+    const query = post.content.split(" ").slice(0, 6).join(" ");
 
-      // ✅ Try Pixabay first
+    while (attempt <= MAX_RETRIES && !success) {
       try {
-        imageUrl = await fetchFromPixabay(query);
-        console.log("Image found via Pixabay");
-      } catch (e1) {
-        console.log("Pixabay failed → trying Unsplash");
+        console.log(
+          `🖼️ Fetching image for post ${post._id} (attempt ${attempt + 1})`
+        );
 
-        // ✅ Fallback: Unsplash
-        try {
-          imageUrl = await fetchFromUnsplash(query);
-          console.log("Image found via Unsplash");
-        } catch (e2) {
-          console.log("Unsplash failed → trying Pexels");
-          /*
-          // ✅ Final fallback: Pexels
-          imageUrl = await fetchFromPexels(query);
-          console.log("Image found via Pexels");*/
-          }
+        const imageUrl = await fetchImageWithFallbacks(query);
+
+        post.image_url = imageUrl;
+        post.image_status = "attached";
+        await post.save();
+
+        console.log("✅ Image attached successfully");
+        success = true;
+
+      } catch (err) {
+        attempt++;
+        console.error(`❌ Image fetch failed (attempt ${attempt}):`, err.message);
+
+        if (attempt <= MAX_RETRIES) {
+          console.log("🔁 Retrying...");
+          await sleep(RETRY_DELAY_MS);
+        }
       }
+    }
 
-      if (!imageUrl) throw new Error("All providers failed");
-
-      post.image_url = imageUrl;
-      post.image_status = "attached";
-      await post.save();
-
-    } catch (err) {
-      console.error("Image fetch failed:", err.message);
+    if (!success) {
       post.image_status = "failed";
       await post.save();
+      console.log("🚫 Image permanently failed for post", post._id);
     }
   }
 };
