@@ -147,6 +147,12 @@ const includeImage = !! includeImages;
 //autoSchedule === true || autoSchedule === "true" || autoSchedule === "on"
 if (autoSchedule === true || autoSchedule === "true" || autoSchedule === "on") {
 try{
+// delete old scheduled posts for this user
+await ScheduledPost.deleteMany({
+  user_id: id,
+  status: "pending" // don't delete already posted history
+});
+
   if (!post_time) {
     return res.status(400).json({
       success: false,
