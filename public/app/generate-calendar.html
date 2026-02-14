@@ -443,9 +443,7 @@ const sampleBtn = document.getElementById('sampleBtn');
 const promptEl = document.getElementById('prompt');
 const templates = document.getElementById('templates');
 const status = document.getElementById('status');
-const autoSchedule = document.getElementById('autoSchedule').checked;
 const autoSchedule2 = document.getElementById('autoSchedule');
-const includeImages = document.getElementById('includeImages'). checked;
 
 document.addEventListener("DOMContentLoaded", () => {
 
@@ -470,6 +468,8 @@ sampleBtn.addEventListener('click', ()=> {
 });
 
 generateBtn.addEventListener('click', async ()=>{
+const autoSchedule = document.getElementById('autoSchedule').checked;
+const includeImages = document.getElementById('includeImages'). checked;
 
 const post_time = document.getElementById('postTime').value;
   if (!user) { alert('Please sign in to generate a calendar'); return; }
