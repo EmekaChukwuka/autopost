@@ -9,6 +9,22 @@ const RETRY_DELAY_MS = 2000; // 2 seconds
 
 const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 
+const STOP_WORDS = new Set([
+  "the","and","for","with","this","that","from","your","about",
+  "into","using","how","why","what","when","where","have","has",
+  "will","can","are","was","were","been","being"
+]);
+
+function extractKeywords(text, max = 6) {
+  return text
+    .toLowerCase()
+    .replace(/[^a-z0-9\s]/g, "")
+    .split(/\s+/)
+    .filter(w => w.length > 3 && !STOP_WORDS.has(w))
+    .slice(0, max)
+    .join(" ");
+}
+
 async function fetchFromPixabay(query) {
   const { data } = await axios.get(
     `https://pixabay.com/api/?key=${PIXABAY_API_KEY}&q=${encodeURIComponent(query)}&image_type=photo&per_page=3`
@@ -91,3 +107,38 @@ export const fetchImagesForPosts = async () => {
     }
   }
 };
+
+export async function getImageForText(text, retries = 2) {
+  const query = extractKeywords(text);
+
+  console.log("Image query:", query);
+
+  for (let attempt = 0; attempt <= retries; attempt++) {
+    try {
+
+      /* --- Try Pixabay first --- */
+      try {
+        const url = await fetchFromPixabay(query);
+        console.log("Image found via Pixabay");
+        return url;
+      } catch {
+        console.log("Pixabay failed → fallback Unsplash");
+      }
+
+      /* --- Fallback Unsplash --- */
+      const url = await fetchFromUnsplash(query);
+      console.log("Image found via Unsplash");
+      return url;
+
+    } catch (err) {
+      console.log(`Image attempt ${attempt + 1} failed`);
+
+      if (attempt < retries) {
+        await sleep(800 * (attempt + 1)); // small backoff
+      }
+    }
+  }
+
+  console.log("All image providers failed");
+  return null;
+}
