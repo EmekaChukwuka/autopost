@@ -416,7 +416,8 @@
 
 const API_BASE = "https://autopost-backend-hbck.onrender.com"; // change if needed
 const token = localStorage.getItem("authToken");
-
+    const user = JSON.parse(localStorage.getItem('currentUser'));
+    const userId = user.id;
 
 if (!token) {
   window.location.href = "signin.html";
@@ -426,7 +427,8 @@ async function api(path) {
   const res = await fetch(API_BASE + path, {
     headers: {
       Authorization: "Bearer " + token
-    }
+    },
+        body: userId
   });
   return res.json();
 }
