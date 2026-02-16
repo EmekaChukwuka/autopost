@@ -2,11 +2,11 @@ import express from "express";
 import PostAnalytics from "../models/PostAnalytics.js";
 import { authenticateToken } from "../middleware/auth.js";
 
-const router = express.Router();
+const analyticsRouter = express.Router();
 
-router.get("/profile", authenticateToken, async (req, res) => {
+analyticsRouter.get("/profile", authenticateToken, async (req, res) => {
   try {
-    const userId = req.user.id;
+    const { userId }= req.body;
 
     const posts = await PostAnalytics.find({ user_id: userId });
 
@@ -51,10 +51,10 @@ router.get("/profile", authenticateToken, async (req, res) => {
   }
 });
 
-router.get("/averages", authenticateToken, async (req,res) => {
-
+analyticsRouter.get("/averages", authenticateToken, async (req,res) => {
+  const { userId } = req.body;
   const result = await PostAnalytics.aggregate([
-    { $match: { user_id: req.user._id } },
+    { $match: { user_id: userId } },
     {
       $group: {
         _id: null,
@@ -67,20 +67,20 @@ router.get("/averages", authenticateToken, async (req,res) => {
   res.json(result[0] || {});
 });
 
-router.get("/post/:id", authenticateToken, async (req,res) => {
-
+analyticsRouter.get("/post/:id", authenticateToken, async (req,res) => {
+  const { userId } = req.body;
   const post = await PostAnalytics.findOne({
     scheduled_post_id: req.params.id,
-    user_id: req.user.id
+    user_id: userId
   });
 
   res.json(post);
 });
 
-router.get("/image-vs-text", authenticateToken, async (req,res) => {
-
+analyticsRouter.get("/image-vs-text", authenticateToken, async (req,res) => {
+  const { userId } = req.body;
   const data = await PostAnalytics.aggregate([
-    { $match: { user_id: req.user._id } },
+    { $match: { user_id: userId } },
     {
       $group: {
         _id: "$has_image",
@@ -93,4 +93,4 @@ router.get("/image-vs-text", authenticateToken, async (req,res) => {
   res.json(data);
 });
 
-export default router;
+export default analyticsRouter;
