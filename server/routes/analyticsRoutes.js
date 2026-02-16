@@ -1,6 +1,5 @@
 import express from "express";
 import PostAnalytics from "../models/PostAnalytics.js";
-import { authenticateToken } from "../middleware/auth.js";
 
 const analyticsRouter = express.Router();
 
