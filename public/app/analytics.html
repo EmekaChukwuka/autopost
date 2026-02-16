@@ -426,7 +426,8 @@ if (!token) {
 async function api(path) {
   const res = await fetch(API_BASE + path, {
     headers: {
-      Authorization: "Bearer " + token
+                        'Content-Type' : 'application/json',
+      'Authorization': `Bearer ${token}`
     },
                          body: JSON.stringify({userId})
   });
