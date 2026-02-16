@@ -4,7 +4,7 @@ import { authenticateToken } from "../middleware/auth.js";
 
 const analyticsRouter = express.Router();
 
-analyticsRouter.get("/profile", authenticateToken, async (req, res) => {
+analyticsRouter.post("/profile", authenticateToken, async (req, res) => {
   try {
     const { userId }= req.body;
 
@@ -51,7 +51,7 @@ analyticsRouter.get("/profile", authenticateToken, async (req, res) => {
   }
 });
 
-analyticsRouter.get("/averages", authenticateToken, async (req,res) => {
+analyticsRouter.post("/averages", authenticateToken, async (req,res) => {
   const { userId } = req.body;
   const result = await PostAnalytics.aggregate([
     { $match: { user_id: userId } },
@@ -67,7 +67,7 @@ analyticsRouter.get("/averages", authenticateToken, async (req,res) => {
   res.json(result[0] || {});
 });
 
-analyticsRouter.get("/post/:id", authenticateToken, async (req,res) => {
+analyticsRouter.post("/post/:id", authenticateToken, async (req,res) => {
   const { userId } = req.body;
   const post = await PostAnalytics.findOne({
     scheduled_post_id: req.params.id,
@@ -77,7 +77,7 @@ analyticsRouter.get("/post/:id", authenticateToken, async (req,res) => {
   res.json(post);
 });
 
-analyticsRouter.get("/image-vs-text", authenticateToken, async (req,res) => {
+analyticsRouter.post("/image-vs-text", authenticateToken, async (req,res) => {
   const { userId } = req.body;
   const data = await PostAnalytics.aggregate([
     { $match: { user_id: userId } },
