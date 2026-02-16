@@ -16,6 +16,9 @@ import authRouter from "./routes/auth.js";
 import router from "./routes/regisAuthRoutes.js";
 import paymentRouter from "./routes/paymentRoutes.js";
 import calendarRouter from './routes/calendarRoutes.js';
+import analyticsRouter from "./routes/analyticsRoutes.js";
+
+app.use("/analytics", analyticsRouter);
 
 import cron from "node-cron";
 import { processLinkedInPosts } from "./workers/linkedinScheduler.js";
