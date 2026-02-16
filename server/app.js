@@ -18,7 +18,6 @@ import paymentRouter from "./routes/paymentRoutes.js";
 import calendarRouter from './routes/calendarRoutes.js';
 import analyticsRouter from "./routes/analyticsRoutes.js";
 
-app.use("/analytics", analyticsRouter);
 
 import cron from "node-cron";
 import { processLinkedInPosts } from "./workers/linkedinScheduler.js";
@@ -132,6 +131,7 @@ app.use("/clearwordsapi", clearwordsAIRouter);
 app.use("/auth", authRouter);
 app.use("/register", router);
 app.use("/paymentApi", paymentRouter);
+app.use("/analytics", analyticsRouter);
 
 //
 // 🌐 Static Page Redirects
