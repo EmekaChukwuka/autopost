@@ -3,7 +3,7 @@ import PostAnalytics from "../models/PostAnalytics.js";
 
 const analyticsRouter = express.Router();
 
-analyticsRouter.post("/profile", authenticateToken, async (req, res) => {
+analyticsRouter.post("/profile", async (req, res) => {
   try {
     const { userId }= req.body;
 
@@ -50,7 +50,7 @@ analyticsRouter.post("/profile", authenticateToken, async (req, res) => {
   }
 });
 
-analyticsRouter.post("/averages", authenticateToken, async (req,res) => {
+analyticsRouter.post("/averages", async (req,res) => {
   const { userId } = req.body;
   const result = await PostAnalytics.aggregate([
     { $match: { user_id: userId } },
@@ -66,7 +66,7 @@ analyticsRouter.post("/averages", authenticateToken, async (req,res) => {
   res.json(result[0] || {});
 });
 
-analyticsRouter.post("/post/:id", authenticateToken, async (req,res) => {
+analyticsRouter.post("/post/:id", async (req,res) => {
   const { userId } = req.body;
   const post = await PostAnalytics.findOne({
     scheduled_post_id: req.params.id,
@@ -76,7 +76,7 @@ analyticsRouter.post("/post/:id", authenticateToken, async (req,res) => {
   res.json(post);
 });
 
-analyticsRouter.post("/image-vs-text", authenticateToken, async (req,res) => {
+analyticsRouter.post("/image-vs-text",  async (req,res) => {
   const { userId } = req.body;
   const data = await PostAnalytics.aggregate([
     { $match: { user_id: userId } },
