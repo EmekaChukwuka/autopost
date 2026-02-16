@@ -5,6 +5,7 @@ import axios from "axios";
 import { uploadImageToLinkedIn } from "../services/linkedinImageUpload.js";
 import { postToLinkedInWithImage, postToLinkedInWithoutImage } from "../services/linkedinPoster.js";
 import { getImageForText } from "./imageFetcher.js"; // ✅ your helper
+import PostAnalytics from "../models/PostAnalytics.js";
 
 export const processLinkedInPosts = async () => {
 
@@ -104,6 +105,14 @@ export const processLinkedInPosts = async () => {
       post.status = "posted";
       await post.save();
 
+await PostAnalytics.create({
+  user_id: post.user_id,
+  scheduled_post_id: post._id,
+  platform: "linkedin",
+  content: post.content,
+  posted_at: new Date(),
+  has_image: !!assetUrn
+});
       console.log("Post success:", post._id);
 
     } catch (err) {
