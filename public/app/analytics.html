@@ -394,10 +394,10 @@
                 <div class="card">
                     <h2>Top Performing Posts</h2>
                     <div class="top-posts" id="topPosts"></div>
-                            
-                        </div>
-                        
+                           
                 </div>
+                        
+               </div>
             </div>
 
           
@@ -412,35 +412,134 @@
     <a href="settings.html"><i class="fas fa-user"></i></a>
   </nav>
   <script src="app.js"></script>
-    <script>
-alert('Coming Soon!');
-    // Dark Mode Toggle
-    const darkModeToggle = document.getElementById('toggle');
-    const root = document.documentElement;
+<script>
 
-    if (localStorage.getItem('theme') === 'dark') {
-      root.setAttribute('data-theme', 'dark');
-      darkModeToggle.checked = true;
+const API_BASE = "https://autopost-backend-hbck.onrender.com"; // change if needed
+const token = localStorage.getItem("token");
+
+if (!token) {
+  window.location.href = "signin.html";
+}
+
+async function api(path) {
+  const res = await fetch(API_BASE + path, {
+    headers: {
+      Authorization: "Bearer " + token
     }
+  });
+  return res.json();
+}
 
-    darkModeToggle.addEventListener('change', (e) => {
-      if (e.target.checked) {
-        root.setAttribute('data-theme', 'dark');
-        localStorage.setItem('theme', 'dark');
-      } else {
-        root.removeAttribute('data-theme');
-        localStorage.setItem('theme', 'light');
-      }
+function formatNumber(n) {
+  if (!n && n !== 0) return "—";
+  if (n > 1000) return (n/1000).toFixed(1) + "k";
+  return Math.round(n);
+}
+
+function renderBestPosts(posts) {
+  const container = document.getElementById("topPosts");
+  container.innerHTML = "";
+
+  if (!posts || !posts.length) {
+    container.innerHTML = "<p>No posts yet</p>";
+    return;
+  }
+
+  posts.slice(0,5).forEach(p => {
+    const engagement =
+      (p.metrics.likes || 0) +
+      (p.metrics.comments || 0) +
+      (p.metrics.shares || 0);
+
+    container.innerHTML += `
+      <div class="post-item">
+        <div class="post-platform">LinkedIn</div>
+
+        <div class="post-content">
+          <h4>${p.content.slice(0,120)}...</h4>
+          <div class="post-meta">
+            <span>${engagement} engagements</span>
+            <span>${new Date(p.posted_at).toLocaleDateString()}</span>
+          </div>
+        </div>
+      </div>
+    `;
+  });
+}
+
+async function loadAnalytics() {
+  try {
+
+    const profile = await api("/analytics/profile");
+
+    if (!profile.data) return;
+
+    const d = profile.data;
+
+    document.getElementById("totalPosts").innerText =
+      formatNumber(d.totalPosts);
+
+    document.getElementById("avgLikes").innerText =
+      formatNumber(d.avgLikesPerPost);
+
+    document.getElementById("avgComments").innerText =
+      formatNumber(d.avgCommentsPerPost);
+
+    const totalEngagement =
+      d.totalLikes + d.totalComments + d.totalShares;
+
+    document.getElementById("totalEngagement").innerText =
+      formatNumber(totalEngagement);
+
+    // load best posts list
+    const postsRes = await fetch(API_BASE + "/analytics/posts", {
+      headers: { Authorization: "Bearer " + token }
     });
-        // Analytics Period
-        const periodBtns = document.querySelectorAll('.period-btn');
-        periodBtns.forEach(btn => {
-            btn.addEventListener('click', () => {
-                periodBtns.forEach(b => b.classList.remove('active'));
-                btn.classList.add('active');
-            });
-        });
 
-    </script>
+    const posts = await postsRes.json();
+    renderBestPosts(posts.data || []);
+
+    document.querySelector(".main").style.opacity = 1;
+
+  } catch (err) {
+    console.error("Analytics load failed:", err);
+  }
+}
+
+loadAnalytics();
+
+
+// ===== Period Buttons UI only (future filter support) =====
+document.querySelectorAll('.period-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.period-btn')
+      .forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+  });
+});
+
+
+// ===== Safe Dark Mode Toggle =====
+const darkToggle = document.getElementById('toggle');
+if (darkToggle) {
+  const root = document.documentElement;
+
+  if (localStorage.getItem('theme') === 'dark') {
+    root.setAttribute('data-theme', 'dark');
+    darkToggle.checked = true;
+  }
+
+  darkToggle.addEventListener('change', e => {
+    if (e.target.checked) {
+      root.setAttribute('data-theme', 'dark');
+      localStorage.setItem('theme','dark');
+    } else {
+      root.removeAttribute('data-theme');
+      localStorage.setItem('theme','light');
+    }
+  });
+}
+
+</script>
 </body>
 </html>
