@@ -428,7 +428,7 @@ async function api(path) {
     headers: {
       Authorization: "Bearer " + token
     },
-        body: userId
+                         body: JSON.stringify({userId})
   });
   return res.json();
 }
