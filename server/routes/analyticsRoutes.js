@@ -92,4 +92,14 @@ analyticsRouter.post("/image-vs-text",  async (req,res) => {
   res.json(data);
 });
 
+analyticsRouter.post("/posts", authenticateToken, async (req,res) => {
+  const { userId} = req.body;
+
+  const posts = await PostAnalytics
+    .find({ user_id: userId })
+    .sort({ "metrics.likes": -1 })
+    .limit(10);
+
+  res.json({ data: posts });
+});
 export default analyticsRouter;
