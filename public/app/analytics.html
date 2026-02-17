@@ -446,6 +446,81 @@ method: 'POST',
   return res.json();
 }
 
+let engagementChart;
+let breakdownChart;
+
+function buildCharts(series) {
+
+  const labels = series.map(x =>
+    new Date(x.date).toLocaleDateString()
+  );
+
+  const likes = series.map(x => x.likes);
+  const comments = series.map(x => x.comments);
+  const shares = series.map(x => x.shares);
+
+  const totals = series.map(x =>
+    x.likes + x.comments + x.shares
+  );
+
+  // ===== Engagement Over Time =====
+  const ctx1 = document
+    .getElementById("engagementChart")
+    .getContext("2d");
+
+  if (engagementChart) engagementChart.destroy();
+
+  engagementChart = new Chart(ctx1, {
+    type: "line",
+    data: {
+      labels,
+      datasets: [{
+        label: "Total Engagement",
+        data: totals,
+        tension: 0.3
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false
+    }
+  });
+
+  // ===== Breakdown Chart =====
+  const ctx2 = document
+    .getElementById("breakdownChart")
+    .getContext("2d");
+
+  if (breakdownChart) breakdownChart.destroy();
+
+  breakdownChart = new Chart(ctx2, {
+    type: "bar",
+    data: {
+      labels,
+      datasets: [
+        { label: "Likes", data: likes },
+        { label: "Comments", data: comments },
+        { label: "Shares", data: shares }
+      ]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false
+    }
+  });
+}
+
+async function loadChartData() {
+
+  const res = await api("/analytics/timeseries");
+
+  const json = res.data;
+
+  if (json && json.length) {
+    buildCharts(json);
+  }
+}
+
 function formatNumber(n) {
   if (!n && n !== 0) return "—";
   if (n > 1000) return (n/1000).toFixed(1) + "k";
