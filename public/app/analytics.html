@@ -3,7 +3,9 @@
 <head>
     <meta charset="UTF-8">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
- 
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Analytics | AutoPost</title>
   <link rel="icon" href="autopost-icon.jpg">
@@ -386,12 +388,21 @@
     <div class="value" id="avgComments">—</div>
   </div>
 
-  <div class="metric-card">
-    <h3>Total Engagement</h3>
-    <div class="value" id="totalEngagement">—</div>
+  <div class="card">
+  <h2>Engagement Over Time</h2>
+  <div class="chart-container">
+    <canvas id="engagementChart"></canvas>
   </div>
 </div>
-                <div class="card">
+
+<div class="card">
+  <h2>Engagement Breakdown</h2>
+  <div class="chart-container">
+    <canvas id="breakdownChart"></canvas>
+  </div>
+</div>
+
+ <div class="card">
                     <h2>Top Performing Posts</h2>
                     <div class="top-posts" id="topPosts"></div>
                            
