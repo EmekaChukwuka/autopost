@@ -92,7 +92,7 @@ analyticsRouter.post("/image-vs-text",  async (req,res) => {
   res.json(data);
 });
 
-analyticsRouter.post("/posts", authenticateToken, async (req,res) => {
+analyticsRouter.post("/posts", async (req,res) => {
   const { userId} = req.body;
 
   const posts = await PostAnalytics
@@ -102,4 +102,21 @@ analyticsRouter.post("/posts", authenticateToken, async (req,res) => {
 
   res.json({ data: posts });
 });
+
+analyticsRouter.post("/analytics/timeseries", async (req,res) => {
+  const { userId} = req.body;
+  const posts = await PostAnalytics.find({
+    user_id: userId 
+  }).sort({ posted_at: 1 });
+
+  const series = posts.map(p => ({
+    date: p.posted_at,
+    likes: p.metrics.likes || 0,
+    comments: p.metrics.comments || 0,
+    shares: p.metrics.shares || 0
+  }));
+
+  res.json({ data: series });
+});
+
 export default analyticsRouter;
