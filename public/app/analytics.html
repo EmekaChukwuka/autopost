@@ -497,11 +497,9 @@ async function loadAnalytics() {
       formatNumber(totalEngagement);
 
     // load best posts list
-    const postsRes = await fetch(API_BASE + "/analytics/posts", {
-      headers: { Authorization: "Bearer " + token }
-    });
-
-    const posts = await postsRes.json();
+    const postsRes = await api("/analytics/posts");
+    if (!postRes.data) return;
+    const posts = postsRes.data;
     renderBestPosts(posts.data || []);
 
     document.querySelector(".main").style.opacity = 1;
