@@ -38,32 +38,9 @@ export const processLinkedInPosts = async () => {
       // ✅ IMAGE FLOW WITH FALLBACK
       // ------------------------------------------------
 
-      if (post.image_required) {
+      if (post.image_required && post.image_url) {
 
-        let imageUrl = post.image_url;
-
-        // 🔁 If no image URL — try helper service
-        if (!imageUrl) {
-          console.log("No image_url — calling helper");
-
-          try {
-            imageUrl = await getImageForText(post.content);
-
-            if (imageUrl) {
-              post.image_url = imageUrl;
-              post.image_status = "attached";
-              await post.save();
-              console.log("Helper image found");
-            }
-
-          } catch (helperErr) {
-            console.log("Image helper failed:", helperErr.message);
-          }
-        }
-
-        // 🖼 If we now have image — upload to LinkedIn
-        if (imageUrl) {
-          try {
+        
             const imageRes = await axios.get(imageUrl, {
               responseType: "arraybuffer"
             });
@@ -76,25 +53,15 @@ export const processLinkedInPosts = async () => {
 
             console.log("LinkedIn asset created:", assetUrn);
 
-          } catch (uploadErr) {
-            console.log("Image upload failed — will post text only");
-            assetUrn = null;
-          }
-        }
-      }
-
-      // ------------------------------------------------
-      // ✅ POST — WITH OR WITHOUT IMAGE
-      // ------------------------------------------------
-
-      if (assetUrn) {
-        await postToLinkedInWithImage(
+          
+await postToLinkedInWithImage(
           token,
           profileId,
           post.content,
           assetUrn
         );
-      } else {
+      
+       } else {
         await postToLinkedInWithoutImage(
           token,
           profileId,
