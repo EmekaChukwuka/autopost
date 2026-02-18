@@ -41,7 +41,7 @@ export const processLinkedInPosts = async () => {
       if (post.image_required && post.image_url) {
 
         
-            const imageRes = await axios.get(imageUrl, {
+            const imageRes = await axios.get(post.image_url, {
               responseType: "arraybuffer"
             });
 
