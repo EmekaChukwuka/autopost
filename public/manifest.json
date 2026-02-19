@@ -1,7 +1,7 @@
 {
-  "name": "AutoPost",
-  "short_name": "AutoPost",
-  "description": "AI-powered social media automation, content generation, content calendar, and analytics.",
+  "name": "AuthorIn",
+  "short_name": "AuthorIn",
+  "description": "AI-powered LinkedIn automation, content generation, content calendar, and analytics.",
   "start_url": "/app/dashboard.html",
   "scope": "/app/",
   "display": "standalone",
