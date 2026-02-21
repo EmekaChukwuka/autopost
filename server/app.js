@@ -26,7 +26,6 @@ import { fetchImagesForPosts } from "./workers/imageFetcher.js";
 cron.schedule("*/1 * * * *", async () => {
   console.log("⏱ Running LinkedIn scheduler...");
   await processLinkedInPosts();
-  await fetchImagesForPosts();
 });
 
 
