@@ -52,7 +52,7 @@ export const processLinkedInPosts = async () => {
             console.log("LinkedIn asset created:", assetUrn);
 
 post.image_status = "attached";
-post.image_url = image buffer;
+post.image_url = imageBuffer;
 await post.save();
           
 await postToLinkedInWithImage(
