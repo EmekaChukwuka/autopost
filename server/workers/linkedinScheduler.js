@@ -38,17 +38,15 @@ export const processLinkedInPosts = async () => {
       // ✅ IMAGE FLOW WITH FALLBACK
       // ------------------------------------------------
 
-      if (post.image_required && post.image_url) {
+      if (post.image_required) {
 
         
-            const imageRes = await axios.get(post.image_url, {
-              responseType: "arraybuffer"
-            });
+            const imageBuffer = await getImageForText(post.content);
 
             assetUrn = await uploadImageToLinkedIn(
               token,
               profileId,
-              imageRes.data
+              imageBuffer
             );
 
             console.log("LinkedIn asset created:", assetUrn);
