@@ -43,17 +43,18 @@ export const processLinkedInPosts = async () => {
             const imageBuffer = await getImageForText(post.content);
             console.log(imageBuffer)
             const imageRes = await axios.get(imageBuffer, { responseType: "arraybuffer" });
+            const imageData = imageRes.data;
 
             assetUrn = await uploadImageToLinkedIn(
               token,
               profileId,
-              imageRes
+              imageData
             );
 
             console.log("LinkedIn asset created:", assetUrn);
 
       post.image_status = "attached";
-      post.image_url = imageBuffer;
+      post.image_url = imageData;
       await post.save();
           
       const res = await postToLinkedInWithImage(
