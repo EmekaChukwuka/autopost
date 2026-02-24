@@ -201,7 +201,6 @@ export const getConnectedAccounts = async (req, res) => {
     }
 
     const accounts = user.socialAccounts;
-    console.log(accounts)
    /* const response = {
       linkedin: formatAccount(accounts.linkedin),
       twitter: formatAccount(accounts.twitter),
