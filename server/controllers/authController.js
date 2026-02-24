@@ -178,11 +178,11 @@ if (state) {
 
     console.log("LinkedIn connected for user:", userId);
 
-    res.redirect("https://autopost-7uhd.onrender.com/app/settings.html?linkedin=connected");
+    res.redirect("https://authorin.onrender.com/app/settings.html?linkedin=connected");
 
   } catch (error) {
     console.error("LinkedIn OAuth error:", error.response?.data || error.message);
-    res.redirect("https://autopost-7uhd.onrender.com/app/settings.html?linkedin=failed");
+    res.redirect("https://authorin.onrender.com/app/settings.html?linkedin=failed");
   }
 };
 
