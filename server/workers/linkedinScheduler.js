@@ -65,7 +65,7 @@ export const processLinkedInPosts = async () => {
         );
 
       if(res){
-       post.linkedin_post_urn = res.data;
+       post.linkedin_post_urn = res.data.id;
         }
 
        } else {
@@ -76,7 +76,7 @@ export const processLinkedInPosts = async () => {
         );
       
         if(res){
-       post.linkedin_post_urn = res.data;
+       post.linkedin_post_urn = res.data.id;
         }
       }
 
