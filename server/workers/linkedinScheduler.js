@@ -54,6 +54,7 @@ export const processLinkedInPosts = async () => {
 
       post.image_status = "attached";
       post.image_url = imageBuffer;
+     // post.linkedin_asset_urn = assetUrn;
       await post.save();
           
       const res = await postToLinkedInWithImage(

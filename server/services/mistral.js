@@ -30,7 +30,7 @@ LinkedIn:
 - Professional, insight-driven, and value-focused
 - Use short paragraphs or line breaks for readability
 - Can use storytelling or lesson-based structure
-- No emojis unless absolutely necessary (max 1)
+- No emojis unless absolutely necessary (max 5)
 - No hashtags unless highly relevant (max 3)
 - No clickbait or hype language
 - Max 1,000 characters
