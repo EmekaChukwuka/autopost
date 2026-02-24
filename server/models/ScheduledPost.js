@@ -18,7 +18,9 @@ image_url : { type: String, default: null},
     default: "pending"
   },
 
-  linkedin_asset_urn: { type: String, default: null }
+  linkedin_asset_urn: { type: String, default: null },
+
+  linkedin_post_urn: { type: String, default: null }
 }, { timestamps: true });
 
 export default mongoose.model("ScheduledPost", scheduledPostSchema);

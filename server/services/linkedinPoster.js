@@ -36,6 +36,7 @@ try {
     }
   );
 console.log("LinkedIn post success:", res.data);
+return res;
 
 } catch (err) {
   console.error("LinkedIn API error:",
@@ -78,7 +79,7 @@ export const postToLinkedInWithoutImage = async (
     }
   );
 console.log("LinkedIn post success:", res.data);
-
+return res;
 } catch (err) {
   console.error("LinkedIn API error:",
     err.response?.data || err.message

@@ -1,7 +1,6 @@
 import ScheduledPost from "../models/ScheduledPost.js";
 import User from "../models/User.js";
 import axios from "axios";
-
 import { uploadImageToLinkedIn } from "../services/linkedinImageUpload.js";
 import { postToLinkedInWithImage, postToLinkedInWithoutImage } from "../services/linkedinPoster.js";
 import { getImageForText } from "./imageFetcher.js"; // ✅ your helper
@@ -42,32 +41,41 @@ export const processLinkedInPosts = async () => {
 
         
             const imageBuffer = await getImageForText(post.content);
+            const imageRes = await axios.get(imageBuffer, { responseType: "arraybuffer" });
 
             assetUrn = await uploadImageToLinkedIn(
               token,
               profileId,
-              imageBuffer
+              imageRes
             );
 
             console.log("LinkedIn asset created:", assetUrn);
 
-post.image_status = "attached";
-post.image_url = imageBuffer;
-await post.save();
+      post.image_status = "attached";
+      post.image_url = imageBuffer;
+      await post.save();
           
-await postToLinkedInWithImage(
+      const res = await postToLinkedInWithImage(
           token,
           profileId,
           post.content,
           assetUrn
         );
-      
+
+      if(res){
+       post.linkedin_post_urn = res.data;
+        }
+
        } else {
-        await postToLinkedInWithoutImage(
+       const res =  await postToLinkedInWithoutImage(
           token,
           profileId,
           post.content
         );
+      
+        if(res){
+       post.linkedin_post_urn = res.data;
+        }
       }
 
       post.status = "posted";
