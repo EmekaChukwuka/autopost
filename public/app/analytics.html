@@ -419,6 +419,12 @@
   <script src="app.js"></script>
 <script>
 
+   const root = document.documentElement;
+  if (localStorage.getItem('theme') === 'dark') {
+    root.setAttribute('data-theme', 'dark');
+  }
+
+
 const API_BASE = "https://autopost-backend-hbck.onrender.com"; // change if needed
 const token = localStorage.getItem("authToken");
     const user = JSON.parse(localStorage.getItem('currentUser'));
@@ -602,26 +608,7 @@ document.querySelectorAll('.period-btn').forEach(btn => {
 });
 
 
-// ===== Safe Dark Mode Toggle =====
-const darkToggle = document.getElementById('toggle');
-if (darkToggle) {
-  const root = document.documentElement;
 
-  if (localStorage.getItem('theme') === 'dark') {
-    root.setAttribute('data-theme', 'dark');
-    darkToggle.checked = true;
-  }
-
-  darkToggle.addEventListener('change', e => {
-    if (e.target.checked) {
-      root.setAttribute('data-theme', 'dark');
-      localStorage.setItem('theme','dark');
-    } else {
-      root.removeAttribute('data-theme');
-      localStorage.setItem('theme','light');
-    }
-  });
-}
 
 </script>
 </body>
