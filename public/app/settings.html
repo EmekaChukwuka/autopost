@@ -931,7 +931,7 @@ async function connectLinkedin(){
                     if(trialData.plan === 'Starter'){
                            document.getElementById('plan').innerHTML = ` <h3>${trialData.plan} Plan</h3>
                             <p>Expired, update payment</p>
-                            <p>₦2500</p>
+                            <p>₦5900</p>
                             <a href="payment.html" class="btn btn-outline" style="margin-top: 16px;">Update Payment</a>
                     `;
                      document.getElementById('billingHistoryCard').innerHTML = `]
@@ -944,7 +944,7 @@ async function connectLinkedin(){
                 if(trialData.plan === 'Professional'){
                            document.getElementById('plan').innerHTML = ` <h3>${trialData.plan} Plan</h3>
                             <p>Expired, update payment</p>
-                            <p>₦5500</p>
+                            <p>₦12900</p>
                             <a href="payment.html" class="btn btn-outline" style="margin-top: 16px;">Update Payment</a>
                     `;
                      document.getElementById('billingHistoryCard').innerHTML = `
@@ -957,7 +957,7 @@ async function connectLinkedin(){
             if(trialData.plan === 'Business'){
                             document.getElementById('plan').innerHTML = ` <h3>${trialData.plan} Plan</h3>
                              <p>Expired, update payment</p>
-                             <p>₦15500</p>
+                             <p>₦24900</p>
                              <a href="payment.html" class="btn btn-outline" style="margin-top: 16px;">Update Payment</a>
                       `;
                      document.getElementById('billingHistoryCard').innerHTML = `
@@ -1007,7 +1007,7 @@ async function connectLinkedin(){
                         switch(result.data.subscription_plan_id){
                             case '690cd11f2c645ad1ba6ed64b': //Starter
                                 planName = 'Starter';
-                                planAmount = '₦2500';
+                                planAmount = '₦5900';
                          document.getElementById('billingHistoryCard').innerHTML = `
                             
                             <p>${startDateString} - ${planAmount}</p>
@@ -1022,7 +1022,7 @@ async function connectLinkedin(){
                                 break;
                             case '690cd11f2c645ad1ba6ed64c': //Professional
                                 planName = 'Professional';
-                                planAmount = '₦5500';
+                                planAmount = '₦12900';
                          document.getElementById('billingHistoryCard').innerHTML = `
                             
                             <p>${startDateString} - ${planAmount}</p>
@@ -1037,7 +1037,7 @@ async function connectLinkedin(){
                                 break;
                             case '690cd11f2c645ad1ba6ed64d': //Business
                                 planName = 'Business';
-                                planAmount = '₦15500';
+                                planAmount = '₦24900';
                          document.getElementById('billingHistoryCard').innerHTML = `
                             
                             <p>${startDateString} - ${planAmount}</p>
@@ -1090,7 +1090,7 @@ async function connectLinkedin(){
     switch(result.data.subscription_plan_id){
                             case '690cd11f2c645ad1ba6ed64b':
                                 planName = 'Starter';
-                                planAmount = '₦2500';
+                                planAmount = '₦5900';
                            document.getElementById('plan').innerHTML = ` <h3>${planName} Plan</h3>
                             <p>Expired, update payment</p>
                             <p>${planAmount}</p>
@@ -1106,7 +1106,7 @@ async function connectLinkedin(){
                                 break;
                             case '690cd11f2c645ad1ba6ed64c':
                                 planName = 'Professional';
-                                planAmount = '₦5500';
+                                planAmount = '₦9900';
                            document.getElementById('plan').innerHTML = ` <h3>${planName} Plan</h3>
                             <p>Expired, update payment</p>
                             <p>${planAmount}</p>
@@ -1121,7 +1121,7 @@ async function connectLinkedin(){
                                 break;
                             case '690cd11f2c645ad1ba6ed64d':
                                 planName = 'Business';
-                                planAmount = '₦15500';
+                                planAmount = '₦24900';
                            document.getElementById('plan').innerHTML = ` <h3>${planName} Plan</h3>
                             <p>Expired, update payment</p>
                             <p>${planAmount}</p>
