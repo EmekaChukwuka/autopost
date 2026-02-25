@@ -60,7 +60,7 @@ async function seedSubscriptionPlans() {
     {
       name: "Starter",
       description: "Perfect for individuals getting started",
-      price: 2500,
+      price: 5900,
       duration_days: 30,
       social_accounts_limit: 3,
       monthly_posts_limit: 30,
@@ -70,7 +70,7 @@ async function seedSubscriptionPlans() {
     {
       name: "Professional",
       description: "For growing brands and small teams",
-      price: 5500,
+      price: 9900,
       duration_days: 30,
       social_accounts_limit: 10,
       monthly_posts_limit: 100,
@@ -81,7 +81,7 @@ async function seedSubscriptionPlans() {
     {
       name: "Business",
       description: "For agencies & large organizations",
-      price: 15500,
+      price: 24900,
       duration_days: 30,
       social_accounts_limit: 25,
       monthly_posts_limit: 300,
@@ -210,17 +210,17 @@ app.post("/trialInfo", async (req, res) => {
     Starter: {
       name: "Starter",
       description: "Perfect for individuals getting started with automation",
-      price: "₦2500"
+      price: "₦5900"
     },
     Professional: {
       name: "Professional",
       description: "For growing brands and small teams",
-      price: "₦5500"
+      price: "₦9900"
     },
     Business: {
       name: "Business",
       description: "For agencies and large organizations",
-      price: "₦15500"
+      price: "₦24900"
     }
   };
 
