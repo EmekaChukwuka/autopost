@@ -26,7 +26,7 @@ import { syncLinkedInAnalytics } from "./workers/linkedinAnalyticsSync.js";
 
 cron.schedule("*/5 * * * *", () => {
   console.log("Syncing LinkedIn posts data...");
-  await syncLinkedInAnalytics();
+  syncLinkedInAnalytics();
 });
 
 cron.schedule("*/1 * * * *", async () => {
