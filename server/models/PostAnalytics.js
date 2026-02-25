@@ -1,38 +1,26 @@
+// models/PostAnalytics.js
+
 import mongoose from "mongoose";
 
-const postAnalyticsSchema = new mongoose.Schema({
-  user_id: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "User",
-    index: true,
-    required: true
-  },
+const PostAnalyticsSchema = new mongoose.Schema({
+  user_id: mongoose.Schema.Types.ObjectId,
 
-  scheduled_post_id: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "ScheduledPost"
-  },
-
-  platform: {
-    type: String,
-    enum: ["linkedin"],
-    required: true
-  },
-
+  post_urn: String,
   content: String,
-
   posted_at: Date,
 
   metrics: {
-    impressions: { type: Number, default: 0 },
-    likes: { type: Number, default: 0 },
-    comments: { type: Number, default: 0 },
-    shares: { type: Number, default: 0 },
-    clicks: { type: Number, default: 0 }
+    likes: Number,
+    comments: Number,
+    shares: Number,
+    impressions: Number,
+    clicks: Number
   },
 
-  has_image: Boolean
+  last_synced: Date
+});
 
-}, { timestamps: true });
-
-export default mongoose.model("PostAnalytics", postAnalyticsSchema);
+export default mongoose.model(
+  "PostAnalytics",
+  PostAnalyticsSchema
+);
