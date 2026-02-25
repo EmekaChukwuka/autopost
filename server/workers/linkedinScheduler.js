@@ -51,6 +51,8 @@ export const processLinkedInPosts = async () => {
             );
 
             console.log("LinkedIn asset created:", assetUrn);
+      
+      let postUrn = null;
 
       post.image_status = "attached";
       post.image_url = imageBuffer;
@@ -66,6 +68,7 @@ export const processLinkedInPosts = async () => {
 
       if(res){
        post.linkedin_post_urn = res.data.id;
+postUrn = res.data.id;
         }
 
        } else {
@@ -77,6 +80,7 @@ export const processLinkedInPosts = async () => {
       
         if(res){
        post.linkedin_post_urn = res.data.id;
+postUrn = res.data.id;
         }
       }
 
