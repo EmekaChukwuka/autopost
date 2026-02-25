@@ -83,14 +83,30 @@ export const processLinkedInPosts = async () => {
       post.status = "posted";
       await post.save();
 
-await PostAnalytics.create({
-  user_id: post.user_id,
-  scheduled_post_id: post._id,
-  platform: "linkedin",
-  content: post.content,
-  posted_at: new Date(),
-  has_image: !!assetUrn
-});
+await PostAnalytics.findOneAndUpdate(
+
+  { user_id: user._id, post_urn: postUrn },
+
+  {
+    user_id: user._id,
+    post_urn: postUrn,
+    content: post.content,
+    posted_at: new Date(),
+
+    metrics: {
+      likes: 0,
+      comments: 0,
+      shares: 0,
+      impressions: 0,
+      clicks: 0
+    },
+
+    last_synced: new Date()
+  },
+
+  { upsert: true }
+);
+
       console.log("Post success:", post._id);
 
     } catch (err) {
