@@ -25,7 +25,7 @@ import { fetchImagesForPosts } from "./workers/imageFetcher.js";
 import { syncLinkedInAnalytics } from "./workers/linkedinAnalyticsSync.js";
 
 cron.schedule("*/5 * * * *", () => {
-  console.log("Syncing LinkedIn posts data..."):
+  console.log("Syncing LinkedIn posts data...");
   await syncLinkedInAnalytics();
 });
 
