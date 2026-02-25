@@ -22,6 +22,12 @@ import analyticsRouter from "./routes/analyticsRoutes.js";
 import cron from "node-cron";
 import { processLinkedInPosts } from "./workers/linkedinScheduler.js";
 import { fetchImagesForPosts } from "./workers/imageFetcher.js";
+import { syncLinkedInAnalytics } from "./workers/linkedinAnalyticsSync.js";
+
+cron.schedule("*/5 * * * *", () => {
+  console.log("Syncing LinkedIn posts data..."):
+  await syncLinkedInAnalytics();
+});
 
 cron.schedule("*/1 * * * *", async () => {
   console.log("⏱ Running LinkedIn scheduler...");
