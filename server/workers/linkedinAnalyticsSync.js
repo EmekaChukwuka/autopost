@@ -9,7 +9,7 @@ export async function syncLinkedInAnalytics() {
 
   console.log("Analytics sync started");
 
-  const users = await User.find({
+  const users = await UserModel.find({
     "socialAccounts.linkedin.accessToken": { $exists: true }
   });
 
