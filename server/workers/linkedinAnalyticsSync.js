@@ -9,7 +9,7 @@ export async function syncLinkedInAnalytics() {
 
   console.log("Analytics sync started");
 
-  const users = await User.findLinkedInUsers()
+  const users = await User.findLinkedInUsers();
 
   for (const user of users) {
 
