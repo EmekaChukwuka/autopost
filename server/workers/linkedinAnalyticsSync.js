@@ -1,4 +1,4 @@
-import UserModel from "../models/User.js";
+import User from "../models/User.js";
 import PostAnalytics from "../models/PostAnalytics.js";
 import {
   getLinkedInPosts,
@@ -9,9 +9,7 @@ export async function syncLinkedInAnalytics() {
 
   console.log("Analytics sync started");
 
-  const users = await UserModel.find({
-    "socialAccounts.linkedin.accessToken": { $exists: true }
-  });
+  const users = await User.findLinkedInUsers()
 
   for (const user of users) {
 
