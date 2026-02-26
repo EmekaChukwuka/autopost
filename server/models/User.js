@@ -177,4 +177,5 @@ static async updateOne(filter, updateData) {
   }
 }
 
-export default User;
+export UserModel;
+export User;
