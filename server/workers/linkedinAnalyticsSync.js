@@ -1,4 +1,4 @@
-import User from "../models/User.js";
+import UserModel from "../models/User.js";
 import PostAnalytics from "../models/PostAnalytics.js";
 import {
   getLinkedInPosts,
