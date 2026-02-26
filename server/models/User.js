@@ -64,7 +64,7 @@ const subscriptionHistorySchema = new mongoose.Schema({
 });
 
 // 5️⃣ Register Models
-const UserModel = mongoose.model("User", userSchema);
+export const UserModel = mongoose.model("User", userSchema);
 const PostModel = mongoose.model("Post", postSchema);
 const SubscriptionPlanModel = mongoose.model("SubscriptionPlan", subscriptionPlanSchema);
 const SubscriptionHistoryModel = mongoose.model("SubscriptionHistory", subscriptionHistorySchema);
@@ -177,5 +177,4 @@ static async updateOne(filter, updateData) {
   }
 }
 
-export UserModel;
 export User;
