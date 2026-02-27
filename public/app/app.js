@@ -9,7 +9,7 @@ function checkAuth() {
 
     // If no token → send user to sign in page
     if (!token) {
-        window.location.href = "/signin.html";
+        window.location.href = "signin.html";
         return false;
     }
     return true;
